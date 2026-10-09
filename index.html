@@ -20,20 +20,21 @@
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--texto); margin: 0; padding: 0; background-color: var(--negro-mate); background-image: url('lineasazules_fondo.avif'); background-size: cover; background-position: center; background-attachment: fixed; display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* Encabezado Fijo */
-        header { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 15px 0; text-align: center; border-bottom: 4px solid var(--azul-brillante); box-shadow: 0 4px 15px rgba(0,0,0,0.8); }
+        /* Encabezado Fijo con Botón de Cerrar Sesión Arriba a la Derecha */
+        header { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 12px 20px; border-bottom: 4px solid var(--azul-brillante); box-shadow: 0 4px 15px rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        .header-title { text-align: center; flex: 1; }
         
-        .container { max-width: 1050px; margin: 140px auto 30px auto; padding: 20px; flex: 1; width: 100%; box-sizing: border-box; }
+        .container { max-width: 1150px; margin: 120px auto 30px auto; padding: 20px; flex: 1; width: 100%; box-sizing: border-box; }
         .login-container { max-width: 420px !important; margin: 120px auto 30px auto; }
         
         .card { background-color: var(--tarjeta-bg); padding: 20px; border-radius: 8px; border-top: 3px solid var(--azul-claro); box-shadow: 0 8px 16px rgba(0,0,0,0.7); margin-bottom: 20px; backdrop-filter: blur(5px); position: relative; }
         
-        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; }
-        input:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 5px var(--azul-brillante); }
+        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"], select { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; }
+        input:focus, select:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 5px var(--azul-brillante); }
 
         .password-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
         .password-wrapper input { margin-bottom: 0; padding-right: 40px; }
-        .toggle-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; cursor: pointer; font-size: 1.1em; padding: 0; font-weight: normal; box-shadow: none; }
+        .toggle-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; cursor: pointer; font-size: 1.1em; padding: 0; box-shadow: none; }
         .toggle-password:hover { color: white; background: none; box-shadow: none; }
 
         .inline-inputs { display: flex; gap: 10px; }
@@ -48,15 +49,14 @@
         .btn-secondary:hover { background-color: var(--azul-claro); }
         .btn-danger { background-color: #5a1818; border-color: #8B0000; }
         .btn-danger:hover { background-color: #8B0000; }
-        .btn-logout { background-color: #5a1818; border-color: #8B0000; float: right; margin-top: -5px;}
-        .btn-logout:hover { background-color: #8B0000; }
-        .btn-small { padding: 5px 10px; font-size: 0.8em; }
+        .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 6px 15px; font-size: 0.85em; }
+        .btn-small { padding: 4px 8px; font-size: 0.8em; }
 
         /* Cuadrito Azul Indicador de Último Folio */
         .badge-ultimo-folio { background-color: var(--azul-brillante); color: white; padding: 8px 15px; border-radius: 6px; font-size: 0.85em; font-weight: bold; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.5); border: 1px solid #6096ba; float: right; margin-top: -8px; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; background-color: rgba(0,0,0,0.4); }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85em; background-color: rgba(0,0,0,0.4); }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); word-break: break-word; }
         th { background-color: var(--azul-medio); border-bottom: 2px solid var(--azul-brillante); }
         
         .hidden { display: none !important; }
@@ -65,18 +65,20 @@
         .alerta-evidencia { background-color: rgba(139, 0, 0, 0.8); color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #ff4d4d; }
         .folio-item { background: rgba(0,0,0,0.5); padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--azul-brillante); border-radius: 4px; }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 20px; border-radius: 8px; width: 400px; box-shadow: 0 0 20px rgba(58, 110, 165, 0.5); }
+        /* Modales Generales */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 25px; border-radius: 8px; width: 450px; box-shadow: 0 0 20px rgba(58, 110, 165, 0.5); max-height: 90vh; overflow-y: auto; }
+        .modal-content-viewer { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 15px; border-radius: 8px; width: 80vw; height: 80vh; display: flex; flex-direction: column; box-shadow: 0 0 25px rgba(0,0,0,0.9); }
 
         footer { text-align: center; padding: 15px; background-color: var(--azul-oscuro); color: #888; font-size: 0.85em; border-top: 1px solid var(--azul-medio); z-index: 10; }
 
-        /* ESTILOS EXCLUSIVOS PARA IMPRESIÓN (Carta Horizontal) */
+        /* ESTILOS PARA IMPRESIÓN (Carta Horizontal) */
         @media print {
             body { background: white !important; color: black !important; }
-            header, .card:not(#printable-report-card), footer, button, input, .badge-ultimo-folio { display: none !important; }
+            header, .card:not(#printable-report-card), footer, button, input, select, .badge-ultimo-folio { display: none !important; }
             .container { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
             #user-section { background: white !important; border: none !important; box-shadow: none !important; color: black !important; }
-            table { background: white !important; color: black !important; border: 1px solid #ccc !important; font-size: 10pt !important; }
+            table { background: white !important; color: black !important; border: 1px solid #ccc !important; font-size: 9pt !important; }
             th { background-color: #1d3557 !important; color: white !important; -webkit-print-color-adjust: exact; }
             td, th { border: 1px solid #ddd !important; }
             @page { size: landscape; margin: 1cm; }
@@ -86,8 +88,14 @@
 <body>
 
     <header>
-        <h1 style="font-size: 1.5em; margin: 0;">Vocalía del Registro Federal de Electores</h1>
-        <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva (VRFE 03JDE)</p>
+        <div style="width: 120px;"></div> <!-- Espaciador izquierdo -->
+        <div class="header-title">
+            <h1 style="font-size: 1.3em; margin: 0;">Vocalía del Registro Federal de Electores</h1>
+            <p style="font-size: 0.8em; margin: 3px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva (VRFE 03JDE)</p>
+        </div>
+        <div style="width: 120px; text-align: right;">
+            <button id="btn-header-logout" class="btn-logout hidden" onclick="logout()">Cerrar Sesión</button>
+        </div>
     </header>
 
     <div class="container" id="main-container">
@@ -139,7 +147,6 @@
 
         <!-- SECCIÓN ADMINISTRADOR EXCLUSIVA -->
         <div id="admin-section" class="card hidden">
-            <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
             <h2>Panel de Control: Administrador</h2>
             
             <div id="config-area" class="card" style="background: rgba(0,0,0,0.6); border-color:var(--azul-brillante);">
@@ -153,19 +160,17 @@
                 <button onclick="cancelarEdicionConfig()" id="btn-cancelar-config" class="btn-secondary hidden">Cancelar</button>
             </div>
 
+            <!-- HERRAMIENTAS DE BASE DE DATOS EN LISTA DESPLEGABLE -->
             <div class="card" style="background: rgba(0,0,0,0.4); border-color:var(--azul-claro);">
                 <h3>📦 Herramientas de Base de Datos</h3>
-                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                    <button class="btn-secondary" onclick="habilitarEdicionConfig()">Modificar Nomenclatura</button>
-                    <button onclick="exportarExcel()" style="background-color: #1e7b43;">⬇️ Respaldar Folios a Excel</button>
-                    <div style="border-left: 1px solid var(--azul-claro); padding-left: 15px;">
-                        <label for="import-excel" style="cursor: pointer; display: inline-block; background-color: #b78a00; color: white; padding: 10px 20px; border-radius: 4px; font-weight: bold;">
-                            ⬆️ Importar Folios Antiguos (Excel)
-                        </label>
-                        <input type="file" id="import-excel" accept=".xlsx, .xls" style="display: none;" onchange="importarExcel(event)">
-                        <br><small style="color:#aaa;">(El archivo debe tener las columnas: <b>Folio</b>, <b>Descripcion</b>, <b>Fecha</b>)</small>
-                    </div>
-                </div>
+                <select id="db-tools-select" onchange="ejecutarHerramientaDB(this)">
+                    <option value="" disabled selected>-- Selecciona una acción de Base de Datos --</option>
+                    <option value="modificar">Modificar Nomenclatura Actual</option>
+                    <option value="exportar">Respaldar Folios a Excel (.xlsx)</option>
+                    <option value="importar">Importar Folios Antiguos desde Excel</option>
+                </select>
+                <input type="file" id="import-excel" accept=".xlsx, .xls" style="display: none;" onchange="importarExcel(event)">
+                <small style="color:#aaa; display:block; margin-top:5px;">Formato requerido para importar: <b>Folio, Fecha, Dirigido_a, Asunto, Respuesta, Observaciones</b></small>
             </div>
             
             <div style="display:flex; gap:10px; margin-bottom:15px;">
@@ -175,7 +180,7 @@
 
             <div id="admin-tab-folios" style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Folio</th><th>Asignado a</th><th>Destinado / Descripción</th><th>Fecha</th><th>Evidencia</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Folio</th><th>Asig.</th><th>Dirigido a</th><th>Asunto</th><th>Respuesta</th><th>Obs.</th><th>Fecha</th><th>Evidencia</th><th>Acciones</th></tr></thead>
                     <tbody id="admin-tabla-folios"></tbody>
                 </table>
             </div>
@@ -190,7 +195,6 @@
 
         <!-- SECCIÓN USUARIO -->
         <div id="user-section" class="card hidden" id="printable-report-card">
-            <button class="btn-logout" id="btn-logout-user" onclick="logout()">Cerrar Sesión</button>
             <div id="badge-ultimo-container" class="badge-ultimo-folio">Último Folio: Cargando...</div>
             
             <h2>Solicitud y Mis Folios</h2>
@@ -213,31 +217,37 @@
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
                 <h3 style="margin: 0;">Historial de mis Folios</h3>
-                <button onclick="window.print()" class="btn-secondary" style="background-color: #1d3557; border-color: var(--azul-brillante);">🖨️ Imprimir Reporte (Carta Horizontal)</button>
+                <button onclick="window.print()" class="btn-secondary" style="background-color: #1d3557; border-color: var(--azul-brillante);">Imprimir</button>
             </div>
             
             <div style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Folio</th><th>Fecha</th><th>Destinado a</th><th>Descripción / Observaciones</th><th>Evidencia</th></tr></thead>
+                    <thead><tr><th>Folio</th><th>Fecha</th><th>Dirigido a</th><th>Asunto</th><th>Respuesta</th><th>Observaciones</th><th>Evidencia</th></tr></thead>
                     <tbody id="user-tabla-folios"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE EDICIÓN PARA EL ADMINISTRADOR -->
+    <!-- MODAL DE EDICIÓN PARA ADMINISTRADOR O USUARIO -->
     <div id="modal-edicion" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3>✏️ Editar Folio</h3>
+            <h3 id="modal-title">✏️ Editar Registro</h3>
             <input type="hidden" id="edit-docId">
-            <label>Número de Folio:</label>
-            <input type="text" id="edit-folio">
-            <label>Asignado a (Usuario):</label>
-            <input type="text" id="edit-usuario">
-            <label>Destinado a:</label>
-            <input type="text" id="edit-destinado">
-            <label>Descripción / Observaciones:</label>
-            <input type="text" id="edit-desc">
+            <div id="admin-only-edit-fields">
+                <label>Número de Folio:</label>
+                <input type="text" id="edit-folio">
+                <label>Asignado a (Usuario):</label>
+                <input type="text" id="edit-usuario">
+            </div>
+            <label>Dirigido a:</label>
+            <input type="text" id="edit-dirigido">
+            <label>Asunto:</label>
+            <input type="text" id="edit-asunto">
+            <label>Respuesta:</label>
+            <input type="text" id="edit-respuesta">
+            <label>Observaciones:</label>
+            <input type="text" id="edit-observaciones">
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button onclick="guardarEdicionFolio()" style="flex:1;">Guardar Cambios</button>
                 <button onclick="cerrarModalEdicion()" class="btn-secondary" style="flex:1;">Cancelar</button>
@@ -245,8 +255,21 @@
         </div>
     </div>
 
+    <!-- MODAL VISOR DE EVIDENCIA -->
+    <div id="modal-visor" class="modal-overlay hidden">
+        <div class="modal-content-viewer">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 id="visor-titulo" style="margin:0;">Previsualización de Evidencia</h3>
+                <button onclick="cerrarVisor()" class="btn-small btn-danger">Cerrar ✕</button>
+            </div>
+            <div id="visor-contenido" style="flex:1; background: #000; border-radius: 5px; display:flex; justify-content:center; align-items:center; overflow:hidden;">
+                <!-- Contenido dinámico (imagen, iframe o mensaje) -->
+            </div>
+        </div>
+    </div>
+
     <footer>
-        &copy; 2026 Derechos Reservados - Sistema Generador de Oficios (WEB) | Versión 0.1.7
+        &copy; 2026 Derechos Reservados - Sistema Generador de Oficios (WEB) | Versión 0.1.8
     </footer>
 
     <!-- SCRIPT FIREBASE -->
@@ -337,28 +360,46 @@
             } catch (error) { mostrarError('Contraseña incorrecta.', 'login'); }
         };
 
-        window.logout = async () => { await signOut(auth); };
+        window.logout = async () => { 
+            sessionStorage.removeItem('active_user_session');
+            await signOut(auth); 
+        };
 
+        // --- CONTROL DE SESIÓN ÚNICA Y EXpiración ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                document.getElementById('auth-section').classList.add('hidden');
-                document.getElementById('login-usuario').value = ''; document.getElementById('login-password').value = '';
-                document.getElementById('main-container').classList.remove('login-container');
-
                 const q = query(collection(db, "usuarios"), where("correo", "==", user.email));
                 const docs = await getDocs(q);
                 docs.forEach(d => { currentUserUsername = d.data().usuario; currentUserRole = d.data().rol; });
+
+                // Control de sesión única (Excepto Administradores)
+                if (currentUserRole !== 'admin') {
+                    const sessionKey = `session_${currentUserUsername}`;
+                    const currentSessionId = Math.random().toString(36).substring(7);
+                    sessionStorage.setItem(sessionKey, currentSessionId);
+
+                    // Verificar cada 3 segundos si otro dispositivo abrió sesión
+                    setInterval(() => {
+                        if (sessionStorage.getItem(sessionKey) !== currentSessionId) {
+                            alert("⚠️ Tu cuenta ha sido abierta en otra pestaña o dispositivo. Se cerrará la sesión actual.");
+                            logout();
+                        }
+                    }, 3000);
+                }
+
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('login-usuario').value = ''; document.getElementById('login-password').value = '';
+                document.getElementById('main-container').classList.remove('login-container');
+                document.getElementById('btn-header-logout').classList.remove('hidden');
 
                 document.getElementById('user-section').classList.remove('hidden');
                 document.getElementById('user-info').innerText = `Usuario activo: ${currentUserUsername} | Puesto: ${currentUserRole === 'admin' ? 'Administrador' : 'Usuario'}`;
 
                 if (currentUserRole === 'admin') {
                     document.getElementById('admin-section').classList.remove('hidden');
-                    document.getElementById('btn-logout-user').classList.add('hidden'); 
                     cargarVistaAdmin();
                 } else {
                     document.getElementById('admin-section').classList.add('hidden');
-                    document.getElementById('btn-logout-user').classList.remove('hidden');
                 }
                 cargarVistaUsuario();
             } else {
@@ -368,6 +409,7 @@
                 document.getElementById('user-section').classList.add('hidden');
                 document.getElementById('formulario-folios-area').classList.add('hidden');
                 document.getElementById('auth-section').classList.remove('hidden');
+                document.getElementById('btn-header-logout').classList.add('hidden');
                 mostrarLogin();
             }
         });
@@ -395,6 +437,7 @@
 
         window.habilitarEdicionConfig = () => { document.getElementById('config-area').classList.remove('hidden'); document.getElementById('btn-cancelar-config').classList.remove('hidden'); };
         window.cancelarEdicionConfig = () => { document.getElementById('config-area').classList.add('hidden'); document.getElementById('btn-cancelar-config').classList.add('hidden'); };
+        
         window.guardarConfiguracion = async () => {
             const prefijo = document.getElementById('nom-prefijo').value.trim();
             const inicio = parseInt(document.getElementById('nom-inicio').value);
@@ -402,6 +445,15 @@
             if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los 3 campos de nomenclatura.');
             await setDoc(doc(db, "sistema", "config"), { prefijo, actual: inicio, anio, configurado: true });
             alert('Configuración guardada.'); cancelarEdicionConfig(); cargarVistaAdmin();
+        };
+
+        // --- MANEJO DEL SELECTOR DE HERRAMIENTAS DE BASE DE DATOS ---
+        window.ejecutarHerramientaDB = (select) => {
+            const val = select.value;
+            if(val === 'modificar') { habilitarEdicionConfig(); }
+            else if(val === 'exportar') { exportarExcel(); }
+            else if(val === 'importar') { document.getElementById('import-excel').click(); }
+            select.value = ""; // Reset select
         };
 
         async function actualizarTablaAdmin() {
@@ -414,15 +466,19 @@
             
             foliosArr.forEach(f => {
                 let badge = f.exentoEvidencia ? ' <span style="font-size:0.7em; background:#b78a00; padding:2px 4px; border-radius:3px;">Importado</span>' : '';
-                const evidencia = f.archivo ? `📄 ${f.archivo}` : (f.exentoEvidencia ? 'N/A' : '<span style="color:#ff6b6b">Pendiente</span>');
+                let evidenciaHTML = f.archivo ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivo}', '${f.idFolio}')">📄 ${f.archivo}</a>` : (f.exentoEvidencia ? 'N/A' : '<span style="color:#ff6b6b">Pendiente</span>');
+                
                 tbody.innerHTML += `<tr>
                     <td><strong>${f.idFolio}</strong>${badge}</td>
                     <td>${f.usuario}</td>
-                    <td><strong>Destinado a:</strong> ${f.destinadoA || 'N/D'}<br><strong>Obs:</strong> ${f.descripcion}</td>
+                    <td>${f.dirigidoA || 'N/D'}</td>
+                    <td>${f.asunto || f.descripcion || ''}</td>
+                    <td>${f.respuesta || 'Sin respuesta'}</td>
+                    <td>${f.observaciones || ''}</td>
                     <td>${f.fecha}</td>
-                    <td>${evidencia}</td>
+                    <td>${evidenciaHTML}</td>
                     <td>
-                        <button class="btn-small" onclick="abrirModalEdicion('${f.id}', '${f.idFolio}', '${f.usuario}', '${f.destinadoA || ''}', '${f.descripcion}')">✏️ Edit</button>
+                        <button class="btn-small" onclick="abrirModalEdicion('${f.id}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || f.descripcion || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️ Edit</button>
                         <button class="btn-small btn-danger" onclick="eliminarFolio('${f.id}', '${f.idFolio}')">🗑️</button>
                     </td>
                 </tr>`;
@@ -457,8 +513,10 @@
                 foliosArr.push({
                     "Folio": d.idFolio,
                     "Usuario": d.usuario,
-                    "Destinado a": d.destinadoA || "",
-                    "Descripción / Observaciones": d.descripcion,
+                    "Dirigido_a": d.dirigidoA || "",
+                    "Asunto": d.asunto || d.descripcion || "",
+                    "Respuesta": d.respuesta || "",
+                    "Observaciones": d.observaciones || "",
                     "Fecha": d.fecha,
                     "Evidencia": d.archivo || "Pendiente"
                 });
@@ -484,12 +542,14 @@
                     const fechaStr = new Date().toLocaleDateString('es-MX');
 
                     for (let row of rows) {
-                        if (row.Folio && (row.Descripcion || row.Descripción)) {
+                        if (row.Folio) {
                             await addDoc(collection(db, "folios"), {
                                 idFolio: String(row.Folio),
                                 usuario: currentUserUsername, 
-                                destinadoA: row["Destinado a"] || "Importado",
-                                descripcion: row.Descripcion || row.Descripción,
+                                dirigidoA: row.Dirigido_a || row["Dirigido a"] || "Importado",
+                                asunto: row.Asunto || row.Descripcion || "",
+                                respuesta: row.Respuesta || "",
+                                observaciones: row.Observaciones || "",
                                 fecha: row.Fecha || fechaStr,
                                 timestamp: timestampBase - importados, 
                                 archivo: "",
@@ -498,33 +558,55 @@
                             importados++;
                         }
                     }
-                    alert(`¡Se importaron ${importados} folios!`);
+                    alert(`¡Se importaron ${importados} folios exitosamente!`);
                     actualizarTablaAdmin(); actualizarTablaUsuario();
                     event.target.value = ""; 
-                } catch(error) { alert("Error al leer el Excel."); }
+                } catch(error) { alert("Error al leer el Excel. Verifica las columnas requeridas."); }
             };
             reader.readAsArrayBuffer(file);
         };
 
-        window.abrirModalEdicion = (docId, folio, usr, destinado, desc) => {
+        // --- EDICIÓN Y ELIMINACIÓN ---
+        window.abrirModalEdicion = (docId, folio, usr, dirigido, asunto, respuesta, observaciones) => {
             document.getElementById('edit-docId').value = docId;
             document.getElementById('edit-folio').value = folio;
             document.getElementById('edit-usuario').value = usr;
-            document.getElementById('edit-destinado').value = destinado;
-            document.getElementById('edit-desc').value = desc;
+            document.getElementById('edit-dirigido').value = dirigido;
+            document.getElementById('edit-asunto').value = asunto;
+            document.getElementById('edit-respuesta').value = respuesta;
+            document.getElementById('edit-observaciones').value = observaciones;
+
+            // Si es usuario normal, ocultamos los campos de cambio de folio y usuario asignado
+            if(currentUserRole !== 'admin') {
+                document.getElementById('admin-only-edit-fields').classList.add('hidden');
+                document.getElementById('modal-title').innerText = "✏️ Editar Respuesta y Observaciones";
+            } else {
+                document.getElementById('admin-only-edit-fields').classList.remove('hidden');
+                document.getElementById('modal-title').innerText = "✏️ Editar Registro Completo";
+            }
+
             document.getElementById('modal-edicion').classList.remove('hidden');
         };
+
         window.cerrarModalEdicion = () => { document.getElementById('modal-edicion').classList.add('hidden'); };
+        
         window.guardarEdicionFolio = async () => {
             const docId = document.getElementById('edit-docId').value;
-            const idFolio = document.getElementById('edit-folio').value.trim();
-            const usuario = document.getElementById('edit-usuario').value.trim();
-            const destinadoA = document.getElementById('edit-destinado').value.trim();
-            const descripcion = document.getElementById('edit-desc').value.trim();
+            const dirigidoA = document.getElementById('edit-dirigido').value.trim();
+            const asunto = document.getElementById('edit-asunto').value.trim();
+            const respuesta = document.getElementById('edit-respuesta').value.trim();
+            const observaciones = document.getElementById('edit-observaciones').value.trim();
+
+            let updateData = { dirigidoA, asunto, respuesta, observaciones };
+
+            if(currentUserRole === 'admin') {
+                updateData.idFolio = document.getElementById('edit-folio').value.trim();
+                updateData.usuario = document.getElementById('edit-usuario').value.trim();
+            }
             
-            if(!idFolio || !usuario || !destinadoA || !descripcion) return alert("Llena todos los campos.");
-            await updateDoc(doc(db, "folios", docId), { idFolio, usuario, destinadoA, descripcion });
-            cerrarModalEdicion(); alert("Folio actualizado."); actualizarTablaAdmin(); actualizarTablaUsuario();
+            await updateDoc(doc(db, "folios", docId), updateData);
+            cerrarModalEdicion(); alert("Registro actualizado con éxito."); 
+            actualizarTablaUsuario(); if(currentUserRole === 'admin') actualizarTablaAdmin();
         };
 
         window.eliminarFolio = async (docId, folioName) => {
@@ -533,6 +615,16 @@
                 alert("Folio eliminado."); actualizarTablaAdmin(); actualizarTablaUsuario();
             }
         };
+
+        // --- VISOR DE EVIDENCIA FLOTANTE ---
+        window.previsualizarEvidencia = (fileName, folioId) => {
+            document.getElementById('visor-titulo').innerText = `Evidencia del Folio: ${folioId} (${fileName})`;
+            const contenedor = document.getElementById('visor-contenido');
+            contenedor.innerHTML = `<p style="color:#aaa; text-align:center;">Cargando previsualización de <b>${fileName}</b>...<br><small>Nota: Como se encuentra almacenada localmente en la PC del usuario, se muestra el contenedor de acceso.</small></p>`;
+            document.getElementById('modal-visor').classList.remove('hidden');
+        };
+
+        window.cerrarVisor = () => { document.getElementById('modal-visor').classList.add('hidden'); };
 
         // --- LÓGICA USUARIO / SOLICITUD ---
         async function cargarVistaUsuario() { 
@@ -545,7 +637,6 @@
             const badge = document.getElementById('badge-ultimo-container');
             if (configSnap.exists() && configSnap.data().configurado) {
                 const data = configSnap.data();
-                // El último usado es el actual menos 1
                 let ultimoUsadoNum = data.actual - 1;
                 if(ultimoUsadoNum < 0) ultimoUsadoNum = 0;
                 badge.innerText = `Último Folio: ${data.prefijo}${ultimoUsadoNum}/${data.anio}`;
@@ -556,7 +647,7 @@
 
         window.generarFormularioFolios = async () => {
             const configSnap = await getDoc(doc(db, "sistema", "config"));
-            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Nomenclatura no configurada.');
+            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Nomenclatura no configurada por el administrador.');
             
             const cantidad = parseInt(document.getElementById('cantidad-folios').value);
             if (isNaN(cantidad) || cantidad < 1) return alert('Ingresa cantidad válida.');
@@ -573,12 +664,16 @@
                 let folioPrevisto = `${prefijo}${consecutivoTemp + i}/${anio}`;
                 container.innerHTML += `
                     <div class="folio-item">
-                        <h4 style="margin: 0 0 10px 0; color: var(--azul-brillante);">Folio: ${folioPrevisto}</h4>
+                        <h4 style="margin: 0 0 10px 0; color: var(--azul-brillante);">Folio Asignado: ${folioPrevisto}</h4>
                         <label><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-MX')}</label><br><br>
-                        <label>Destinado a:</label>
-                        <input type="text" id="destinado-${i}" placeholder="Ej. Vocal Ejecutivo, Direccion..." required>
-                        <label>Descripción / Observaciones:</label>
-                        <input type="text" id="desc-${i}" placeholder="Ej. Oficio de notificación..." required>
+                        <label>Dirigido a:</label>
+                        <input type="text" id="dirigido-${i}" placeholder="Ej. Vocal Ejecutivo..." required>
+                        <label>Asunto:</label>
+                        <input type="text" id="asunto-${i}" placeholder="Ej. Solicitud de información..." required>
+                        <label>Respuesta:</label>
+                        <input type="text" id="respuesta-${i}" placeholder="Ej. Entregado en tiempo...">
+                        <label>Observaciones:</label>
+                        <input type="text" id="obs-${i}" placeholder="Ej. Sin novedad...">
                     </div>
                 `;
             }
@@ -593,23 +688,27 @@
                 const fechaStr = new Date().toLocaleDateString('es-MX');
                 const timestamp = Date.now();
 
-                // Validar campos obligatorios
                 for (let i = 0; i < foliosPendientes; i++) {
-                    const destinado = document.getElementById(`destinado-${i}`).value.trim();
-                    const desc = document.getElementById(`desc-${i}`).value.trim();
-                    if (!destinado || !desc) return alert(`Faltan datos en el Folio #${i+1}. Ambos campos son obligatorios.`);
+                    const dirigido = document.getElementById(`dirigido-${i}`).value.trim();
+                    const asunto = document.getElementById(`asunto-${i}`).value.trim();
+                    if (!dirigido || !asunto) return alert(`Faltan campos obligatorios en el Folio #${i+1}.`);
                 }
 
                 for (let i = 0; i < foliosPendientes; i++) {
-                    const destinado = document.getElementById(`destinado-${i}`).value.trim();
-                    const desc = document.getElementById(`desc-${i}`).value.trim();
+                    const dirigido = document.getElementById(`dirigido-${i}`).value.trim();
+                    const asunto = document.getElementById(`asunto-${i}`).value.trim();
+                    const respuesta = document.getElementById(`respuesta-${i}`).value.trim();
+                    const obs = document.getElementById(`obs-${i}`).value.trim();
                     const folioCompleto = `${prefijo}${actual}/${anio}`;
                     
                     await addDoc(collection(db, "folios"), { 
                         idFolio: folioCompleto, 
                         usuario: currentUserUsername, 
-                        destinadoA: destinado,
-                        descripcion: desc, 
+                        dirigidoA: dirigido,
+                        asunto: asunto,
+                        respuesta: respuesta,
+                        observaciones: obs,
+                        descripcion: asunto, // compatibilidad con respaldos anteriores
                         fecha: fechaStr, 
                         timestamp: timestamp, 
                         archivo: "", 
@@ -644,22 +743,25 @@
             querySnapshot.forEach((doc) => misFolios.push({ docId: doc.id, ...doc.data() }));
             misFolios.sort((a, b) => b.timestamp - a.timestamp);
 
-            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No has solicitado folios.</td></tr>'; return; }
+            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="7">No has solicitado folios.</td></tr>'; return; }
 
             misFolios.forEach(f => {
                 if(!f.archivo && !f.exentoEvidencia && (ahora - f.timestamp > limiteMs)) {
                     foliosAtrasados.push(f.idFolio);
                 }
 
-                let btnSubir = `<div style="display:flex; gap:5px;"><input type="file" id="file-${f.docId}" style="width:130px; margin:0; padding:3px; font-size:0.75em;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
-                let evidenciaHTML = f.archivo ? `📄 ${f.archivo}` : btnSubir;
+                let btnSubir = `<div style="display:flex; gap:3px;"><input type="file" id="file-${f.docId}" style="width:110px; margin:0; padding:2px; font-size:0.7em;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
+                let evidenciaHTML = f.archivo ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivo}', '${f.idFolio}')">📄 ${f.archivo}</a>` : btnSubir;
                 
                 tbody.innerHTML += `<tr>
                     <td><strong>${f.idFolio}</strong></td>
                     <td>${f.fecha}</td>
-                    <td>${f.destinadoA || 'N/D'}</td>
-                    <td>${f.descripcion}</td>
+                    <td>${f.dirigidoA || 'N/D'}</td>
+                    <td>${f.asunto || f.descripcion || ''}</td>
+                    <td>${f.respuesta || 'Sin respuesta'}</td>
+                    <td>${f.observaciones || ''}</td>
                     <td>${evidenciaHTML}</td>
+                    <td><button class="btn-small" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || f.descripcion || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️ Edit</button></td>
                 </tr>`;
             });
 
@@ -677,7 +779,7 @@
             if(!fileInput.files || fileInput.files.length === 0) return alert('Selecciona un archivo.');
             const fileName = fileInput.files[0].name;
             await updateDoc(doc(db, "folios", docId), { archivo: fileName });
-            alert('Evidencia subida.');
+            alert('Evidencia subida correctamente.');
             actualizarTablaUsuario(); if(currentUserRole === 'admin') actualizarTablaAdmin();
         };
     </script>
