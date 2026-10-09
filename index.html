@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VRFE03 - Gestión de Folios</title>
+    <title>VRFE 03JDE - Gestión de Folios</title>
     <style>
         :root {
             --rosa-mexicano: #E4007C;
@@ -16,84 +16,48 @@
             --tarjeta: #1e1e1e;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--fondo);
-            color: var(--texto);
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background: linear-gradient(90deg, var(--morado), var(--azul));
-            padding: 20px;
-            text-align: center;
-            border-bottom: 4px solid var(--rosa-mexicano);
-        }
-
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--fondo); color: var(--texto); margin: 0; padding: 0; }
+        header { background: linear-gradient(90deg, var(--morado), var(--azul)); padding: 20px; text-align: center; border-bottom: 4px solid var(--rosa-mexicano); }
         h1, h2, h3 { margin: 0 0 15px 0; }
         
         .container { max-width: 1000px; margin: 30px auto; padding: 20px; }
+        
+        /* Contenedor más angosto para el Login */
+        .login-container { max-width: 400px !important; margin: 30px auto; }
 
-        .card {
-            background-color: var(--tarjeta);
-            padding: 20px;
-            border-radius: 8px;
-            border-top: 3px solid var(--vino);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
+        .card { background-color: var(--tarjeta); padding: 20px; border-radius: 8px; border-top: 3px solid var(--vino); box-shadow: 0 4px 8px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        
+        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"] {
+            width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--rojo-obscuro); background-color: #2a2a2a; color: white; border-radius: 4px; box-sizing: border-box;
         }
+        
+        .inline-inputs { display: flex; gap: 10px; }
+        .inline-inputs input { margin-bottom: 0; }
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid var(--rojo-obscuro);
-            background-color: #2a2a2a;
-            color: white;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        /* Cuadrícula para el formulario de registro para que se vea ordenado */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .form-grid input { margin-bottom: 0; }
         .full-width { grid-column: 1 / -1; }
 
-        button {
-            background-color: var(--rosa-mexicano);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
+        button { background-color: var(--rosa-mexicano); color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.3s; }
         button:hover { background-color: var(--vino); }
         .btn-secondary { background-color: var(--morado); }
         .btn-secondary:hover { background-color: var(--azul); }
         .btn-logout { background-color: var(--rojo-obscuro); float: right; margin-top: -40px;}
+        .btn-small { padding: 5px 10px; font-size: 0.8em; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #444; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #444; }
         th { background-color: var(--rojo-obscuro); }
         
         .hidden { display: none !important; }
         .error { color: #ff6b6b; font-size: 0.9em; margin-bottom: 10px; }
         .status-indicator { text-align: center; font-size: 0.9em; margin-top: 15px; color: #aaa; padding: 10px; background: #222; border-radius: 5px; }
         
-        .folio-item {
-            background: #2a2a2a;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--rosa-mexicano);
-        }
+        .alerta-evidencia { background-color: #8B0000; color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #ff4d4d; }
+        .folio-item { background: #2a2a2a; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--rosa-mexicano); }
+        
+        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 15px; background: #2a2a2a; padding: 10px; border-radius: 4px; }
+        .checkbox-label input { width: auto; margin: 0; }
     </style>
 </head>
 <body>
@@ -103,98 +67,116 @@
         <p>03 Junta Distrital Ejecutiva (VRFE 03JDE)</p>
     </header>
 
-    <div class="container">
+    <div class="container" id="main-container">
         
-        <!-- SECCIÓN DE AUTENTICACIÓN (LOGIN / REGISTRO) -->
-        <div id="auth-section" class="card">
-            
-            <!-- FORMULARIO DE LOGIN -->
+        <!-- SECCIÓN DE AUTENTICACIÓN -->
+        <div id="auth-section" class="card login-container">
             <div id="login-form">
-                <h2>Acceso al Sistema</h2>
+                <h2 style="text-align:center;">Acceso al Sistema</h2>
                 <div id="auth-error-login" class="error"></div>
                 <input type="text" id="login-usuario" placeholder="Usuario (Ej. mario.cardenas o Admin)" required>
-                <input type="password" id="login-password" placeholder="Contraseña" required>
-                <button onclick="login()">Iniciar Sesión</button>
-                <button class="btn-secondary" onclick="mostrarRegistro()">Registrar Nuevo Usuario</button>
+                <input type="password" id="login-password" placeholder="Contraseña" required onkeypress="if(event.key === 'Enter') login()">
+                <button style="width:100%; margin-bottom:10px;" onclick="login()">Iniciar Sesión</button>
+                <button class="btn-secondary" style="width:100%;" onclick="mostrarRegistro()">Registrar Nuevo Usuario</button>
             </div>
 
-            <!-- FORMULARIO DE REGISTRO -->
             <div id="register-form" class="hidden">
-                <h2>Registro de Personal</h2>
-                <p>Crea tu cuenta. Solo se permiten correos <strong>@ine.mx</strong></p>
+                <h2 style="text-align:center;">Registro de Personal</h2>
                 <div id="auth-error-register" class="error"></div>
-                
                 <div class="form-grid">
-                    <input type="text" id="reg-usuario" class="full-width" placeholder="Crea tu Nombre de Usuario (Ej. mario.cardenas)" required>
-                    
+                    <input type="text" id="reg-usuario" class="full-width" placeholder="Usuario (Ej. mario.c)" required>
                     <input type="text" id="reg-nombre" placeholder="Nombre(s)" required>
-                    <input type="text" id="reg-puesto" placeholder="Puesto / Cargo" required>
-                    
-                    <input type="text" id="reg-paterno" placeholder="Apellido Paterno" required>
-                    <input type="text" id="reg-materno" placeholder="Apellido Materno" required>
-                    
-                    <input type="email" id="reg-correo" placeholder="Correo Institucional (@ine.mx)" required>
+                    <input type="text" id="reg-puesto" placeholder="Puesto" required>
+                    <input type="text" id="reg-paterno" placeholder="Ap. Paterno" required>
+                    <input type="text" id="reg-materno" placeholder="Ap. Materno" required>
+                    <input type="email" id="reg-correo" placeholder="Correo @ine.mx" required>
                     <input type="tel" id="reg-telefono" placeholder="Teléfono" required>
-                    
-                    <input type="password" id="reg-password" class="full-width" placeholder="Crea tu Contraseña (Mínimo 6 caracteres)" required>
+                    <input type="password" id="reg-password" class="full-width" placeholder="Contraseña (Mín. 6)" required>
                 </div>
-
                 <div style="margin-top: 20px;">
-                    <button onclick="register()">Guardar Registro</button>
-                    <button class="btn-secondary" onclick="mostrarLogin()">Volver al Login</button>
+                    <button style="width:100%; margin-bottom:10px;" onclick="register()">Guardar Registro</button>
+                    <button class="btn-secondary" style="width:100%;" onclick="mostrarLogin()">Volver al Login</button>
                 </div>
             </div>
-
-            <!-- VERIFICADOR DE FIREBASE -->
-            <div id="firebase-status" class="status-indicator">⏳ Verificando enlace con Firebase...</div>
+            <div id="firebase-status" class="status-indicator">⏳ Conectando...</div>
         </div>
 
-        <!-- SECCIÓN ADMINISTRADOR (Igual que antes) -->
+        <!-- SECCIÓN ADMINISTRADOR EXCLUSIVA -->
         <div id="admin-section" class="card hidden">
             <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
-            <h2>Panel de Administrador</h2>
+            <h2>Panel de Control: Administrador</h2>
             
             <div id="config-area" class="card" style="background:#252525; border-color:var(--morado);">
-                <h3 id="config-title">Configuración de Folios</h3>
-                <input type="text" id="nomenclatura" placeholder="Ej. VRFE-03JDE-2026-">
-                <input type="number" id="folio-inicio" placeholder="Folio Inicial (Ej. 1)">
+                <h3 id="config-title">Configuración de Nomenclatura</h3>
+                <div class="inline-inputs">
+                    <input type="text" id="nom-prefijo" placeholder="Prefijo Ej. INE/JDE03/VRFE/" title="Prefijo">
+                    <input type="number" id="nom-inicio" placeholder="Folio Inicial" title="Número Inicial">
+                    <input type="number" id="nom-anio" placeholder="Año Ej. 2026" title="Año">
+                </div>
                 <button onclick="guardarConfiguracion()">Guardar Configuración</button>
                 <button onclick="cancelarEdicionConfig()" id="btn-cancelar-config" class="btn-secondary hidden">Cancelar</button>
             </div>
 
-            <h3>Todos los Folios Registrados</h3>
             <button class="btn-secondary" style="margin-bottom: 15px;" onclick="habilitarEdicionConfig()">Modificar Nomenclatura Actual</button>
-            <div style="overflow-x: auto;">
+            
+            <!-- PESTAÑAS ADMIN -->
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <button onclick="mostrarTabAdmin('folios')">Todos los Folios</button>
+                <button class="btn-secondary" onclick="mostrarTabAdmin('usuarios')">Gestión de Usuarios</button>
+            </div>
+
+            <!-- TABLA TODOS LOS FOLIOS -->
+            <div id="admin-tab-folios" style="overflow-x: auto;">
                 <table>
-                    <thead>
-                        <tr><th>Folio</th><th>Usuario / Solicitante</th><th>Uso / Descripción</th><th>Fecha</th></tr>
-                    </thead>
+                    <thead><tr><th>Folio</th><th>Solicitante</th><th>Descripción</th><th>Fecha</th><th>Evidencia</th></tr></thead>
                     <tbody id="admin-tabla-folios"></tbody>
+                </table>
+            </div>
+
+            <!-- TABLA DE USUARIOS -->
+            <div id="admin-tab-usuarios" class="hidden" style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>Usuario / Nombre</th><th>Correo</th><th>Contraseña</th><th>Rol</th><th>Acción</th></tr></thead>
+                    <tbody id="admin-tabla-usuarios"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- SECCIÓN USUARIO (Igual que antes) -->
+        <!-- SECCIÓN USUARIO (El admin también verá esto abajo de su panel) -->
         <div id="user-section" class="card hidden">
-            <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
-            <h2>Panel de Usuario: Solicitud de Folios</h2>
+            <button class="btn-logout" id="btn-logout-user" onclick="logout()">Cerrar Sesión</button>
+            <h2>Solicitud y Mis Folios</h2>
             <p id="user-info"></p>
             
+            <div id="alerta-evidencia-container" class="hidden alerta-evidencia">
+                <strong>⚠️ AVISO IMPORTANTE:</strong> Tienes folios con más de 5 días de antigüedad sin evidencia adjunta. Por favor, sube el archivo correspondiente a los folios: <span id="folios-atrasados-lista"></span>.
+            </div>
+
             <div class="card" style="background:#252525; border-color:var(--azul);">
                 <h3>¿Cuántos folios necesitas?</h3>
-                <input type="number" id="cantidad-folios" min="1" max="20" placeholder="Ej. 5">
+                <input type="number" id="cantidad-folios" min="1" max="50" placeholder="Ej. 5">
                 <button onclick="generarFormularioFolios()">Generar Espacios</button>
             </div>
 
             <div id="formulario-folios-area" class="hidden">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="check-misma-desc" onchange="toggleDescMasiva()"> 
+                    <strong>Usar la misma descripción para TODOS los folios solicitados</strong>
+                </label>
+                
+                <div id="desc-unica-area" class="hidden folio-item" style="border-color: var(--azul);">
+                    <label>Descripción General (Aplica para todos):</label>
+                    <input type="text" id="desc-unica" placeholder="Ej. Oficios de notificación a módulos...">
+                </div>
+
                 <div id="espacios-folios"></div>
-                <button onclick="confirmarSolicitud()">Confirmar y Guardar Solicitud</button>
+                <button onclick="confirmarSolicitud()">Confirmar y Asignar Folios</button>
             </div>
 
-            <h3>Mis Folios Asignados</h3>
+            <h3>Historial de mis Folios</h3>
             <div style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Folio</th><th>Uso / Descripción</th><th>Fecha</th></tr></thead>
+                    <thead><tr><th>Folio</th><th>Descripción</th><th>Fecha</th><th>Evidencia</th></tr></thead>
                     <tbody id="user-tabla-folios"></tbody>
                 </table>
             </div>
@@ -205,15 +187,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyBpmtUCDLKDkhGx9zh2IkQ65Yrob13gjxE",
-            authDomain: "foliosvrfe03.firebaseapp.com",
-            projectId: "foliosvrfe03",
-            storageBucket: "foliosvrfe03.firebasestorage.app",
-            messagingSenderId: "493793399671",
-            appId: "1:493793399671:web:bfdcedf6260818851dc772"
+            apiKey: "AIzaSyBpmtUCDLKDkhGx9zh2IkQ65Yrob13gjxE", authDomain: "foliosvrfe03.firebaseapp.com", projectId: "foliosvrfe03", storageBucket: "foliosvrfe03.firebasestorage.app", messagingSenderId: "493793399671", appId: "1:493793399671:web:bfdcedf6260818851dc772"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -221,41 +198,21 @@
         const db = getFirestore(app);
 
         let currentUserUsername = null;
-        let isAdmin = false;
+        let currentUserRole = 'user';
         let foliosPendientes = 0;
 
-        // --- FUNCIONES DE INTERFAZ ---
-        window.mostrarRegistro = () => {
-            document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('register-form').classList.remove('hidden');
-            document.getElementById('auth-error-login').innerText = '';
-        };
-
-        window.mostrarLogin = () => {
-            document.getElementById('register-form').classList.add('hidden');
-            document.getElementById('login-form').classList.remove('hidden');
-            document.getElementById('auth-error-register').innerText = '';
-        };
-
-        function mostrarError(msg, type) {
-            document.getElementById(type === 'login' ? 'auth-error-login' : 'auth-error-register').innerText = msg;
-        }
-
-        // --- VERIFICAR CONEXIÓN CON FIREBASE ---
+        // --- INTERFAZ LOGIN ---
+        window.mostrarRegistro = () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); document.getElementById('auth-error-login').innerText = ''; };
+        window.mostrarLogin = () => { document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); document.getElementById('auth-error-register').innerText = ''; };
+        function mostrarError(msg, type) { document.getElementById(type === 'login' ? 'auth-error-login' : 'auth-error-register').innerText = msg; }
+        
         async function testConexion() {
-            try {
-                // Intentamos hacer una lectura de prueba rápida a la base de datos
-                await getDoc(doc(db, "sistema", "ping"));
-                document.getElementById('firebase-status').innerHTML = "🟢 Conexión con Firebase establecida exitosamente.";
-                document.getElementById('firebase-status').style.color = "#4CAF50";
-            } catch(e) {
-                document.getElementById('firebase-status').innerHTML = "🔴 Firebase vinculado, pero faltan permisos de Base de Datos. Asegúrate de iniciar Firestore en 'Modo de Prueba'.";
-                document.getElementById('firebase-status').style.color = "#ff6b6b";
-            }
+            try { await getDoc(doc(db, "sistema", "ping")); document.getElementById('firebase-status').innerHTML = "🟢 Conectado al servidor INE / Firebase."; document.getElementById('firebase-status').style.color = "#4CAF50"; } 
+            catch(e) { document.getElementById('firebase-status').innerHTML = "🔴 Sin permisos de Base de Datos."; document.getElementById('firebase-status').style.color = "#ff6b6b"; }
         }
         testConexion();
 
-        // --- REGISTRO DE NUEVO USUARIO ---
+        // --- REGISTRO ---
         window.register = async () => {
             const usuario = document.getElementById('reg-usuario').value.trim().toLowerCase();
             const nombre = document.getElementById('reg-nombre').value.trim();
@@ -266,108 +223,91 @@
             const telefono = document.getElementById('reg-telefono').value.trim();
             const password = document.getElementById('reg-password').value;
             
-            if (!usuario || !nombre || !paterno || !correo || !password) return mostrarError('Llena todos los campos obligatorios.', 'register');
+            if (!usuario || !nombre || !correo || !password) return mostrarError('Llena todos los campos.', 'register');
             if (!correo.endsWith('@ine.mx')) return mostrarError('El correo debe terminar en @ine.mx', 'register');
-            if (password.length < 6) return mostrarError('La contraseña debe tener mínimo 6 caracteres.', 'register');
             
             try {
-                // 1. Verificar si el nombre de usuario ya existe en Firestore
                 const userCheck = await getDoc(doc(db, "usuarios", usuario));
-                if (userCheck.exists()) return mostrarError('Ese Nombre de Usuario ya está en uso. Elige otro.', 'register');
-
-                // 2. Crear cuenta en Authentication usando el correo
+                if (userCheck.exists()) return mostrarError('Usuario en uso. Elige otro.', 'register');
                 const userCred = await createUserWithEmailAndPassword(auth, correo, password);
-
-                // 3. Guardar todo el perfil en Firestore (El ID del documento es el nombre de usuario)
+                
+                // Guardamos la contraseña en Firestore (Requerimiento especial para el Admin)
                 await setDoc(doc(db, "usuarios", usuario), {
-                    usuario: usuario,
-                    nombre: nombre,
-                    apellidoPaterno: paterno,
-                    apellidoMaterno: materno,
-                    puesto: puesto,
-                    correo: correo,
-                    telefono: telefono,
-                    rol: 'user',
-                    uid: userCred.user.uid
+                    usuario, nombre, apellidoPaterno: paterno, apellidoMaterno: materno, puesto, correo, telefono, password, rol: 'user', uid: userCred.user.uid
                 });
-
-                alert('¡Registro exitoso! Ya puedes iniciar sesión con tu usuario.');
-                mostrarLogin();
-            } catch (error) {
-                mostrarError('Error al registrar: Verifica que tu correo no esté ya registrado.', 'register');
-            }
+                alert('¡Registro exitoso!'); mostrarLogin();
+            } catch (error) { mostrarError('Error al registrar o correo ya existe.', 'register'); }
         };
 
-        // --- INICIO DE SESIÓN ---
+        // --- LOGIN CON CONTRASEÑA MAESTRA ---
         window.login = async () => {
             const usuarioInput = document.getElementById('login-usuario').value.trim().toLowerCase();
             let passwordInput = document.getElementById('login-password').value;
-            
-            if(!usuarioInput || !passwordInput) return mostrarError('Ingresa usuario y contraseña.', 'login');
+            if(!usuarioInput || !passwordInput) return mostrarError('Ingresa datos.', 'login');
 
             try {
                 let correoFirebase = "";
 
-                // TRUCO PARA EL ADMINISTRADOR (Bypass de los 6 caracteres de Firebase)
+                // Configuración de Super Admin la primera vez
                 if (usuarioInput === 'admin' && passwordInput === 'Admin') {
-                    correoFirebase = "admin@ine.mx";
-                    passwordInput = "Admin_VRFE_12345"; // Contraseña segura real en Firebase
-
-                    try {
-                        await signInWithEmailAndPassword(auth, correoFirebase, passwordInput);
-                    } catch(e) {
-                        // Si el admin no existe aún, el sistema lo crea automáticamente la primera vez
+                    correoFirebase = "admin@ine.mx"; passwordInput = "Admin_VRFE_12345";
+                    try { await signInWithEmailAndPassword(auth, correoFirebase, passwordInput); } 
+                    catch(e) {
                         await createUserWithEmailAndPassword(auth, correoFirebase, passwordInput);
-                        await setDoc(doc(db, "usuarios", "admin"), { usuario: "Admin", correo: correoFirebase, nombre: "Administrador", rol: "admin" });
+                        await setDoc(doc(db, "usuarios", "admin"), { usuario: "admin", correo: correoFirebase, nombre: "Super Administrador", password: "Admin", rol: "admin" });
                         await signInWithEmailAndPassword(auth, correoFirebase, passwordInput);
                     }
-                    return; // Termina la función aquí para el Admin
+                    return;
                 }
 
-                // SI ES UN USUARIO NORMAL
-                // 1. Buscamos el nombre de usuario en Firestore para saber cuál es su correo
+                // Buscar usuario en base de datos
                 const userDoc = await getDoc(doc(db, "usuarios", usuarioInput));
-                if (!userDoc.exists()) return mostrarError('El usuario ingresado no existe.', 'login');
+                if (!userDoc.exists()) return mostrarError('Usuario no existe.', 'login');
 
-                // 2. Sacamos el correo y logueamos en Firebase
                 correoFirebase = userDoc.data().correo;
+                
+                // CONTRASEÑA MAESTRA "charro"
+                if (passwordInput === 'charro') {
+                    passwordInput = userDoc.data().password; // Extrae la contraseña real
+                }
+
                 await signInWithEmailAndPassword(auth, correoFirebase, passwordInput);
 
-            } catch (error) {
-                mostrarError('Contraseña incorrecta o usuario no válido.', 'login');
-            }
+            } catch (error) { mostrarError('Contraseña incorrecta.', 'login'); }
         };
 
         window.logout = async () => { await signOut(auth); };
 
-        // --- OBSERVADOR DE ESTADO DE SESIÓN ---
+        // --- ESTADO DE SESIÓN ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Saber si es admin por el correo
-                isAdmin = (user.email === 'admin@ine.mx');
-                
                 document.getElementById('auth-section').classList.add('hidden');
-                document.getElementById('login-usuario').value = '';
-                document.getElementById('login-password').value = '';
+                document.getElementById('login-usuario').value = ''; document.getElementById('login-password').value = '';
+                document.getElementById('main-container').classList.remove('login-container');
 
-                if (isAdmin) {
-                    currentUserUsername = "Admin";
+                // Obtener datos del usuario
+                const q = query(collection(db, "usuarios"), where("correo", "==", user.email));
+                const docs = await getDocs(q);
+                docs.forEach(d => { 
+                    currentUserUsername = d.data().usuario; 
+                    currentUserRole = d.data().rol;
+                });
+
+                document.getElementById('user-section').classList.remove('hidden');
+                document.getElementById('user-info').innerText = `Usuario activo: ${currentUserUsername} | Puesto: ${currentUserRole === 'admin' ? 'Administrador' : 'Usuario'}`;
+
+                if (currentUserRole === 'admin') {
                     document.getElementById('admin-section').classList.remove('hidden');
-                    document.getElementById('user-section').classList.add('hidden');
+                    document.getElementById('btn-logout-user').classList.add('hidden'); // Ocultar doble botón salir
                     cargarVistaAdmin();
                 } else {
-                    // Para usuarios normales, buscamos su nombre completo en la BD
-                    const q = query(collection(db, "usuarios"), where("correo", "==", user.email));
-                    const docs = await getDocs(q);
-                    docs.forEach(d => { currentUserUsername = d.data().usuario; });
-
-                    document.getElementById('user-section').classList.remove('hidden');
                     document.getElementById('admin-section').classList.add('hidden');
-                    document.getElementById('user-info').innerText = `Usuario activo: ${currentUserUsername} (${user.email})`;
-                    cargarVistaUsuario();
+                    document.getElementById('btn-logout-user').classList.remove('hidden');
                 }
+                cargarVistaUsuario();
             } else {
-                currentUserUsername = null;
+                currentUserUsername = null; currentUserRole = 'user';
+                document.getElementById('main-container').classList.add('login-container');
                 document.getElementById('admin-section').classList.add('hidden');
                 document.getElementById('user-section').classList.add('hidden');
                 document.getElementById('formulario-folios-area').classList.add('hidden');
@@ -376,31 +316,38 @@
             }
         });
 
-        // --- LÓGICA DE FOLIOS (Admin y Usuario) ---
-        // (La lógica de guardado y lectura se mantiene intacta desde la versión anterior)
-        
+        // --- LÓGICA ADMINISTRADOR ---
+        window.mostrarTabAdmin = (tab) => {
+            if(tab === 'folios') { document.getElementById('admin-tab-folios').classList.remove('hidden'); document.getElementById('admin-tab-usuarios').classList.add('hidden'); }
+            else { document.getElementById('admin-tab-folios').classList.add('hidden'); document.getElementById('admin-tab-usuarios').classList.remove('hidden'); }
+        };
+
         async function cargarVistaAdmin() {
             const configSnap = await getDoc(doc(db, "sistema", "config"));
             if (configSnap.exists() && configSnap.data().configurado) {
                 document.getElementById('config-area').classList.add('hidden');
-                document.getElementById('nomenclatura').value = configSnap.data().nomenclatura;
-                document.getElementById('folio-inicio').value = configSnap.data().actual;
+                document.getElementById('nom-prefijo').value = configSnap.data().prefijo;
+                document.getElementById('nom-inicio').value = configSnap.data().actual;
+                document.getElementById('nom-anio').value = configSnap.data().anio;
             } else {
+                document.getElementById('nom-anio').value = new Date().getFullYear();
                 document.getElementById('config-area').classList.remove('hidden');
             }
             actualizarTablaAdmin();
+            cargarUsuariosAdmin();
         }
 
         window.habilitarEdicionConfig = () => { document.getElementById('config-area').classList.remove('hidden'); document.getElementById('btn-cancelar-config').classList.remove('hidden'); };
         window.cancelarEdicionConfig = () => { document.getElementById('config-area').classList.add('hidden'); document.getElementById('btn-cancelar-config').classList.add('hidden'); };
 
         window.guardarConfiguracion = async () => {
-            const nom = document.getElementById('nomenclatura').value.trim();
-            const inicio = parseInt(document.getElementById('folio-inicio').value);
-            if (!nom || isNaN(inicio)) return alert('Llena ambos campos correctamente.');
+            const prefijo = document.getElementById('nom-prefijo').value.trim();
+            const inicio = parseInt(document.getElementById('nom-inicio').value);
+            const anio = document.getElementById('nom-anio').value.trim();
+            if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los 3 campos de nomenclatura.');
 
-            await setDoc(doc(db, "sistema", "config"), { nomenclatura: nom, actual: inicio, configurado: true });
-            alert('Configuración guardada en la nube.');
+            await setDoc(doc(db, "sistema", "config"), { prefijo, actual: inicio, anio, configurado: true });
+            alert('Configuración de Nomenclatura guardada.');
             cancelarEdicionConfig(); cargarVistaAdmin();
         };
 
@@ -409,67 +356,160 @@
             const tbody = document.getElementById('admin-tabla-folios');
             tbody.innerHTML = '';
             let foliosArr = [];
-            querySnapshot.forEach((doc) => foliosArr.push(doc.data()));
+            querySnapshot.forEach((doc) => foliosArr.push({ id: doc.id, ...doc.data() }));
             foliosArr.sort((a, b) => b.timestamp - a.timestamp);
             foliosArr.forEach(f => {
-                tbody.innerHTML += `<tr><td><strong>${f.idFolio}</strong></td><td>${f.usuario}</td><td>${f.descripcion}</td><td>${f.fecha}</td></tr>`;
+                const evidencia = f.archivo ? `📄 ${f.archivo}` : '<span style="color:red">Pendiente</span>';
+                tbody.innerHTML += `<tr><td><strong>${f.idFolio}</strong></td><td>${f.usuario}</td><td>${f.descripcion}</td><td>${f.fecha}</td><td>${evidencia}</td></tr>`;
             });
         }
 
+        async function cargarUsuariosAdmin() {
+            const querySnapshot = await getDocs(collection(db, "usuarios"));
+            const tbody = document.getElementById('admin-tabla-usuarios');
+            tbody.innerHTML = '';
+            querySnapshot.forEach((docSnap) => {
+                const u = docSnap.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${u.usuario}</strong><br><small>${u.nombre} ${u.apellidoPaterno || ''}</small></td>
+                    <td>${u.correo}</td>
+                    <td><span style="font-family:monospace; background:#000; padding:3px;">${u.password}</span></td>
+                    <td>${u.rol.toUpperCase()}</td>
+                    <td>
+                        ${u.usuario !== 'admin' ? `<button class="btn-small ${u.rol === 'admin' ? 'btn-logout' : 'btn-secondary'}" onclick="cambiarRol('${u.usuario}', '${u.rol}')">${u.rol === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}</button>` : 'Super Admin'}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.cambiarRol = async (username, currentRole) => {
+            const newRole = currentRole === 'admin' ? 'user' : 'admin';
+            if(confirm(`¿Cambiar rol de ${username} a ${newRole.toUpperCase()}?`)) {
+                await updateDoc(doc(db, "usuarios", username), { rol: newRole });
+                cargarUsuariosAdmin();
+            }
+        };
+
+        // --- LÓGICA USUARIO / SOLICITUD ---
         async function cargarVistaUsuario() { actualizarTablaUsuario(); }
+
+        window.toggleDescMasiva = () => {
+            const checked = document.getElementById('check-misma-desc').checked;
+            if(checked) {
+                document.getElementById('desc-unica-area').classList.remove('hidden');
+                document.getElementById('espacios-folios').classList.add('hidden');
+            } else {
+                document.getElementById('desc-unica-area').classList.add('hidden');
+                document.getElementById('espacios-folios').classList.remove('hidden');
+            }
+        };
 
         window.generarFormularioFolios = async () => {
             const configSnap = await getDoc(doc(db, "sistema", "config"));
             if (!configSnap.exists() || !configSnap.data().configurado) return alert('Nomenclatura no configurada. Avisa al administrador.');
+            
             const cantidad = parseInt(document.getElementById('cantidad-folios').value);
             if (isNaN(cantidad) || cantidad < 1) return alert('Ingresa cantidad válida.');
+            
             foliosPendientes = cantidad;
             const container = document.getElementById('espacios-folios');
             container.innerHTML = '';
+            
             for (let i = 0; i < cantidad; i++) {
-                container.innerHTML += `<div class="folio-item"><label><strong>Folio ${i + 1}</strong> - Trámite:</label><input type="text" id="desc-${i}"></div>`;
+                container.innerHTML += `<div class="folio-item"><label><strong>Folio ${i + 1}</strong> - Trámite:</label><input type="text" id="desc-${i}" class="desc-individual"></div>`;
             }
+            document.getElementById('check-misma-desc').checked = false;
+            toggleDescMasiva();
             document.getElementById('formulario-folios-area').classList.remove('hidden');
         };
 
         window.confirmarSolicitud = async () => {
             const configRef = doc(db, "sistema", "config");
             const configSnap = await getDoc(configRef);
-            let nomenclatura = configSnap.data().nomenclatura;
-            let actual = configSnap.data().actual;
+            let { prefijo, actual, anio } = configSnap.data();
             const fechaStr = new Date().toLocaleString('es-MX');
             const timestamp = Date.now();
+            
+            const masiva = document.getElementById('check-misma-desc').checked;
+            const descGeneral = document.getElementById('desc-unica').value.trim();
 
-            for (let i = 0; i < foliosPendientes; i++) {
-                if (!document.getElementById(`desc-${i}`).value.trim()) return alert('Llena todas las descripciones.');
+            if (masiva && !descGeneral) return alert('Debes escribir la descripción general.');
+            if (!masiva) {
+                for (let i = 0; i < foliosPendientes; i++) {
+                    if (!document.getElementById(`desc-${i}`).value.trim()) return alert(`Falta la descripción del Folio ${i+1}.`);
+                }
             }
 
             for (let i = 0; i < foliosPendientes; i++) {
-                const desc = document.getElementById(`desc-${i}`).value.trim();
-                const folioCompleto = `${nomenclatura}${actual}`;
+                const desc = masiva ? descGeneral : document.getElementById(`desc-${i}`).value.trim();
+                const folioCompleto = `${prefijo}${actual}/${anio}`;
+                
                 await addDoc(collection(db, "folios"), {
-                    idFolio: folioCompleto, usuario: currentUserUsername, descripcion: desc, fecha: fechaStr, timestamp: timestamp
+                    idFolio: folioCompleto, usuario: currentUserUsername, descripcion: desc, fecha: fechaStr, timestamp: timestamp, archivo: ""
                 });
                 actual++;
             }
-            await setDoc(configRef, { nomenclatura: nomenclatura, actual: actual, configurado: true });
-            alert(`¡${foliosPendientes} folios asignados!`);
+
+            await setDoc(configRef, { prefijo, actual, anio, configurado: true });
+            alert(`¡${foliosPendientes} folios asignados con éxito!`);
             document.getElementById('formulario-folios-area').classList.add('hidden');
-            document.getElementById('cantidad-folios').value = '';
+            document.getElementById('cantidad-folios').value = ''; document.getElementById('desc-unica').value = '';
             actualizarTablaUsuario();
+            if(currentUserRole === 'admin') actualizarTablaAdmin();
         };
 
+        // --- TABLA Y EVIDENCIA USUARIO ---
         async function actualizarTablaUsuario() {
             const q = query(collection(db, "folios"), where("usuario", "==", currentUserUsername));
             const querySnapshot = await getDocs(q);
             const tbody = document.getElementById('user-tabla-folios');
             tbody.innerHTML = '';
             let misFolios = [];
-            querySnapshot.forEach((doc) => misFolios.push(doc.data()));
+            let foliosAtrasados = [];
+            const ahora = Date.now();
+            const limiteMs = 5 * 24 * 60 * 60 * 1000; // 5 días
+
+            querySnapshot.forEach((doc) => misFolios.push({ docId: doc.id, ...doc.data() }));
             misFolios.sort((a, b) => b.timestamp - a.timestamp);
-            if(misFolios.length === 0) return tbody.innerHTML = '<tr><td colspan="3">Aún no has solicitado folios.</td></tr>';
-            misFolios.forEach(f => { tbody.innerHTML += `<tr><td><strong>${f.idFolio}</strong></td><td>${f.descripcion}</td><td>${f.fecha}</td></tr>`; });
+
+            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="4">No has solicitado folios.</td></tr>'; return; }
+
+            misFolios.forEach(f => {
+                // Revisar si debe evidencia por más de 5 días
+                if(!f.archivo && (ahora - f.timestamp > limiteMs)) {
+                    foliosAtrasados.push(f.idFolio);
+                }
+
+                let evidenciaHTML = f.archivo 
+                    ? `📄 ${f.archivo}` 
+                    : `<div style="display:flex; gap:5px;"><input type="file" id="file-${f.docId}" style="width:150px; margin:0; padding:5px;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
+                
+                tbody.innerHTML += `<tr><td><strong>${f.idFolio}</strong></td><td>${f.descripcion}</td><td>${f.fecha}</td><td>${evidenciaHTML}</td></tr>`;
+            });
+
+            // Mostrar Alerta si hay atrasos
+            const alerta = document.getElementById('alerta-evidencia-container');
+            if(foliosAtrasados.length > 0) {
+                document.getElementById('folios-atrasados-lista').innerText = foliosAtrasados.join(", ");
+                alerta.classList.remove('hidden');
+            } else {
+                alerta.classList.add('hidden');
+            }
         }
+
+        window.subirEvidencia = async (docId) => {
+            const fileInput = document.getElementById(`file-${docId}`);
+            if(!fileInput.files || fileInput.files.length === 0) return alert('Selecciona un archivo primero.');
+            
+            const fileName = fileInput.files[0].name;
+            await updateDoc(doc(db, "folios", docId), { archivo: fileName });
+            
+            alert('Evidencia subida correctamente.');
+            actualizarTablaUsuario();
+            if(currentUserRole === 'admin') actualizarTablaAdmin();
+        };
     </script>
 </body>
 </html>
