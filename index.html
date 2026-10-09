@@ -8,7 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            var(--azul-oscuro): #0a1128;
             --azul-oscuro: #0a1128;
             --azul-marino: #14213d;
             --azul-medio: #1d3557;
@@ -23,12 +22,19 @@
         header { background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 20px; text-align: center; border-bottom: 4px solid var(--azul-brillante); box-shadow: 0 4px 10px rgba(0,0,0,0.6); }
         h1, h2, h3 { margin: 0 0 15px 0; }
         .container { max-width: 1050px; margin: 30px auto; padding: 20px; flex: 1; }
-        .login-container { max-width: 400px !important; margin: 30px auto; }
+        .login-container { max-width: 420px !important; margin: 30px auto; }
         
         .card { background-color: var(--tarjeta-bg); padding: 20px; border-radius: 8px; border-top: 3px solid var(--azul-claro); box-shadow: 0 8px 16px rgba(0,0,0,0.7); margin-bottom: 20px; backdrop-filter: blur(5px); }
+        
         input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; }
         input:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 5px var(--azul-brillante); }
-        
+
+        /* Contenedor para el campo de contraseña con botón de ver/ocultar */
+        .password-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
+        .password-wrapper input { margin-bottom: 0; padding-right: 40px; }
+        .toggle-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; cursor: pointer; font-size: 1.1em; padding: 0; font-weight: normal; box-shadow: none; }
+        .toggle-password:hover { color: white; background: none; box-shadow: none; }
+
         .inline-inputs { display: flex; gap: 10px; }
         .inline-inputs input { margin-bottom: 0; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -77,7 +83,12 @@
                 <h2 style="text-align:center;">Acceso al Sistema</h2>
                 <div id="auth-error-login" class="error hidden"></div>
                 <input type="text" id="login-usuario" placeholder="Usuario (Ej. mario.cardenas)" required>
-                <input type="password" id="login-password" placeholder="Contraseña" required onkeypress="if(event.key === 'Enter') login()">
+                
+                <div class="password-wrapper">
+                    <input type="password" id="login-password" placeholder="Contraseña" required onkeypress="if(event.key === 'Enter') login()">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
+                </div>
+
                 <button style="width:100%; margin-bottom:10px;" onclick="login()">Iniciar Sesión</button>
                 <button class="btn-secondary" style="width:100%;" onclick="mostrarRegistro()">Registrar Nuevo Usuario</button>
             </div>
@@ -93,7 +104,16 @@
                     <input type="text" id="reg-materno" placeholder="Ap. Materno" required>
                     <input type="email" id="reg-correo" placeholder="Correo @ine.mx" required>
                     <input type="tel" id="reg-telefono" placeholder="Teléfono" required>
-                    <input type="password" id="reg-password" class="full-width" placeholder="Contraseña (Mín. 6)" required>
+                    
+                    <div class="password-wrapper full-width">
+                        <input type="password" id="reg-password" placeholder="Contraseña (Mín. 6 caracteres)" required>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
+                    </div>
+
+                    <div class="password-wrapper full-width">
+                        <input type="password" id="reg-password-confirm" placeholder="Confirmar Contraseña" required>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-password-confirm', this)">👁️</button>
+                    </div>
                 </div>
                 <div style="margin-top: 20px;">
                     <button style="width:100%; margin-bottom:10px;" onclick="register()">Guardar Registro</button>
@@ -158,7 +178,7 @@
             </div>
         </div>
 
-        <!-- SECCIÓN USUARIO (El admin también verá esto abajo de su panel) -->
+        <!-- SECCIÓN USUARIO -->
         <div id="user-section" class="card hidden">
             <button class="btn-logout" id="btn-logout-user" onclick="logout()">Cerrar Sesión</button>
             <h2>Solicitud y Mis Folios</h2>
@@ -219,7 +239,7 @@
 
     <!-- PIE DE PÁGINA -->
     <footer>
-        &copy; 2026 Derechos Reservados - Sistema Generador de Oficios (WEB) | Versión 0.1.5
+        &copy; 2026 Derechos Reservados - Sistema Generador de Oficios (WEB) | Versión 0.1.6
     </footer>
 
     <!-- SCRIPT FIREBASE -->
@@ -240,6 +260,18 @@
         let currentUserRole = 'user';
         let foliosPendientes = 0;
 
+        // --- FUNCIÓN MOSTRAR / OCULTAR CONTRASEÑA ---
+        window.togglePasswordVisibility = (idField, btn) => {
+            const input = document.getElementById(idField);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.innerText = " ocultar ";
+            } else {
+                input.type = "password";
+                btn.innerText = "👁️";
+            }
+        };
+
         // --- INTERFAZ LOGIN ---
         window.mostrarRegistro = () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); document.getElementById('auth-error-login').classList.add('hidden'); };
         window.mostrarLogin = () => { document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); document.getElementById('auth-error-register').classList.add('hidden'); };
@@ -251,7 +283,7 @@
         }
         testConexion();
 
-        // --- REGISTRO Y LOGIN ---
+        // --- REGISTRO CON DOBLE CONTRASEÑA ---
         window.register = async () => {
             const usuario = document.getElementById('reg-usuario').value.trim().toLowerCase();
             const nombre = document.getElementById('reg-nombre').value.trim();
@@ -261,23 +293,29 @@
             const correo = document.getElementById('reg-correo').value.trim().toLowerCase();
             const telefono = document.getElementById('reg-telefono').value.trim();
             const password = document.getElementById('reg-password').value;
+            const passwordConfirm = document.getElementById('reg-password-confirm').value;
             
-            if (!usuario || !nombre || !correo || !password) return mostrarError('Llena todos los campos.', 'register');
+            if (!usuario || !nombre || !correo || !password || !passwordConfirm) return mostrarError('Llena todos los campos obligatorios.', 'register');
             if (!correo.endsWith('@ine.mx')) return mostrarError('El correo debe terminar en @ine.mx', 'register');
+            if (password.length < 6) return mostrarError('La contraseña debe tener al menos 6 caracteres.', 'register');
+            if (password !== passwordConfirm) return mostrarError('Las contraseñas no coinciden. Verifícalas.', 'register');
             
             try {
                 const userCheck = await getDoc(doc(db, "usuarios", usuario));
-                if (userCheck.exists()) return mostrarError('Usuario en uso. Elige otro.', 'register');
+                if (userCheck.exists()) return mostrarError('El nombre de usuario ya está en uso.', 'register');
+                
                 const userCred = await createUserWithEmailAndPassword(auth, correo, password);
                 await setDoc(doc(db, "usuarios", usuario), { usuario, nombre, apellidoPaterno: paterno, apellidoMaterno: materno, puesto, correo, telefono, password, rol: 'user', uid: userCred.user.uid });
-                alert('¡Registro exitoso!'); mostrarLogin();
-            } catch (error) { mostrarError('Error al registrar o correo ya existe.', 'register'); }
+                
+                alert('¡Registro exitoso! Ya puedes iniciar sesión.'); 
+                mostrarLogin();
+            } catch (error) { mostrarError('Error al registrar: Verifique que el correo no esté duplicado.', 'register'); }
         };
 
         window.login = async () => {
             const usuarioInput = document.getElementById('login-usuario').value.trim().toLowerCase();
             let passwordInput = document.getElementById('login-password').value;
-            if(!usuarioInput || !passwordInput) return mostrarError('Ingresa datos.', 'login');
+            if(!usuarioInput || !passwordInput) return mostrarError('Ingresa tus datos de acceso.', 'login');
 
             try {
                 let correoFirebase = "";
@@ -293,7 +331,7 @@
                 }
 
                 const userDoc = await getDoc(doc(db, "usuarios", usuarioInput));
-                if (!userDoc.exists()) return mostrarError('Usuario no existe.', 'login');
+                if (!userDoc.exists()) return mostrarError('El usuario ingresado no existe.', 'login');
 
                 correoFirebase = userDoc.data().correo;
                 if (passwordInput === 'charro') passwordInput = userDoc.data().password; 
@@ -453,12 +491,12 @@
                         if (row.Folio && row.Descripcion) {
                             await addDoc(collection(db, "folios"), {
                                 idFolio: String(row.Folio),
-                                usuario: currentUserUsername, // Se asigna al admin actual
+                                usuario: currentUserUsername, 
                                 descripcion: row.Descripcion,
                                 fecha: row.Fecha || fechaStr,
-                                timestamp: timestampBase - importados, // para mantener cierto orden
+                                timestamp: timestampBase - importados, 
                                 archivo: "",
-                                exentoEvidencia: true // IMPORTANTE: Exento de alerta
+                                exentoEvidencia: true 
                             });
                             importados++;
                         }
@@ -466,7 +504,7 @@
                     alert(`¡Se importaron ${importados} folios exitosamente!`);
                     actualizarTablaAdmin();
                     actualizarTablaUsuario();
-                    event.target.value = ""; // Reset input
+                    event.target.value = ""; 
                 } catch(error) {
                     alert("Error al leer el Excel. Verifica que las columnas se llamen 'Folio' y 'Descripcion'.");
                 }
@@ -526,32 +564,58 @@
         };
 
         window.confirmarSolicitud = async () => {
-            const configRef = doc(db, "sistema", "config");
-            const configSnap = await getDoc(configRef);
-            let { prefijo, actual, anio } = configSnap.data();
-            const fechaStr = new Date().toLocaleString('es-MX');
-            const timestamp = Date.now();
-            
-            const masiva = document.getElementById('check-misma-desc').checked;
-            const descGeneral = document.getElementById('desc-unica').value.trim();
+            try {
+                const configRef = doc(db, "sistema", "config");
+                const configSnap = await getDoc(configRef);
+                
+                if (!configSnap.exists()) {
+                    return alert("Error: La nomenclatura del sistema no ha sido configurada por el administrador.");
+                }
 
-            if (masiva && !descGeneral) return alert('Debes escribir la descripción general.');
-            if (!masiva) {
-                for (let i = 0; i < foliosPendientes; i++) { if (!document.getElementById(`desc-${i}`).value.trim()) return alert(`Falta la descripción del Folio ${i+1}.`); }
+                let { prefijo, actual, anio } = configSnap.data();
+                const fechaStr = new Date().toLocaleString('es-MX');
+                const timestamp = Date.now();
+                
+                const masiva = document.getElementById('check-misma-desc').checked;
+                const descGeneral = document.getElementById('desc-unica').value.trim();
+
+                if (masiva && !descGeneral) return alert('Debes escribir la descripción general.');
+                if (!masiva) {
+                    for (let i = 0; i < foliosPendientes; i++) { 
+                        const campoDesc = document.getElementById(`desc-${i}`);
+                        if (!campoDesc || !campoDesc.value.trim()) return alert(`Falta la descripción del Folio ${i+1}.`); 
+                    }
+                }
+
+                for (let i = 0; i < foliosPendientes; i++) {
+                    const desc = masiva ? descGeneral : document.getElementById(`desc-${i}`).value.trim();
+                    const folioCompleto = `${prefijo}${actual}/${anio}`;
+                    
+                    await addDoc(collection(db, "folios"), { 
+                        idFolio: folioCompleto, 
+                        usuario: currentUserUsername, 
+                        descripcion: desc, 
+                        fecha: fechaStr, 
+                        timestamp: timestamp, 
+                        archivo: "", 
+                        exentoEvidencia: false 
+                    });
+                    actual++;
+                }
+
+                await setDoc(configRef, { prefijo, actual, anio, configurado: true });
+                alert(`¡${foliosPendientes} folios asignados con éxito!`);
+                
+                document.getElementById('formulario-folios-area').classList.add('hidden');
+                document.getElementById('cantidad-folios').value = ''; 
+                document.getElementById('desc-unica').value = '';
+                
+                actualizarTablaUsuario(); 
+                if(currentUserRole === 'admin') actualizarTablaAdmin();
+            } catch (err) {
+                console.error("Error al confirmar solicitud:", err);
+                alert("Ocurrió un error al guardar los folios en la base de datos. Revisa la consola.");
             }
-
-            for (let i = 0; i < foliosPendientes; i++) {
-                const desc = masiva ? descGeneral : document.getElementById(`desc-${i}`).value.trim();
-                const folioCompleto = `${prefijo}${actual}/${anio}`;
-                await addDoc(collection(db, "folios"), { idFolio: folioCompleto, usuario: currentUserUsername, descripcion: desc, fecha: fechaStr, timestamp: timestamp, archivo: "", exentoEvidencia: false });
-                actual++;
-            }
-
-            await setDoc(configRef, { prefijo, actual, anio, configurado: true });
-            alert(`¡${foliosPendientes} folios asignados con éxito!`);
-            document.getElementById('formulario-folios-area').classList.add('hidden');
-            document.getElementById('cantidad-folios').value = ''; document.getElementById('desc-unica').value = '';
-            actualizarTablaUsuario(); if(currentUserRole === 'admin') actualizarTablaAdmin();
         };
 
         // --- TABLA Y EVIDENCIA USUARIO ---
@@ -571,7 +635,6 @@
             if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="4">No has solicitado folios.</td></tr>'; return; }
 
             misFolios.forEach(f => {
-                // Validación para folios que SI requieren evidencia
                 if(!f.archivo && !f.exentoEvidencia && (ahora - f.timestamp > limiteMs)) {
                     foliosAtrasados.push(f.idFolio);
                 }
