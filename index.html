@@ -20,7 +20,6 @@
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--texto); margin: 0; padding: 0; background-color: var(--negro-mate); background-image: url('lineasazules_fondo.avif'); background-size: cover; background-position: center; background-attachment: fixed; display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* Encabezado Fijo con Botón de Cerrar Sesión Arriba a la Derecha */
         header { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 12px 20px; border-bottom: 4px solid var(--azul-brillante); box-shadow: 0 4px 15px rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
         .header-title { text-align: center; flex: 1; }
         
@@ -31,6 +30,7 @@
         
         input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"], select { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; }
         input:focus, select:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 5px var(--azul-brillante); }
+        input[readonly] { background-color: #222; color: #888; cursor: not-allowed; }
 
         .password-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
         .password-wrapper input { margin-bottom: 0; padding-right: 40px; }
@@ -52,7 +52,6 @@
         .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 6px 15px; font-size: 0.85em; }
         .btn-small { padding: 4px 8px; font-size: 0.8em; }
 
-        /* Cuadrito Azul Indicador de Último Folio */
         .badge-ultimo-folio { background-color: var(--azul-brillante); color: white; padding: 8px 15px; border-radius: 6px; font-size: 0.85em; font-weight: bold; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.5); border: 1px solid #6096ba; float: right; margin-top: -8px; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85em; background-color: rgba(0,0,0,0.4); }
@@ -65,30 +64,30 @@
         .alerta-evidencia { background-color: rgba(139, 0, 0, 0.8); color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #ff4d4d; }
         .folio-item { background: rgba(0,0,0,0.5); padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--azul-brillante); border-radius: 4px; }
         
-        /* Modales Generales */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 25px; border-radius: 8px; width: 450px; box-shadow: 0 0 20px rgba(58, 110, 165, 0.5); max-height: 90vh; overflow-y: auto; }
-        .modal-content-viewer { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 15px; border-radius: 8px; width: 80vw; height: 80vh; display: flex; flex-direction: column; box-shadow: 0 0 25px rgba(0,0,0,0.9); }
+        .modal-content-viewer { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 15px; border-radius: 8px; width: 85vw; height: 85vh; display: flex; flex-direction: column; box-shadow: 0 0 25px rgba(0,0,0,0.9); }
 
         footer { text-align: center; padding: 15px; background-color: var(--azul-oscuro); color: #888; font-size: 0.85em; border-top: 1px solid var(--azul-medio); z-index: 10; }
 
-        /* ESTILOS PARA IMPRESIÓN (Carta Horizontal) */
+        /* ESTILOS PARA IMPRESIÓN (VERTICAL / PORTRAIT) */
         @media print {
-            body { background: white !important; color: black !important; }
-            header, .card:not(#printable-report-card), footer, button, input, select, .badge-ultimo-folio { display: none !important; }
-            .container { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
-            #user-section { background: white !important; border: none !important; box-shadow: none !important; color: black !important; }
-            table { background: white !important; color: black !important; border: 1px solid #ccc !important; font-size: 9pt !important; }
+            body { background: white !important; color: black !important; margin: 0 !important; }
+            header, .card, footer, button, input, select, .badge-ultimo-folio, .alerta-evidencia, .modal-overlay { display: none !important; }
+            #user-section { display: block !important; background: white !important; border: none !important; box-shadow: none !important; color: black !important; margin: 0 !important; padding: 0 !important; }
+            .container { margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; }
+            table { width: 100% !important; background: white !important; color: black !important; border: 1px solid #999 !important; font-size: 8pt !important; page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
             th { background-color: #1d3557 !important; color: white !important; -webkit-print-color-adjust: exact; }
-            td, th { border: 1px solid #ddd !important; }
-            @page { size: landscape; margin: 1cm; }
+            td, th { border: 1px solid #ccc !important; padding: 5px !important; }
+            @page { size: portrait; margin: 1cm; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div style="width: 120px;"></div> <!-- Espaciador izquierdo -->
+        <div style="width: 120px;"></div>
         <div class="header-title">
             <h1 style="font-size: 1.3em; margin: 0;">Vocalía del Registro Federal de Electores</h1>
             <p style="font-size: 0.8em; margin: 3px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva (VRFE 03JDE)</p>
@@ -160,7 +159,6 @@
                 <button onclick="cancelarEdicionConfig()" id="btn-cancelar-config" class="btn-secondary hidden">Cancelar</button>
             </div>
 
-            <!-- HERRAMIENTAS DE BASE DE DATOS EN LISTA DESPLEGABLE -->
             <div class="card" style="background: rgba(0,0,0,0.4); border-color:var(--azul-claro);">
                 <h3>📦 Herramientas de Base de Datos</h3>
                 <select id="db-tools-select" onchange="ejecutarHerramientaDB(this)">
@@ -194,7 +192,7 @@
         </div>
 
         <!-- SECCIÓN USUARIO -->
-        <div id="user-section" class="card hidden" id="printable-report-card">
+        <div id="user-section" class="card hidden">
             <div id="badge-ultimo-container" class="badge-ultimo-folio">Último Folio: Cargando...</div>
             
             <h2>Solicitud y Mis Folios</h2>
@@ -222,32 +220,36 @@
             
             <div style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Folio</th><th>Fecha</th><th>Dirigido a</th><th>Asunto</th><th>Respuesta</th><th>Observaciones</th><th>Evidencia</th></tr></thead>
+                    <thead><tr><th>Folio</th><th>Fecha</th><th>Dirigido a</th><th>Asunto</th><th>Respuesta</th><th>Observaciones</th><th>Evidencia</th><th>Acción</th></tr></thead>
                     <tbody id="user-tabla-folios"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE EDICIÓN PARA ADMINISTRADOR O USUARIO -->
+    <!-- MODAL DE EDICIÓN -->
     <div id="modal-edicion" class="modal-overlay hidden">
         <div class="modal-content">
             <h3 id="modal-title">✏️ Editar Registro</h3>
             <input type="hidden" id="edit-docId">
+            
             <div id="admin-only-edit-fields">
                 <label>Número de Folio:</label>
                 <input type="text" id="edit-folio">
                 <label>Asignado a (Usuario):</label>
                 <input type="text" id="edit-usuario">
             </div>
+
             <label>Dirigido a:</label>
-            <input type="text" id="edit-dirigido">
+            <input type="text" id="edit-dirigido" readonly title="Campo bloqueado tras el registro">
             <label>Asunto:</label>
-            <input type="text" id="edit-asunto">
+            <input type="text" id="edit-asunto" readonly title="Campo bloqueado tras el registro">
+            
             <label>Respuesta:</label>
-            <input type="text" id="edit-respuesta">
+            <input type="text" id="edit-respuesta" placeholder="Actualizar respuesta...">
             <label>Observaciones:</label>
-            <input type="text" id="edit-observaciones">
+            <input type="text" id="edit-observaciones" placeholder="Actualizar observaciones...">
+            
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button onclick="guardarEdicionFolio()" style="flex:1;">Guardar Cambios</button>
                 <button onclick="cerrarModalEdicion()" class="btn-secondary" style="flex:1;">Cancelar</button>
@@ -255,7 +257,7 @@
         </div>
     </div>
 
-    <!-- MODAL VISOR DE EVIDENCIA -->
+    <!-- MODAL VISOR DE EVIDENCIA (NUBE) -->
     <div id="modal-visor" class="modal-overlay hidden">
         <div class="modal-content-viewer">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -263,20 +265,21 @@
                 <button onclick="cerrarVisor()" class="btn-small btn-danger">Cerrar ✕</button>
             </div>
             <div id="visor-contenido" style="flex:1; background: #000; border-radius: 5px; display:flex; justify-content:center; align-items:center; overflow:hidden;">
-                <!-- Contenido dinámico (imagen, iframe o mensaje) -->
+                <!-- Contenido dinámico (imagen o iframe para PDF/Docs) -->
             </div>
         </div>
     </div>
 
     <footer>
-        &copy; 2026 Derechos Reservados - Sistema Generador de Oficios (WEB) | Versión 0.1.8
+        &copy; 2026 Derechos Reservados - Sistema Generador de Oficios (WEB) | Versión 0.1.9
     </footer>
 
-    <!-- SCRIPT FIREBASE -->
+    <!-- SCRIPT FIREBASE CON STORAGE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBpmtUCDLKDkhGx9zh2IkQ65Yrob13gjxE", authDomain: "foliosvrfe03.firebaseapp.com", projectId: "foliosvrfe03", storageBucket: "foliosvrfe03.firebasestorage.app", messagingSenderId: "493793399671", appId: "1:493793399671:web:bfdcedf6260818851dc772"
@@ -285,6 +288,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         let currentUserUsername = null;
         let currentUserRole = 'user';
@@ -365,20 +369,17 @@
             await signOut(auth); 
         };
 
-        // --- CONTROL DE SESIÓN ÚNICA Y EXpiración ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const q = query(collection(db, "usuarios"), where("correo", "==", user.email));
                 const docs = await getDocs(q);
                 docs.forEach(d => { currentUserUsername = d.data().usuario; currentUserRole = d.data().rol; });
 
-                // Control de sesión única (Excepto Administradores)
                 if (currentUserRole !== 'admin') {
                     const sessionKey = `session_${currentUserUsername}`;
                     const currentSessionId = Math.random().toString(36).substring(7);
                     sessionStorage.setItem(sessionKey, currentSessionId);
 
-                    // Verificar cada 3 segundos si otro dispositivo abrió sesión
                     setInterval(() => {
                         if (sessionStorage.getItem(sessionKey) !== currentSessionId) {
                             alert("⚠️ Tu cuenta ha sido abierta en otra pestaña o dispositivo. Se cerrará la sesión actual.");
@@ -447,13 +448,12 @@
             alert('Configuración guardada.'); cancelarEdicionConfig(); cargarVistaAdmin();
         };
 
-        // --- MANEJO DEL SELECTOR DE HERRAMIENTAS DE BASE DE DATOS ---
         window.ejecutarHerramientaDB = (select) => {
             const val = select.value;
             if(val === 'modificar') { habilitarEdicionConfig(); }
             else if(val === 'exportar') { exportarExcel(); }
             else if(val === 'importar') { document.getElementById('import-excel').click(); }
-            select.value = ""; // Reset select
+            select.value = ""; 
         };
 
         async function actualizarTablaAdmin() {
@@ -466,7 +466,7 @@
             
             foliosArr.forEach(f => {
                 let badge = f.exentoEvidencia ? ' <span style="font-size:0.7em; background:#b78a00; padding:2px 4px; border-radius:3px;">Importado</span>' : '';
-                let evidenciaHTML = f.archivo ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivo}', '${f.idFolio}')">📄 ${f.archivo}</a>` : (f.exentoEvidencia ? 'N/A' : '<span style="color:#ff6b6b">Pendiente</span>');
+                let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 ${f.archivo}</a>` : (f.exentoEvidencia ? 'N/A' : '<span style="color:#ff6b6b">Pendiente</span>');
                 
                 tbody.innerHTML += `<tr>
                     <td><strong>${f.idFolio}</strong>${badge}</td>
@@ -518,7 +518,7 @@
                     "Respuesta": d.respuesta || "",
                     "Observaciones": d.observaciones || "",
                     "Fecha": d.fecha,
-                    "Evidencia": d.archivo || "Pendiente"
+                    "Evidencia": d.archivoUrl || "Pendiente"
                 });
             });
             const ws = XLSX.utils.json_to_sheet(foliosArr);
@@ -553,6 +553,7 @@
                                 fecha: row.Fecha || fechaStr,
                                 timestamp: timestampBase - importados, 
                                 archivo: "",
+                                archivoUrl: "",
                                 exentoEvidencia: true 
                             });
                             importados++;
@@ -566,7 +567,7 @@
             reader.readAsArrayBuffer(file);
         };
 
-        // --- EDICIÓN Y ELIMINACIÓN ---
+        // --- EDICIÓN CON CAMPOS BLOQUEADOS ---
         window.abrirModalEdicion = (docId, folio, usr, dirigido, asunto, respuesta, observaciones) => {
             document.getElementById('edit-docId').value = docId;
             document.getElementById('edit-folio').value = folio;
@@ -576,13 +577,12 @@
             document.getElementById('edit-respuesta').value = respuesta;
             document.getElementById('edit-observaciones').value = observaciones;
 
-            // Si es usuario normal, ocultamos los campos de cambio de folio y usuario asignado
             if(currentUserRole !== 'admin') {
                 document.getElementById('admin-only-edit-fields').classList.add('hidden');
                 document.getElementById('modal-title').innerText = "✏️ Editar Respuesta y Observaciones";
             } else {
                 document.getElementById('admin-only-edit-fields').classList.remove('hidden');
-                document.getElementById('modal-title').innerText = "✏️ Editar Registro Completo";
+                document.getElementById('modal-title').innerText = "✏️ Editar Registro Completo (Admin)";
             }
 
             document.getElementById('modal-edicion').classList.remove('hidden');
@@ -592,16 +592,16 @@
         
         window.guardarEdicionFolio = async () => {
             const docId = document.getElementById('edit-docId').value;
-            const dirigidoA = document.getElementById('edit-dirigido').value.trim();
-            const asunto = document.getElementById('edit-asunto').value.trim();
             const respuesta = document.getElementById('edit-respuesta').value.trim();
             const observaciones = document.getElementById('edit-observaciones').value.trim();
 
-            let updateData = { dirigidoA, asunto, respuesta, observaciones };
+            let updateData = { respuesta, observaciones };
 
             if(currentUserRole === 'admin') {
                 updateData.idFolio = document.getElementById('edit-folio').value.trim();
                 updateData.usuario = document.getElementById('edit-usuario').value.trim();
+                updateData.dirigidoA = document.getElementById('edit-dirigido').value.trim();
+                updateData.asunto = document.getElementById('edit-asunto').value.trim();
             }
             
             await updateDoc(doc(db, "folios", docId), updateData);
@@ -616,15 +616,27 @@
             }
         };
 
-        // --- VISOR DE EVIDENCIA FLOTANTE ---
-        window.previsualizarEvidencia = (fileName, folioId) => {
-            document.getElementById('visor-titulo').innerText = `Evidencia del Folio: ${folioId} (${fileName})`;
+        // --- VISOR DE EVIDENCIA DESDE FIREBASE STORAGE ---
+        window.previsualizarEvidencia = (fileUrl, fileName, folioId) => {
+            document.getElementById('visor-titulo').innerText = `Evidencia: ${folioId} (${fileName})`;
             const contenedor = document.getElementById('visor-contenido');
-            contenedor.innerHTML = `<p style="color:#aaa; text-align:center;">Cargando previsualización de <b>${fileName}</b>...<br><small>Nota: Como se encuentra almacenada localmente en la PC del usuario, se muestra el contenedor de acceso.</small></p>`;
+            
+            const ext = fileName.split('.').pop().toLowerCase();
+            if(['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                contenedor.innerHTML = `<img src="${fileUrl}" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:4px;">`;
+            } else if(ext === 'pdf') {
+                contenedor.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:100%; border:none;"></iframe>`;
+            } else {
+                contenedor.innerHTML = `<div style="text-align:center; padding:20px;"><p>Este archivo no se puede previsualizar directamente.</p><a href="${fileUrl}" target="_blank" style="background:#3a6ea5; color:white; padding:10px 20px; text-decoration:none; border-radius:4px;">📥 Descargar Archivo</a></div>`;
+            }
+
             document.getElementById('modal-visor').classList.remove('hidden');
         };
 
-        window.cerrarVisor = () => { document.getElementById('modal-visor').classList.add('hidden'); };
+        window.cerrarVisor = () => { 
+            document.getElementById('modal-visor').classList.add('hidden');
+            document.getElementById('visor-contenido').innerHTML = '';
+        };
 
         // --- LÓGICA USUARIO / SOLICITUD ---
         async function cargarVistaUsuario() { 
@@ -708,10 +720,11 @@
                         asunto: asunto,
                         respuesta: respuesta,
                         observaciones: obs,
-                        descripcion: asunto, // compatibilidad con respaldos anteriores
+                        descripcion: asunto, 
                         fecha: fechaStr, 
                         timestamp: timestamp, 
                         archivo: "", 
+                        archivoUrl: "",
                         exentoEvidencia: false 
                     });
                     actual++;
@@ -743,15 +756,15 @@
             querySnapshot.forEach((doc) => misFolios.push({ docId: doc.id, ...doc.data() }));
             misFolios.sort((a, b) => b.timestamp - a.timestamp);
 
-            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="7">No has solicitado folios.</td></tr>'; return; }
+            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="8">No has solicitado folios.</td></tr>'; return; }
 
             misFolios.forEach(f => {
-                if(!f.archivo && !f.exentoEvidencia && (ahora - f.timestamp > limiteMs)) {
+                if(!f.archivoUrl && !f.exentoEvidencia && (ahora - f.timestamp > limiteMs)) {
                     foliosAtrasados.push(f.idFolio);
                 }
 
                 let btnSubir = `<div style="display:flex; gap:3px;"><input type="file" id="file-${f.docId}" style="width:110px; margin:0; padding:2px; font-size:0.7em;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
-                let evidenciaHTML = f.archivo ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivo}', '${f.idFolio}')">📄 ${f.archivo}</a>` : btnSubir;
+                let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 ${f.archivo}</a>` : btnSubir;
                 
                 tbody.innerHTML += `<tr>
                     <td><strong>${f.idFolio}</strong></td>
@@ -774,13 +787,30 @@
             }
         }
 
+        // --- SUBIDA REAL A FIREBASE STORAGE ---
         window.subirEvidencia = async (docId) => {
             const fileInput = document.getElementById(`file-${docId}`);
             if(!fileInput.files || fileInput.files.length === 0) return alert('Selecciona un archivo.');
-            const fileName = fileInput.files[0].name;
-            await updateDoc(doc(db, "folios", docId), { archivo: fileName });
-            alert('Evidencia subida correctamente.');
-            actualizarTablaUsuario(); if(currentUserRole === 'admin') actualizarTablaAdmin();
+            const file = fileInput.files[0];
+            
+            try {
+                alert("Subiendo archivo a la nube... Por favor espera un momento.");
+                const storageRef = ref(storage, `evidencias/${docId}_${file.name}`);
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+
+                await updateDoc(doc(db, "folios", docId), { 
+                    archivo: file.name,
+                    archivoUrl: downloadURL 
+                });
+
+                alert('¡Evidencia subida a la nube correctamente!');
+                actualizarTablaUsuario(); 
+                if(currentUserRole === 'admin') actualizarTablaAdmin();
+            } catch (error) {
+                console.error("Error al subir archivo:", error);
+                alert("Error al subir el archivo. Verifica que Firebase Storage esté activado en tu consola.");
+            }
         };
     </script>
 </body>
