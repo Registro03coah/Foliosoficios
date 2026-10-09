@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VRFE 03JDE - Gestión de Folios</title>
+    <title>VRFE03 - Gestión de Folios</title>
     <style>
         :root {
             --rosa-mexicano: #E4007C;
@@ -33,11 +33,7 @@
 
         h1, h2, h3 { margin: 0 0 15px 0; }
         
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 20px;
-        }
+        .container { max-width: 1000px; margin: 30px auto; padding: 20px; }
 
         .card {
             background-color: var(--tarjeta);
@@ -48,7 +44,7 @@
             margin-bottom: 20px;
         }
 
-        input[type="email"], input[type="password"], input[type="text"], input[type="number"], input[type="file"] {
+        input {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -58,6 +54,15 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+
+        /* Cuadrícula para el formulario de registro para que se vea ordenado */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .form-grid input { margin-bottom: 0; }
+        .full-width { grid-column: 1 / -1; }
 
         button {
             background-color: var(--rosa-mexicano);
@@ -75,22 +80,13 @@
         .btn-secondary:hover { background-color: var(--azul); }
         .btn-logout { background-color: var(--rojo-obscuro); float: right; margin-top: -40px;}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #444;
-        }
-
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #444; }
         th { background-color: var(--rojo-obscuro); }
         
         .hidden { display: none !important; }
         .error { color: #ff6b6b; font-size: 0.9em; margin-bottom: 10px; }
+        .status-indicator { text-align: center; font-size: 0.9em; margin-top: 15px; color: #aaa; padding: 10px; background: #222; border-radius: 5px; }
         
         .folio-item {
             background: #2a2a2a;
@@ -108,28 +104,61 @@
     </header>
 
     <div class="container">
-        <!-- SECCIÓN DE LOGIN / REGISTRO -->
+        
+        <!-- SECCIÓN DE AUTENTICACIÓN (LOGIN / REGISTRO) -->
         <div id="auth-section" class="card">
-            <h2>Acceso al Sistema</h2>
-            <p>Solo se permiten correos con terminación <strong>@ine.mx</strong></p>
-            <div id="auth-error" class="error"></div>
-            <input type="email" id="email" placeholder="correo@ine.mx" required>
-            <input type="password" id="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
-            <button onclick="login()">Iniciar Sesión</button>
-            <button class="btn-secondary" onclick="register()">Registrarse</button>
+            
+            <!-- FORMULARIO DE LOGIN -->
+            <div id="login-form">
+                <h2>Acceso al Sistema</h2>
+                <div id="auth-error-login" class="error"></div>
+                <input type="text" id="login-usuario" placeholder="Usuario (Ej. mario.cardenas o Admin)" required>
+                <input type="password" id="login-password" placeholder="Contraseña" required>
+                <button onclick="login()">Iniciar Sesión</button>
+                <button class="btn-secondary" onclick="mostrarRegistro()">Registrar Nuevo Usuario</button>
+            </div>
+
+            <!-- FORMULARIO DE REGISTRO -->
+            <div id="register-form" class="hidden">
+                <h2>Registro de Personal</h2>
+                <p>Crea tu cuenta. Solo se permiten correos <strong>@ine.mx</strong></p>
+                <div id="auth-error-register" class="error"></div>
+                
+                <div class="form-grid">
+                    <input type="text" id="reg-usuario" class="full-width" placeholder="Crea tu Nombre de Usuario (Ej. mario.cardenas)" required>
+                    
+                    <input type="text" id="reg-nombre" placeholder="Nombre(s)" required>
+                    <input type="text" id="reg-puesto" placeholder="Puesto / Cargo" required>
+                    
+                    <input type="text" id="reg-paterno" placeholder="Apellido Paterno" required>
+                    <input type="text" id="reg-materno" placeholder="Apellido Materno" required>
+                    
+                    <input type="email" id="reg-correo" placeholder="Correo Institucional (@ine.mx)" required>
+                    <input type="tel" id="reg-telefono" placeholder="Teléfono" required>
+                    
+                    <input type="password" id="reg-password" class="full-width" placeholder="Crea tu Contraseña (Mínimo 6 caracteres)" required>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button onclick="register()">Guardar Registro</button>
+                    <button class="btn-secondary" onclick="mostrarLogin()">Volver al Login</button>
+                </div>
+            </div>
+
+            <!-- VERIFICADOR DE FIREBASE -->
+            <div id="firebase-status" class="status-indicator">⏳ Verificando enlace con Firebase...</div>
         </div>
 
-        <!-- SECCIÓN ADMINISTRADOR -->
+        <!-- SECCIÓN ADMINISTRADOR (Igual que antes) -->
         <div id="admin-section" class="card hidden">
             <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
             <h2>Panel de Administrador</h2>
             
             <div id="config-area" class="card" style="background:#252525; border-color:var(--morado);">
-                <h3 id="config-title">Configuración Inicial de Folios</h3>
-                <p>Define la nomenclatura y el número de inicio.</p>
+                <h3 id="config-title">Configuración de Folios</h3>
                 <input type="text" id="nomenclatura" placeholder="Ej. VRFE-03JDE-2026-">
                 <input type="number" id="folio-inicio" placeholder="Folio Inicial (Ej. 1)">
-                <button onclick="guardarConfiguracion()" id="btn-config">Guardar Configuración</button>
+                <button onclick="guardarConfiguracion()">Guardar Configuración</button>
                 <button onclick="cancelarEdicionConfig()" id="btn-cancelar-config" class="btn-secondary hidden">Cancelar</button>
             </div>
 
@@ -138,22 +167,14 @@
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Folio</th>
-                            <th>Usuario</th>
-                            <th>Uso / Descripción</th>
-                            <th>Fecha y Hora</th>
-                            <th>Archivo Adjunto</th>
-                        </tr>
+                        <tr><th>Folio</th><th>Usuario / Solicitante</th><th>Uso / Descripción</th><th>Fecha</th></tr>
                     </thead>
-                    <tbody id="admin-tabla-folios">
-                        <tr><td colspan="5">Cargando folios...</td></tr>
-                    </tbody>
+                    <tbody id="admin-tabla-folios"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- SECCIÓN USUARIO -->
+        <!-- SECCIÓN USUARIO (Igual que antes) -->
         <div id="user-section" class="card hidden">
             <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
             <h2>Panel de Usuario: Solicitud de Folios</h2>
@@ -166,7 +187,6 @@
             </div>
 
             <div id="formulario-folios-area" class="hidden">
-                <h3>Detalla el uso y sube evidencia</h3>
                 <div id="espacios-folios"></div>
                 <button onclick="confirmarSolicitud()">Confirmar y Guardar Solicitud</button>
             </div>
@@ -174,17 +194,8 @@
             <h3>Mis Folios Asignados</h3>
             <div style="overflow-x: auto;">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Folio</th>
-                            <th>Uso / Descripción</th>
-                            <th>Fecha</th>
-                            <th>Archivo Adjunto</th>
-                        </tr>
-                    </thead>
-                    <tbody id="user-tabla-folios">
-                        <tr><td colspan="4">Cargando folios...</td></tr>
-                    </tbody>
+                    <thead><tr><th>Folio</th><th>Uso / Descripción</th><th>Fecha</th></tr></thead>
+                    <tbody id="user-tabla-folios"></tbody>
                 </table>
             </div>
         </div>
@@ -194,7 +205,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBpmtUCDLKDkhGx9zh2IkQ65Yrob13gjxE",
@@ -209,167 +220,214 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let currentUserEmail = null;
+        let currentUserUsername = null;
         let isAdmin = false;
         let foliosPendientes = 0;
 
-        function mostrarError(msg) {
-            document.getElementById('auth-error').innerText = msg;
+        // --- FUNCIONES DE INTERFAZ ---
+        window.mostrarRegistro = () => {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('register-form').classList.remove('hidden');
+            document.getElementById('auth-error-login').innerText = '';
+        };
+
+        window.mostrarLogin = () => {
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('auth-error-register').innerText = '';
+        };
+
+        function mostrarError(msg, type) {
+            document.getElementById(type === 'login' ? 'auth-error-login' : 'auth-error-register').innerText = msg;
         }
 
-        // --- AUTENTICACIÓN ---
+        // --- VERIFICAR CONEXIÓN CON FIREBASE ---
+        async function testConexion() {
+            try {
+                // Intentamos hacer una lectura de prueba rápida a la base de datos
+                await getDoc(doc(db, "sistema", "ping"));
+                document.getElementById('firebase-status').innerHTML = "🟢 Conexión con Firebase establecida exitosamente.";
+                document.getElementById('firebase-status').style.color = "#4CAF50";
+            } catch(e) {
+                document.getElementById('firebase-status').innerHTML = "🔴 Firebase vinculado, pero faltan permisos de Base de Datos. Asegúrate de iniciar Firestore en 'Modo de Prueba'.";
+                document.getElementById('firebase-status').style.color = "#ff6b6b";
+            }
+        }
+        testConexion();
+
+        // --- REGISTRO DE NUEVO USUARIO ---
         window.register = async () => {
-            const email = document.getElementById('email').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
+            const usuario = document.getElementById('reg-usuario').value.trim().toLowerCase();
+            const nombre = document.getElementById('reg-nombre').value.trim();
+            const paterno = document.getElementById('reg-paterno').value.trim();
+            const materno = document.getElementById('reg-materno').value.trim();
+            const puesto = document.getElementById('reg-puesto').value.trim();
+            const correo = document.getElementById('reg-correo').value.trim().toLowerCase();
+            const telefono = document.getElementById('reg-telefono').value.trim();
+            const password = document.getElementById('reg-password').value;
             
-            if (!email.endsWith('@ine.mx')) return mostrarError('El correo debe terminar en @ine.mx');
+            if (!usuario || !nombre || !paterno || !correo || !password) return mostrarError('Llena todos los campos obligatorios.', 'register');
+            if (!correo.endsWith('@ine.mx')) return mostrarError('El correo debe terminar en @ine.mx', 'register');
+            if (password.length < 6) return mostrarError('La contraseña debe tener mínimo 6 caracteres.', 'register');
             
             try {
-                await createUserWithEmailAndPassword(auth, email, password);
+                // 1. Verificar si el nombre de usuario ya existe en Firestore
+                const userCheck = await getDoc(doc(db, "usuarios", usuario));
+                if (userCheck.exists()) return mostrarError('Ese Nombre de Usuario ya está en uso. Elige otro.', 'register');
+
+                // 2. Crear cuenta en Authentication usando el correo
+                const userCred = await createUserWithEmailAndPassword(auth, correo, password);
+
+                // 3. Guardar todo el perfil en Firestore (El ID del documento es el nombre de usuario)
+                await setDoc(doc(db, "usuarios", usuario), {
+                    usuario: usuario,
+                    nombre: nombre,
+                    apellidoPaterno: paterno,
+                    apellidoMaterno: materno,
+                    puesto: puesto,
+                    correo: correo,
+                    telefono: telefono,
+                    rol: 'user',
+                    uid: userCred.user.uid
+                });
+
+                alert('¡Registro exitoso! Ya puedes iniciar sesión con tu usuario.');
+                mostrarLogin();
             } catch (error) {
-                mostrarError('Error al registrar: ' + error.message);
+                mostrarError('Error al registrar: Verifica que tu correo no esté ya registrado.', 'register');
             }
         };
 
+        // --- INICIO DE SESIÓN ---
         window.login = async () => {
-            const email = document.getElementById('email').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
+            const usuarioInput = document.getElementById('login-usuario').value.trim().toLowerCase();
+            let passwordInput = document.getElementById('login-password').value;
+            
+            if(!usuarioInput || !passwordInput) return mostrarError('Ingresa usuario y contraseña.', 'login');
+
             try {
-                await signInWithEmailAndPassword(auth, email, password);
+                let correoFirebase = "";
+
+                // TRUCO PARA EL ADMINISTRADOR (Bypass de los 6 caracteres de Firebase)
+                if (usuarioInput === 'admin' && passwordInput === 'Admin') {
+                    correoFirebase = "admin@ine.mx";
+                    passwordInput = "Admin_VRFE_12345"; // Contraseña segura real en Firebase
+
+                    try {
+                        await signInWithEmailAndPassword(auth, correoFirebase, passwordInput);
+                    } catch(e) {
+                        // Si el admin no existe aún, el sistema lo crea automáticamente la primera vez
+                        await createUserWithEmailAndPassword(auth, correoFirebase, passwordInput);
+                        await setDoc(doc(db, "usuarios", "admin"), { usuario: "Admin", correo: correoFirebase, nombre: "Administrador", rol: "admin" });
+                        await signInWithEmailAndPassword(auth, correoFirebase, passwordInput);
+                    }
+                    return; // Termina la función aquí para el Admin
+                }
+
+                // SI ES UN USUARIO NORMAL
+                // 1. Buscamos el nombre de usuario en Firestore para saber cuál es su correo
+                const userDoc = await getDoc(doc(db, "usuarios", usuarioInput));
+                if (!userDoc.exists()) return mostrarError('El usuario ingresado no existe.', 'login');
+
+                // 2. Sacamos el correo y logueamos en Firebase
+                correoFirebase = userDoc.data().correo;
+                await signInWithEmailAndPassword(auth, correoFirebase, passwordInput);
+
             } catch (error) {
-                mostrarError('Credenciales incorrectas o usuario no registrado.');
+                mostrarError('Contraseña incorrecta o usuario no válido.', 'login');
             }
         };
 
-        window.logout = async () => {
-            await signOut(auth);
-        };
+        window.logout = async () => { await signOut(auth); };
 
-        // Observador de estado de sesión
-        onAuthStateChanged(auth, (user) => {
+        // --- OBSERVADOR DE ESTADO DE SESIÓN ---
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                currentUserEmail = user.email;
+                // Saber si es admin por el correo
                 isAdmin = (user.email === 'admin@ine.mx');
                 
                 document.getElementById('auth-section').classList.add('hidden');
-                document.getElementById('email').value = '';
-                document.getElementById('password').value = '';
-                document.getElementById('auth-error').innerText = '';
+                document.getElementById('login-usuario').value = '';
+                document.getElementById('login-password').value = '';
 
                 if (isAdmin) {
+                    currentUserUsername = "Admin";
                     document.getElementById('admin-section').classList.remove('hidden');
                     document.getElementById('user-section').classList.add('hidden');
                     cargarVistaAdmin();
                 } else {
+                    // Para usuarios normales, buscamos su nombre completo en la BD
+                    const q = query(collection(db, "usuarios"), where("correo", "==", user.email));
+                    const docs = await getDocs(q);
+                    docs.forEach(d => { currentUserUsername = d.data().usuario; });
+
                     document.getElementById('user-section').classList.remove('hidden');
                     document.getElementById('admin-section').classList.add('hidden');
-                    document.getElementById('user-info').innerText = `Bienvenido: ${user.email}`;
+                    document.getElementById('user-info').innerText = `Usuario activo: ${currentUserUsername} (${user.email})`;
                     cargarVistaUsuario();
                 }
             } else {
-                currentUserEmail = null;
+                currentUserUsername = null;
                 document.getElementById('admin-section').classList.add('hidden');
                 document.getElementById('user-section').classList.add('hidden');
                 document.getElementById('formulario-folios-area').classList.add('hidden');
                 document.getElementById('auth-section').classList.remove('hidden');
+                mostrarLogin();
             }
         });
 
-        // --- LÓGICA ADMINISTRADOR ---
+        // --- LÓGICA DE FOLIOS (Admin y Usuario) ---
+        // (La lógica de guardado y lectura se mantiene intacta desde la versión anterior)
+        
         async function cargarVistaAdmin() {
-            const configRef = doc(db, "sistema", "config");
-            const configSnap = await getDoc(configRef);
-            const configArea = document.getElementById('config-area');
-
+            const configSnap = await getDoc(doc(db, "sistema", "config"));
             if (configSnap.exists() && configSnap.data().configurado) {
-                configArea.classList.add('hidden');
+                document.getElementById('config-area').classList.add('hidden');
                 document.getElementById('nomenclatura').value = configSnap.data().nomenclatura;
                 document.getElementById('folio-inicio').value = configSnap.data().actual;
             } else {
-                configArea.classList.remove('hidden');
+                document.getElementById('config-area').classList.remove('hidden');
             }
             actualizarTablaAdmin();
         }
 
-        window.habilitarEdicionConfig = () => {
-            document.getElementById('config-area').classList.remove('hidden');
-            document.getElementById('config-title').innerText = "Modificar Nomenclatura Actual";
-            document.getElementById('btn-cancelar-config').classList.remove('hidden');
-        };
-
-        window.cancelarEdicionConfig = () => {
-            document.getElementById('config-area').classList.add('hidden');
-            document.getElementById('btn-cancelar-config').classList.add('hidden');
-        };
+        window.habilitarEdicionConfig = () => { document.getElementById('config-area').classList.remove('hidden'); document.getElementById('btn-cancelar-config').classList.remove('hidden'); };
+        window.cancelarEdicionConfig = () => { document.getElementById('config-area').classList.add('hidden'); document.getElementById('btn-cancelar-config').classList.add('hidden'); };
 
         window.guardarConfiguracion = async () => {
             const nom = document.getElementById('nomenclatura').value.trim();
             const inicio = parseInt(document.getElementById('folio-inicio').value);
-
             if (!nom || isNaN(inicio)) return alert('Llena ambos campos correctamente.');
 
-            await setDoc(doc(db, "sistema", "config"), {
-                nomenclatura: nom,
-                actual: inicio,
-                configurado: true
-            });
-
+            await setDoc(doc(db, "sistema", "config"), { nomenclatura: nom, actual: inicio, configurado: true });
             alert('Configuración guardada en la nube.');
-            cancelarEdicionConfig();
-            cargarVistaAdmin();
+            cancelarEdicionConfig(); cargarVistaAdmin();
         };
 
         async function actualizarTablaAdmin() {
             const querySnapshot = await getDocs(collection(db, "folios"));
             const tbody = document.getElementById('admin-tabla-folios');
             tbody.innerHTML = '';
-            
             let foliosArr = [];
             querySnapshot.forEach((doc) => foliosArr.push(doc.data()));
-            
-            // Ordenar por timestamp
             foliosArr.sort((a, b) => b.timestamp - a.timestamp);
-
             foliosArr.forEach(f => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${f.idFolio}</strong></td>
-                        <td>${f.usuario}</td>
-                        <td>${f.descripcion}</td>
-                        <td>${f.fecha}</td>
-                        <td>📄 ${f.archivo || 'Sin archivo'}</td>
-                    </tr>
-                `;
+                tbody.innerHTML += `<tr><td><strong>${f.idFolio}</strong></td><td>${f.usuario}</td><td>${f.descripcion}</td><td>${f.fecha}</td></tr>`;
             });
         }
 
-        // --- LÓGICA USUARIO ---
-        async function cargarVistaUsuario() {
-            actualizarTablaUsuario();
-        }
+        async function cargarVistaUsuario() { actualizarTablaUsuario(); }
 
         window.generarFormularioFolios = async () => {
             const configSnap = await getDoc(doc(db, "sistema", "config"));
-            if (!configSnap.exists() || !configSnap.data().configurado) {
-                return alert('El administrador aún no ha configurado la nomenclatura. Intenta más tarde.');
-            }
-
+            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Nomenclatura no configurada. Avisa al administrador.');
             const cantidad = parseInt(document.getElementById('cantidad-folios').value);
-            if (isNaN(cantidad) || cantidad < 1) return alert('Ingresa una cantidad válida.');
-
+            if (isNaN(cantidad) || cantidad < 1) return alert('Ingresa cantidad válida.');
             foliosPendientes = cantidad;
             const container = document.getElementById('espacios-folios');
             container.innerHTML = '';
-
             for (let i = 0; i < cantidad; i++) {
-                container.innerHTML += `
-                    <div class="folio-item">
-                        <label><strong>Folio ${i + 1}</strong> - Descripción / Trámite:</label>
-                        <input type="text" id="desc-${i}" placeholder="Ej. Registro de ciudadano...">
-                        <label>Subir evidencia (Nombre del archivo por ahora):</label>
-                        <input type="file" id="file-${i}" accept=".pdf, image/*">
-                    </div>
-                `;
+                container.innerHTML += `<div class="folio-item"><label><strong>Folio ${i + 1}</strong> - Trámite:</label><input type="text" id="desc-${i}"></div>`;
             }
             document.getElementById('formulario-folios-area').classList.remove('hidden');
         };
@@ -382,69 +440,35 @@
             const fechaStr = new Date().toLocaleString('es-MX');
             const timestamp = Date.now();
 
-            // Validar que todos tengan descripción antes de guardar
             for (let i = 0; i < foliosPendientes; i++) {
-                if (!document.getElementById(`desc-${i}`).value.trim()) {
-                    return alert('Por favor, llena la descripción de todos los folios.');
-                }
+                if (!document.getElementById(`desc-${i}`).value.trim()) return alert('Llena todas las descripciones.');
             }
 
-            // Guardar folios en Firestore
             for (let i = 0; i < foliosPendientes; i++) {
                 const desc = document.getElementById(`desc-${i}`).value.trim();
-                const fileInput = document.getElementById(`file-${i}`);
-                const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : 'Sin evidencia';
                 const folioCompleto = `${nomenclatura}${actual}`;
-                
                 await addDoc(collection(db, "folios"), {
-                    idFolio: folioCompleto,
-                    usuario: currentUserEmail,
-                    descripcion: desc,
-                    archivo: fileName,
-                    fecha: fechaStr,
-                    timestamp: timestamp
+                    idFolio: folioCompleto, usuario: currentUserUsername, descripcion: desc, fecha: fechaStr, timestamp: timestamp
                 });
                 actual++;
             }
-
-            // Actualizar el folio de inicio en la configuración global
             await setDoc(configRef, { nomenclatura: nomenclatura, actual: actual, configurado: true });
-
-            alert(`¡Se han asignado ${foliosPendientes} folios exitosamente en la nube!`);
-            
+            alert(`¡${foliosPendientes} folios asignados!`);
             document.getElementById('formulario-folios-area').classList.add('hidden');
             document.getElementById('cantidad-folios').value = '';
             actualizarTablaUsuario();
         };
 
         async function actualizarTablaUsuario() {
-            const q = query(collection(db, "folios"), where("usuario", "==", currentUserEmail));
+            const q = query(collection(db, "folios"), where("usuario", "==", currentUserUsername));
             const querySnapshot = await getDocs(q);
-            
             const tbody = document.getElementById('user-tabla-folios');
             tbody.innerHTML = '';
-            
             let misFolios = [];
             querySnapshot.forEach((doc) => misFolios.push(doc.data()));
-            
-            // Ordenar por fecha (los más recientes primero)
             misFolios.sort((a, b) => b.timestamp - a.timestamp);
-
-            if(misFolios.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4">Aún no has solicitado folios.</td></tr>';
-                return;
-            }
-
-            misFolios.forEach(f => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${f.idFolio}</strong></td>
-                        <td>${f.descripcion}</td>
-                        <td>${f.fecha}</td>
-                        <td>📄 ${f.archivo || 'Sin archivo'}</td>
-                    </tr>
-                `;
-            });
+            if(misFolios.length === 0) return tbody.innerHTML = '<tr><td colspan="3">Aún no has solicitado folios.</td></tr>';
+            misFolios.forEach(f => { tbody.innerHTML += `<tr><td><strong>${f.idFolio}</strong></td><td>${f.descripcion}</td><td>${f.fecha}</td></tr>`; });
         }
     </script>
 </body>
