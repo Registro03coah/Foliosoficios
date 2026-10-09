@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VRFE 03JDE - Gestión de Folios</title>
-    <!-- Librería para leer y exportar Excel -->
+    <!-- Librería SheetJS para Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -15,21 +15,22 @@
             --azul-brillante: #3a6ea5;
             --negro-mate: #121212;
             --texto: #f1f1f1;
-            --tarjeta-bg: rgba(18, 18, 18, 0.85);
+            --tarjeta-bg: rgba(18, 18, 18, 0.9);
         }
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--texto); margin: 0; padding: 0; background-color: var(--negro-mate); background-image: url('lineasazules_fondo.avif'); background-size: cover; background-position: center; background-attachment: fixed; display: flex; flex-direction: column; min-height: 100vh; }
-        header { background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 20px; text-align: center; border-bottom: 4px solid var(--azul-brillante); box-shadow: 0 4px 10px rgba(0,0,0,0.6); }
-        h1, h2, h3 { margin: 0 0 15px 0; }
-        .container { max-width: 1050px; margin: 30px auto; padding: 20px; flex: 1; }
-        .login-container { max-width: 420px !important; margin: 30px auto; }
         
-        .card { background-color: var(--tarjeta-bg); padding: 20px; border-radius: 8px; border-top: 3px solid var(--azul-claro); box-shadow: 0 8px 16px rgba(0,0,0,0.7); margin-bottom: 20px; backdrop-filter: blur(5px); }
+        /* Encabezado Fijo */
+        header { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 15px 0; text-align: center; border-bottom: 4px solid var(--azul-brillante); box-shadow: 0 4px 15px rgba(0,0,0,0.8); }
+        
+        .container { max-width: 1050px; margin: 140px auto 30px auto; padding: 20px; flex: 1; width: 100%; box-sizing: border-box; }
+        .login-container { max-width: 420px !important; margin: 120px auto 30px auto; }
+        
+        .card { background-color: var(--tarjeta-bg); padding: 20px; border-radius: 8px; border-top: 3px solid var(--azul-claro); box-shadow: 0 8px 16px rgba(0,0,0,0.7); margin-bottom: 20px; backdrop-filter: blur(5px); position: relative; }
         
         input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; }
         input:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 5px var(--azul-brillante); }
 
-        /* Contenedor para el campo de contraseña con botón de ver/ocultar */
         .password-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
         .password-wrapper input { margin-bottom: 0; padding-right: 40px; }
         .toggle-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; cursor: pointer; font-size: 1.1em; padding: 0; font-weight: normal; box-shadow: none; }
@@ -47,9 +48,12 @@
         .btn-secondary:hover { background-color: var(--azul-claro); }
         .btn-danger { background-color: #5a1818; border-color: #8B0000; }
         .btn-danger:hover { background-color: #8B0000; }
-        .btn-logout { background-color: #5a1818; border-color: #8B0000; float: right; margin-top: -40px;}
+        .btn-logout { background-color: #5a1818; border-color: #8B0000; float: right; margin-top: -5px;}
         .btn-logout:hover { background-color: #8B0000; }
         .btn-small { padding: 5px 10px; font-size: 0.8em; }
+
+        /* Cuadrito Azul Indicador de Último Folio */
+        .badge-ultimo-folio { background-color: var(--azul-brillante); color: white; padding: 8px 15px; border-radius: 6px; font-size: 0.85em; font-weight: bold; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.5); border: 1px solid #6096ba; float: right; margin-top: -8px; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; background-color: rgba(0,0,0,0.4); }
         th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); }
@@ -59,21 +63,31 @@
         .error { color: #ff6b6b; font-size: 0.9em; margin-bottom: 10px; background: rgba(255,0,0,0.1); padding: 5px; border-radius: 3px;}
         .status-indicator { text-align: center; font-size: 0.9em; margin-top: 15px; color: #aaa; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 5px; }
         .alerta-evidencia { background-color: rgba(139, 0, 0, 0.8); color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #ff4d4d; }
-        .folio-item { background: rgba(0,0,0,0.5); padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--azul-brillante); }
-        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 15px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 4px; border: 1px solid var(--azul-oscuro); }
+        .folio-item { background: rgba(0,0,0,0.5); padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--azul-brillante); border-radius: 4px; }
         
-        /* Modal de Edición */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 20px; border-radius: 8px; width: 400px; box-shadow: 0 0 20px rgba(58, 110, 165, 0.5); }
 
-        footer { text-align: center; padding: 15px; background-color: var(--azul-oscuro); color: #888; font-size: 0.85em; border-top: 1px solid var(--azul-medio); }
+        footer { text-align: center; padding: 15px; background-color: var(--azul-oscuro); color: #888; font-size: 0.85em; border-top: 1px solid var(--azul-medio); z-index: 10; }
+
+        /* ESTILOS EXCLUSIVOS PARA IMPRESIÓN (Carta Horizontal) */
+        @media print {
+            body { background: white !important; color: black !important; }
+            header, .card:not(#printable-report-card), footer, button, input, .badge-ultimo-folio { display: none !important; }
+            .container { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+            #user-section { background: white !important; border: none !important; box-shadow: none !important; color: black !important; }
+            table { background: white !important; color: black !important; border: 1px solid #ccc !important; font-size: 10pt !important; }
+            th { background-color: #1d3557 !important; color: white !important; -webkit-print-color-adjust: exact; }
+            td, th { border: 1px solid #ddd !important; }
+            @page { size: landscape; margin: 1cm; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Vocalía del Registro Federal de Electores</h1>
-        <p>03 Junta Distrital Ejecutiva (VRFE 03JDE)</p>
+        <h1 style="font-size: 1.5em; margin: 0;">Vocalía del Registro Federal de Electores</h1>
+        <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva (VRFE 03JDE)</p>
     </header>
 
     <div class="container" id="main-container">
@@ -139,7 +153,6 @@
                 <button onclick="cancelarEdicionConfig()" id="btn-cancelar-config" class="btn-secondary hidden">Cancelar</button>
             </div>
 
-            <!-- CONTROLES AVANZADOS DE IMPORTACIÓN/EXPORTACIÓN -->
             <div class="card" style="background: rgba(0,0,0,0.4); border-color:var(--azul-claro);">
                 <h3>📦 Herramientas de Base de Datos</h3>
                 <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
@@ -155,21 +168,18 @@
                 </div>
             </div>
             
-            <!-- PESTAÑAS ADMIN -->
             <div style="display:flex; gap:10px; margin-bottom:15px;">
                 <button onclick="mostrarTabAdmin('folios')">Todos los Folios</button>
                 <button class="btn-secondary" onclick="mostrarTabAdmin('usuarios')">Gestión de Usuarios</button>
             </div>
 
-            <!-- TABLA TODOS LOS FOLIOS -->
             <div id="admin-tab-folios" style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Folio</th><th>Asignado a</th><th>Descripción</th><th>Fecha</th><th>Evidencia</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Folio</th><th>Asignado a</th><th>Destinado / Descripción</th><th>Fecha</th><th>Evidencia</th><th>Acciones</th></tr></thead>
                     <tbody id="admin-tabla-folios"></tbody>
                 </table>
             </div>
 
-            <!-- TABLA DE USUARIOS -->
             <div id="admin-tab-usuarios" class="hidden" style="overflow-x: auto;">
                 <table>
                     <thead><tr><th>Usuario / Nombre</th><th>Correo</th><th>Contraseña</th><th>Rol</th><th>Acción</th></tr></thead>
@@ -179,40 +189,36 @@
         </div>
 
         <!-- SECCIÓN USUARIO -->
-        <div id="user-section" class="card hidden">
+        <div id="user-section" class="card hidden" id="printable-report-card">
             <button class="btn-logout" id="btn-logout-user" onclick="logout()">Cerrar Sesión</button>
+            <div id="badge-ultimo-container" class="badge-ultimo-folio">Último Folio: Cargando...</div>
+            
             <h2>Solicitud y Mis Folios</h2>
             <p id="user-info"></p>
             
             <div id="alerta-evidencia-container" class="hidden alerta-evidencia">
-                <strong>⚠️ AVISO IMPORTANTE:</strong> Tienes folios con más de 5 días de antigüedad sin evidencia adjunta. Por favor, sube el archivo correspondiente a los folios: <span id="folios-atrasados-lista"></span>.
+                <strong>⚠️ AVISO IMPORTANTE:</strong> Tienes folios con más de 5 días de antigüedad sin evidencia adjunta. Folios pendientes: <span id="folios-atrasados-lista"></span>.
             </div>
 
             <div class="card" style="background: rgba(0,0,0,0.6); border-color:var(--azul-medio);">
-                <h3>¿Cuántos folios necesitas?</h3>
+                <h3>¿Cuántos folios necesitas solicitar?</h3>
                 <input type="number" id="cantidad-folios" min="1" max="50" placeholder="Ej. 5">
                 <button onclick="generarFormularioFolios()">Generar Espacios</button>
             </div>
 
             <div id="formulario-folios-area" class="hidden">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="check-misma-desc" onchange="toggleDescMasiva()"> 
-                    <strong>Usar la misma descripción para TODOS los folios solicitados</strong>
-                </label>
-                
-                <div id="desc-unica-area" class="hidden folio-item" style="border-color: var(--azul-brillante);">
-                    <label>Descripción General (Aplica para todos):</label>
-                    <input type="text" id="desc-unica" placeholder="Ej. Oficios de notificación a módulos...">
-                </div>
-
                 <div id="espacios-folios"></div>
                 <button onclick="confirmarSolicitud()">Confirmar y Asignar Folios</button>
             </div>
 
-            <h3>Historial de mis Folios</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                <h3 style="margin: 0;">Historial de mis Folios</h3>
+                <button onclick="window.print()" class="btn-secondary" style="background-color: #1d3557; border-color: var(--azul-brillante);">🖨️ Imprimir Reporte (Carta Horizontal)</button>
+            </div>
+            
             <div style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Folio</th><th>Descripción</th><th>Fecha</th><th>Evidencia</th></tr></thead>
+                    <thead><tr><th>Folio</th><th>Fecha</th><th>Destinado a</th><th>Descripción / Observaciones</th><th>Evidencia</th></tr></thead>
                     <tbody id="user-tabla-folios"></tbody>
                 </table>
             </div>
@@ -228,7 +234,9 @@
             <input type="text" id="edit-folio">
             <label>Asignado a (Usuario):</label>
             <input type="text" id="edit-usuario">
-            <label>Descripción:</label>
+            <label>Destinado a:</label>
+            <input type="text" id="edit-destinado">
+            <label>Descripción / Observaciones:</label>
             <input type="text" id="edit-desc">
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button onclick="guardarEdicionFolio()" style="flex:1;">Guardar Cambios</button>
@@ -237,9 +245,8 @@
         </div>
     </div>
 
-    <!-- PIE DE PÁGINA -->
     <footer>
-        &copy; 2026 Derechos Reservados - Sistema Generador de Oficios (WEB) | Versión 0.1.6
+        &copy; 2026 Derechos Reservados - Sistema Generador de Oficios (WEB) | Versión 0.1.7
     </footer>
 
     <!-- SCRIPT FIREBASE -->
@@ -260,19 +267,12 @@
         let currentUserRole = 'user';
         let foliosPendientes = 0;
 
-        // --- FUNCIÓN MOSTRAR / OCULTAR CONTRASEÑA ---
         window.togglePasswordVisibility = (idField, btn) => {
             const input = document.getElementById(idField);
-            if (input.type === "password") {
-                input.type = "text";
-                btn.innerText = " ocultar ";
-            } else {
-                input.type = "password";
-                btn.innerText = "👁️";
-            }
+            if (input.type === "password") { input.type = "text"; btn.innerText = " ocultar "; } 
+            else { input.type = "password"; btn.innerText = "👁️"; }
         };
 
-        // --- INTERFAZ LOGIN ---
         window.mostrarRegistro = () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); document.getElementById('auth-error-login').classList.add('hidden'); };
         window.mostrarLogin = () => { document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); document.getElementById('auth-error-register').classList.add('hidden'); };
         function mostrarError(msg, type) { const errorDiv = document.getElementById(type === 'login' ? 'auth-error-login' : 'auth-error-register'); errorDiv.innerText = msg; errorDiv.classList.remove('hidden'); }
@@ -283,7 +283,6 @@
         }
         testConexion();
 
-        // --- REGISTRO CON DOBLE CONTRASEÑA ---
         window.register = async () => {
             const usuario = document.getElementById('reg-usuario').value.trim().toLowerCase();
             const nombre = document.getElementById('reg-nombre').value.trim();
@@ -298,7 +297,7 @@
             if (!usuario || !nombre || !correo || !password || !passwordConfirm) return mostrarError('Llena todos los campos obligatorios.', 'register');
             if (!correo.endsWith('@ine.mx')) return mostrarError('El correo debe terminar en @ine.mx', 'register');
             if (password.length < 6) return mostrarError('La contraseña debe tener al menos 6 caracteres.', 'register');
-            if (password !== passwordConfirm) return mostrarError('Las contraseñas no coinciden. Verifícalas.', 'register');
+            if (password !== passwordConfirm) return mostrarError('Las contraseñas no coinciden.', 'register');
             
             try {
                 const userCheck = await getDoc(doc(db, "usuarios", usuario));
@@ -306,16 +305,14 @@
                 
                 const userCred = await createUserWithEmailAndPassword(auth, correo, password);
                 await setDoc(doc(db, "usuarios", usuario), { usuario, nombre, apellidoPaterno: paterno, apellidoMaterno: materno, puesto, correo, telefono, password, rol: 'user', uid: userCred.user.uid });
-                
-                alert('¡Registro exitoso! Ya puedes iniciar sesión.'); 
-                mostrarLogin();
-            } catch (error) { mostrarError('Error al registrar: Verifique que el correo no esté duplicado.', 'register'); }
+                alert('¡Registro exitoso!'); mostrarLogin();
+            } catch (error) { mostrarError('Error al registrar.', 'register'); }
         };
 
         window.login = async () => {
             const usuarioInput = document.getElementById('login-usuario').value.trim().toLowerCase();
             let passwordInput = document.getElementById('login-password').value;
-            if(!usuarioInput || !passwordInput) return mostrarError('Ingresa tus datos de acceso.', 'login');
+            if(!usuarioInput || !passwordInput) return mostrarError('Ingresa tus datos.', 'login');
 
             try {
                 let correoFirebase = "";
@@ -421,11 +418,11 @@
                 tbody.innerHTML += `<tr>
                     <td><strong>${f.idFolio}</strong>${badge}</td>
                     <td>${f.usuario}</td>
-                    <td>${f.descripcion}</td>
+                    <td><strong>Destinado a:</strong> ${f.destinadoA || 'N/D'}<br><strong>Obs:</strong> ${f.descripcion}</td>
                     <td>${f.fecha}</td>
                     <td>${evidencia}</td>
                     <td>
-                        <button class="btn-small" onclick="abrirModalEdicion('${f.id}', '${f.idFolio}', '${f.usuario}', '${f.descripcion}')">✏️ Edit</button>
+                        <button class="btn-small" onclick="abrirModalEdicion('${f.id}', '${f.idFolio}', '${f.usuario}', '${f.destinadoA || ''}', '${f.descripcion}')">✏️ Edit</button>
                         <button class="btn-small btn-danger" onclick="eliminarFolio('${f.id}', '${f.idFolio}')">🗑️</button>
                     </td>
                 </tr>`;
@@ -452,7 +449,6 @@
             if(confirm(`¿Cambiar rol de ${username} a ${newRole.toUpperCase()}?`)) { await updateDoc(doc(db, "usuarios", username), { rol: newRole }); cargarUsuariosAdmin(); }
         };
 
-        // --- IMPORTAR / EXPORTAR A EXCEL ---
         window.exportarExcel = async () => {
             const querySnapshot = await getDocs(collection(db, "folios"));
             let foliosArr = [];
@@ -461,15 +457,16 @@
                 foliosArr.push({
                     "Folio": d.idFolio,
                     "Usuario": d.usuario,
-                    "Descripción": d.descripcion,
-                    "Fecha Asignación": d.fecha,
-                    "Archivo/Evidencia": d.archivo || (d.exentoEvidencia ? "Importado (Sin evidencia)" : "Pendiente")
+                    "Destinado a": d.destinadoA || "",
+                    "Descripción / Observaciones": d.descripcion,
+                    "Fecha": d.fecha,
+                    "Evidencia": d.archivo || "Pendiente"
                 });
             });
             const ws = XLSX.utils.json_to_sheet(foliosArr);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Folios Registrados");
-            XLSX.writeFile(wb, "Respaldo_VRFE03_Folios.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Folios");
+            XLSX.writeFile(wb, "Respaldo_Folios_VRFE03.xlsx");
         };
 
         window.importarExcel = (event) => {
@@ -482,17 +479,17 @@
                     const workbook = XLSX.read(data, {type: 'array'});
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     const rows = XLSX.utils.sheet_to_json(firstSheet);
-                    
                     let importados = 0;
                     const timestampBase = Date.now();
-                    const fechaStr = new Date().toLocaleString('es-MX');
+                    const fechaStr = new Date().toLocaleDateString('es-MX');
 
                     for (let row of rows) {
-                        if (row.Folio && row.Descripcion) {
+                        if (row.Folio && (row.Descripcion || row.Descripción)) {
                             await addDoc(collection(db, "folios"), {
                                 idFolio: String(row.Folio),
                                 usuario: currentUserUsername, 
-                                descripcion: row.Descripcion,
+                                destinadoA: row["Destinado a"] || "Importado",
+                                descripcion: row.Descripcion || row.Descripción,
                                 fecha: row.Fecha || fechaStr,
                                 timestamp: timestampBase - importados, 
                                 archivo: "",
@@ -501,65 +498,90 @@
                             importados++;
                         }
                     }
-                    alert(`¡Se importaron ${importados} folios exitosamente!`);
-                    actualizarTablaAdmin();
-                    actualizarTablaUsuario();
+                    alert(`¡Se importaron ${importados} folios!`);
+                    actualizarTablaAdmin(); actualizarTablaUsuario();
                     event.target.value = ""; 
-                } catch(error) {
-                    alert("Error al leer el Excel. Verifica que las columnas se llamen 'Folio' y 'Descripcion'.");
-                }
+                } catch(error) { alert("Error al leer el Excel."); }
             };
             reader.readAsArrayBuffer(file);
         };
 
-        // --- EDITAR Y ELIMINAR FOLIOS (ADMIN) ---
-        window.abrirModalEdicion = (docId, folio, usr, desc) => {
+        window.abrirModalEdicion = (docId, folio, usr, destinado, desc) => {
             document.getElementById('edit-docId').value = docId;
             document.getElementById('edit-folio').value = folio;
             document.getElementById('edit-usuario').value = usr;
+            document.getElementById('edit-destinado').value = destinado;
             document.getElementById('edit-desc').value = desc;
             document.getElementById('modal-edicion').classList.remove('hidden');
         };
         window.cerrarModalEdicion = () => { document.getElementById('modal-edicion').classList.add('hidden'); };
         window.guardarEdicionFolio = async () => {
             const docId = document.getElementById('edit-docId').value;
-            const nuevoFolio = document.getElementById('edit-folio').value.trim();
-            const nuevoUsr = document.getElementById('edit-usuario').value.trim();
-            const nuevaDesc = document.getElementById('edit-desc').value.trim();
+            const idFolio = document.getElementById('edit-folio').value.trim();
+            const usuario = document.getElementById('edit-usuario').value.trim();
+            const destinadoA = document.getElementById('edit-destinado').value.trim();
+            const descripcion = document.getElementById('edit-desc').value.trim();
             
-            if(!nuevoFolio || !nuevoUsr || !nuevaDesc) return alert("Llena todos los campos.");
-            
-            await updateDoc(doc(db, "folios", docId), { idFolio: nuevoFolio, usuario: nuevoUsr, descripcion: nuevaDesc });
+            if(!idFolio || !usuario || !destinadoA || !descripcion) return alert("Llena todos los campos.");
+            await updateDoc(doc(db, "folios", docId), { idFolio, usuario, destinadoA, descripcion });
             cerrarModalEdicion(); alert("Folio actualizado."); actualizarTablaAdmin(); actualizarTablaUsuario();
         };
 
         window.eliminarFolio = async (docId, folioName) => {
-            if(confirm(`⚠️ ¿ESTÁS SEGURO DE ELIMINAR EL FOLIO ${folioName}?\nEsta acción no se puede deshacer.`)) {
+            if(confirm(`⚠️ ¿Eliminar folio ${folioName}?`)) {
                 await deleteDoc(doc(db, "folios", docId));
                 alert("Folio eliminado."); actualizarTablaAdmin(); actualizarTablaUsuario();
             }
         };
 
         // --- LÓGICA USUARIO / SOLICITUD ---
-        async function cargarVistaUsuario() { actualizarTablaUsuario(); }
+        async function cargarVistaUsuario() { 
+            await actualizarIndicadorUltimoFolio();
+            actualizarTablaUsuario(); 
+        }
 
-        window.toggleDescMasiva = () => {
-            const checked = document.getElementById('check-misma-desc').checked;
-            if(checked) { document.getElementById('desc-unica-area').classList.remove('hidden'); document.getElementById('espacios-folios').classList.add('hidden'); } 
-            else { document.getElementById('desc-unica-area').classList.add('hidden'); document.getElementById('espacios-folios').classList.remove('hidden'); }
-        };
+        async function actualizarIndicadorUltimoFolio() {
+            const configSnap = await getDoc(doc(db, "sistema", "config"));
+            const badge = document.getElementById('badge-ultimo-container');
+            if (configSnap.exists() && configSnap.data().configurado) {
+                const data = configSnap.data();
+                // El último usado es el actual menos 1
+                let ultimoUsadoNum = data.actual - 1;
+                if(ultimoUsadoNum < 0) ultimoUsadoNum = 0;
+                badge.innerText = `Último Folio: ${data.prefijo}${ultimoUsadoNum}/${data.anio}`;
+            } else {
+                badge.innerText = `Último Folio: Sin configurar`;
+            }
+        }
 
         window.generarFormularioFolios = async () => {
             const configSnap = await getDoc(doc(db, "sistema", "config"));
-            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Nomenclatura no configurada. Avisa al administrador.');
+            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Nomenclatura no configurada.');
+            
             const cantidad = parseInt(document.getElementById('cantidad-folios').value);
             if (isNaN(cantidad) || cantidad < 1) return alert('Ingresa cantidad válida.');
             
             foliosPendientes = cantidad;
+            let prefijo = configSnap.data().prefijo;
+            let consecutivoTemp = configSnap.data().actual;
+            let anio = configSnap.data().anio;
+
             const container = document.getElementById('espacios-folios');
             container.innerHTML = '';
-            for (let i = 0; i < cantidad; i++) { container.innerHTML += `<div class="folio-item"><label><strong>Folio ${i + 1}</strong> - Trámite:</label><input type="text" id="desc-${i}" class="desc-individual"></div>`; }
-            document.getElementById('check-misma-desc').checked = false; toggleDescMasiva();
+            
+            for (let i = 0; i < cantidad; i++) {
+                let folioPrevisto = `${prefijo}${consecutivoTemp + i}/${anio}`;
+                container.innerHTML += `
+                    <div class="folio-item">
+                        <h4 style="margin: 0 0 10px 0; color: var(--azul-brillante);">Folio: ${folioPrevisto}</h4>
+                        <label><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-MX')}</label><br><br>
+                        <label>Destinado a:</label>
+                        <input type="text" id="destinado-${i}" placeholder="Ej. Vocal Ejecutivo, Direccion..." required>
+                        <label>Descripción / Observaciones:</label>
+                        <input type="text" id="desc-${i}" placeholder="Ej. Oficio de notificación..." required>
+                    </div>
+                `;
+            }
             document.getElementById('formulario-folios-area').classList.remove('hidden');
         };
 
@@ -567,33 +589,26 @@
             try {
                 const configRef = doc(db, "sistema", "config");
                 const configSnap = await getDoc(configRef);
-                
-                if (!configSnap.exists()) {
-                    return alert("Error: La nomenclatura del sistema no ha sido configurada por el administrador.");
-                }
-
                 let { prefijo, actual, anio } = configSnap.data();
-                const fechaStr = new Date().toLocaleString('es-MX');
+                const fechaStr = new Date().toLocaleDateString('es-MX');
                 const timestamp = Date.now();
-                
-                const masiva = document.getElementById('check-misma-desc').checked;
-                const descGeneral = document.getElementById('desc-unica').value.trim();
 
-                if (masiva && !descGeneral) return alert('Debes escribir la descripción general.');
-                if (!masiva) {
-                    for (let i = 0; i < foliosPendientes; i++) { 
-                        const campoDesc = document.getElementById(`desc-${i}`);
-                        if (!campoDesc || !campoDesc.value.trim()) return alert(`Falta la descripción del Folio ${i+1}.`); 
-                    }
+                // Validar campos obligatorios
+                for (let i = 0; i < foliosPendientes; i++) {
+                    const destinado = document.getElementById(`destinado-${i}`).value.trim();
+                    const desc = document.getElementById(`desc-${i}`).value.trim();
+                    if (!destinado || !desc) return alert(`Faltan datos en el Folio #${i+1}. Ambos campos son obligatorios.`);
                 }
 
                 for (let i = 0; i < foliosPendientes; i++) {
-                    const desc = masiva ? descGeneral : document.getElementById(`desc-${i}`).value.trim();
+                    const destinado = document.getElementById(`destinado-${i}`).value.trim();
+                    const desc = document.getElementById(`desc-${i}`).value.trim();
                     const folioCompleto = `${prefijo}${actual}/${anio}`;
                     
                     await addDoc(collection(db, "folios"), { 
                         idFolio: folioCompleto, 
                         usuario: currentUserUsername, 
+                        destinadoA: destinado,
                         descripcion: desc, 
                         fecha: fechaStr, 
                         timestamp: timestamp, 
@@ -607,18 +622,15 @@
                 alert(`¡${foliosPendientes} folios asignados con éxito!`);
                 
                 document.getElementById('formulario-folios-area').classList.add('hidden');
-                document.getElementById('cantidad-folios').value = ''; 
-                document.getElementById('desc-unica').value = '';
+                document.getElementById('cantidad-folios').value = '';
                 
-                actualizarTablaUsuario(); 
+                await cargarVistaUsuario();
                 if(currentUserRole === 'admin') actualizarTablaAdmin();
             } catch (err) {
-                console.error("Error al confirmar solicitud:", err);
-                alert("Ocurrió un error al guardar los folios en la base de datos. Revisa la consola.");
+                alert("Ocurrió un error al guardar los folios.");
             }
         };
 
-        // --- TABLA Y EVIDENCIA USUARIO ---
         async function actualizarTablaUsuario() {
             const q = query(collection(db, "folios"), where("usuario", "==", currentUserUsername));
             const querySnapshot = await getDocs(q);
@@ -632,17 +644,23 @@
             querySnapshot.forEach((doc) => misFolios.push({ docId: doc.id, ...doc.data() }));
             misFolios.sort((a, b) => b.timestamp - a.timestamp);
 
-            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="4">No has solicitado folios.</td></tr>'; return; }
+            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="5">No has solicitado folios.</td></tr>'; return; }
 
             misFolios.forEach(f => {
                 if(!f.archivo && !f.exentoEvidencia && (ahora - f.timestamp > limiteMs)) {
                     foliosAtrasados.push(f.idFolio);
                 }
 
-                let btnSubir = `<div style="display:flex; gap:5px;"><input type="file" id="file-${f.docId}" style="width:150px; margin:0; padding:5px; font-size:0.8em;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
+                let btnSubir = `<div style="display:flex; gap:5px;"><input type="file" id="file-${f.docId}" style="width:130px; margin:0; padding:3px; font-size:0.75em;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
                 let evidenciaHTML = f.archivo ? `📄 ${f.archivo}` : btnSubir;
                 
-                tbody.innerHTML += `<tr><td><strong>${f.idFolio}</strong></td><td>${f.descripcion}</td><td>${f.fecha}</td><td>${evidenciaHTML}</td></tr>`;
+                tbody.innerHTML += `<tr>
+                    <td><strong>${f.idFolio}</strong></td>
+                    <td>${f.fecha}</td>
+                    <td>${f.destinadoA || 'N/D'}</td>
+                    <td>${f.descripcion}</td>
+                    <td>${evidenciaHTML}</td>
+                </tr>`;
             });
 
             const alerta = document.getElementById('alerta-evidencia-container');
@@ -656,10 +674,10 @@
 
         window.subirEvidencia = async (docId) => {
             const fileInput = document.getElementById(`file-${docId}`);
-            if(!fileInput.files || fileInput.files.length === 0) return alert('Selecciona un archivo primero.');
+            if(!fileInput.files || fileInput.files.length === 0) return alert('Selecciona un archivo.');
             const fileName = fileInput.files[0].name;
             await updateDoc(doc(db, "folios", docId), { archivo: fileName });
-            alert('Evidencia subida correctamente.');
+            alert('Evidencia subida.');
             actualizarTablaUsuario(); if(currentUserRole === 'admin') actualizarTablaAdmin();
         };
     </script>
