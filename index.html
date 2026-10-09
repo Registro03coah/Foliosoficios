@@ -114,7 +114,7 @@
             <p>Solo se permiten correos con terminación <strong>@ine.mx</strong></p>
             <div id="auth-error" class="error"></div>
             <input type="email" id="email" placeholder="correo@ine.mx" required>
-            <input type="password" id="password" placeholder="Contraseña" required>
+            <input type="password" id="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
             <button onclick="login()">Iniciar Sesión</button>
             <button class="btn-secondary" onclick="register()">Registrarse</button>
         </div>
@@ -126,7 +126,7 @@
             
             <div id="config-area" class="card" style="background:#252525; border-color:var(--morado);">
                 <h3 id="config-title">Configuración Inicial de Folios</h3>
-                <p>Define la nomenclatura y el número de inicio. Esto se configurará una sola vez (hasta que decidas cambiarlo).</p>
+                <p>Define la nomenclatura y el número de inicio.</p>
                 <input type="text" id="nomenclatura" placeholder="Ej. VRFE-03JDE-2026-">
                 <input type="number" id="folio-inicio" placeholder="Folio Inicial (Ej. 1)">
                 <button onclick="guardarConfiguracion()" id="btn-config">Guardar Configuración</button>
@@ -147,7 +147,7 @@
                         </tr>
                     </thead>
                     <tbody id="admin-tabla-folios">
-                        <!-- Llenado con JS -->
+                        <tr><td colspan="5">Cargando folios...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -183,142 +183,154 @@
                         </tr>
                     </thead>
                     <tbody id="user-tabla-folios">
-                        <!-- Llenado con JS -->
+                        <tr><td colspan="4">Cargando folios...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <script>
-        // Inicializar datos locales (Simulando Firebase por ahora)
-        if (!localStorage.getItem('ine_users')) localStorage.setItem('ine_users', JSON.stringify([]));
-        if (!localStorage.getItem('ine_folios')) localStorage.setItem('ine_folios', JSON.stringify([]));
-        if (!localStorage.getItem('ine_config')) localStorage.setItem('ine_config', JSON.stringify({ nomenclatura: '', actual: 1, configurado: false }));
+    <!-- SCRIPT TIPO MÓDULO PARA FIREBASE V9 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-        let currentUser = null;
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpmtUCDLKDkhGx9zh2IkQ65Yrob13gjxE",
+            authDomain: "foliosvrfe03.firebaseapp.com",
+            projectId: "foliosvrfe03",
+            storageBucket: "foliosvrfe03.firebasestorage.app",
+            messagingSenderId: "493793399671",
+            appId: "1:493793399671:web:bfdcedf6260818851dc772"
+        };
 
-        function validarCorreo(email) {
-            return email.endsWith('@ine.mx');
-        }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUserEmail = null;
+        let isAdmin = false;
+        let foliosPendientes = 0;
 
         function mostrarError(msg) {
             document.getElementById('auth-error').innerText = msg;
         }
 
-        function register() {
+        // --- AUTENTICACIÓN ---
+        window.register = async () => {
             const email = document.getElementById('email').value.trim().toLowerCase();
             const password = document.getElementById('password').value;
             
-            if (!validarCorreo(email)) return mostrarError('El correo debe terminar en @ine.mx');
-            if (password.length < 4) return mostrarError('Contraseña muy corta.');
-
-            let users = JSON.parse(localStorage.getItem('ine_users'));
-            if (users.find(u => u.email === email)) return mostrarError('El usuario ya existe. Inicia sesión.');
-
-            const role = (email === 'admin@ine.mx') ? 'admin' : 'user';
-            users.push({ email, password, role });
-            localStorage.setItem('ine_users', JSON.stringify(users));
+            if (!email.endsWith('@ine.mx')) return mostrarError('El correo debe terminar en @ine.mx');
             
-            alert('Registro exitoso. Iniciando sesión...');
-            iniciarSesion(email, role);
-        }
-
-        function login() {
-            const email = document.getElementById('email').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
-            
-            // Bypass temporal para crear el admin si no existe
-            if(email === 'admin@ine.mx' && password === 'admin') {
-                iniciarSesion(email, 'admin');
-                return;
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                mostrarError('Error al registrar: ' + error.message);
             }
+        };
 
-            let users = JSON.parse(localStorage.getItem('ine_users'));
-            const user = users.find(u => u.email === email && u.password === password);
-
-            if (user) {
-                iniciarSesion(user.email, user.role);
-            } else {
+        window.login = async () => {
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
                 mostrarError('Credenciales incorrectas o usuario no registrado.');
             }
-        }
+        };
 
-        function iniciarSesion(email, role) {
-            currentUser = { email, role };
-            document.getElementById('auth-section').classList.add('hidden');
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('auth-error').innerText = '';
+        window.logout = async () => {
+            await signOut(auth);
+        };
 
-            if (role === 'admin') {
-                document.getElementById('admin-section').classList.remove('hidden');
-                cargarVistaAdmin();
+        // Observador de estado de sesión
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserEmail = user.email;
+                isAdmin = (user.email === 'admin@ine.mx');
+                
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('auth-error').innerText = '';
+
+                if (isAdmin) {
+                    document.getElementById('admin-section').classList.remove('hidden');
+                    document.getElementById('user-section').classList.add('hidden');
+                    cargarVistaAdmin();
+                } else {
+                    document.getElementById('user-section').classList.remove('hidden');
+                    document.getElementById('admin-section').classList.add('hidden');
+                    document.getElementById('user-info').innerText = `Bienvenido: ${user.email}`;
+                    cargarVistaUsuario();
+                }
             } else {
-                document.getElementById('user-section').classList.remove('hidden');
-                document.getElementById('user-info').innerText = `Bienvenido: ${email}`;
-                cargarVistaUsuario();
+                currentUserEmail = null;
+                document.getElementById('admin-section').classList.add('hidden');
+                document.getElementById('user-section').classList.add('hidden');
+                document.getElementById('formulario-folios-area').classList.add('hidden');
+                document.getElementById('auth-section').classList.remove('hidden');
             }
-        }
-
-        function logout() {
-            currentUser = null;
-            document.getElementById('admin-section').classList.add('hidden');
-            document.getElementById('user-section').classList.add('hidden');
-            document.getElementById('auth-section').classList.remove('hidden');
-            document.getElementById('formulario-folios-area').classList.add('hidden');
-        }
+        });
 
         // --- LÓGICA ADMINISTRADOR ---
-        function cargarVistaAdmin() {
-            let config = JSON.parse(localStorage.getItem('ine_config'));
+        async function cargarVistaAdmin() {
+            const configRef = doc(db, "sistema", "config");
+            const configSnap = await getDoc(configRef);
             const configArea = document.getElementById('config-area');
-            const tituloConfig = document.getElementById('config-title');
 
-            if (config.configurado) {
+            if (configSnap.exists() && configSnap.data().configurado) {
                 configArea.classList.add('hidden');
-                document.getElementById('nomenclatura').value = config.nomenclatura;
-                document.getElementById('folio-inicio').value = config.actual;
+                document.getElementById('nomenclatura').value = configSnap.data().nomenclatura;
+                document.getElementById('folio-inicio').value = configSnap.data().actual;
             } else {
                 configArea.classList.remove('hidden');
-                tituloConfig.innerText = "Configuración Inicial de Folios";
             }
             actualizarTablaAdmin();
         }
 
-        function habilitarEdicionConfig() {
+        window.habilitarEdicionConfig = () => {
             document.getElementById('config-area').classList.remove('hidden');
             document.getElementById('config-title').innerText = "Modificar Nomenclatura Actual";
             document.getElementById('btn-cancelar-config').classList.remove('hidden');
-        }
+        };
 
-        function cancelarEdicionConfig() {
+        window.cancelarEdicionConfig = () => {
             document.getElementById('config-area').classList.add('hidden');
             document.getElementById('btn-cancelar-config').classList.add('hidden');
-        }
+        };
 
-        function guardarConfiguracion() {
+        window.guardarConfiguracion = async () => {
             const nom = document.getElementById('nomenclatura').value.trim();
             const inicio = parseInt(document.getElementById('folio-inicio').value);
 
-            if (!nom || isNaN(inicio)) {
-                alert('Llena ambos campos correctamente.');
-                return;
-            }
+            if (!nom || isNaN(inicio)) return alert('Llena ambos campos correctamente.');
 
-            let config = { nomenclatura: nom, actual: inicio, configurado: true };
-            localStorage.setItem('ine_config', JSON.stringify(config));
-            alert('Configuración guardada. Los siguientes folios usarán esta estructura.');
+            await setDoc(doc(db, "sistema", "config"), {
+                nomenclatura: nom,
+                actual: inicio,
+                configurado: true
+            });
+
+            alert('Configuración guardada en la nube.');
             cancelarEdicionConfig();
             cargarVistaAdmin();
-        }
+        };
 
-        function actualizarTablaAdmin() {
-            const folios = JSON.parse(localStorage.getItem('ine_folios'));
+        async function actualizarTablaAdmin() {
+            const querySnapshot = await getDocs(collection(db, "folios"));
             const tbody = document.getElementById('admin-tabla-folios');
             tbody.innerHTML = '';
+            
+            let foliosArr = [];
+            querySnapshot.forEach((doc) => foliosArr.push(doc.data()));
+            
+            // Ordenar por timestamp
+            foliosArr.sort((a, b) => b.timestamp - a.timestamp);
 
-            folios.forEach(f => {
+            foliosArr.forEach(f => {
                 tbody.innerHTML += `
                     <tr>
                         <td><strong>${f.idFolio}</strong></td>
@@ -332,17 +344,14 @@
         }
 
         // --- LÓGICA USUARIO ---
-        let foliosPendientes = 0;
-
-        function cargarVistaUsuario() {
+        async function cargarVistaUsuario() {
             actualizarTablaUsuario();
         }
 
-        function generarFormularioFolios() {
-            let config = JSON.parse(localStorage.getItem('ine_config'));
-            if (!config.configurado) {
-                alert('El administrador aún no ha configurado la nomenclatura inicial. Intenta más tarde.');
-                return;
+        window.generarFormularioFolios = async () => {
+            const configSnap = await getDoc(doc(db, "sistema", "config"));
+            if (!configSnap.exists() || !configSnap.data().configurado) {
+                return alert('El administrador aún no ha configurado la nomenclatura. Intenta más tarde.');
             }
 
             const cantidad = parseInt(document.getElementById('cantidad-folios').value);
@@ -357,62 +366,74 @@
                     <div class="folio-item">
                         <label><strong>Folio ${i + 1}</strong> - Descripción / Trámite:</label>
                         <input type="text" id="desc-${i}" placeholder="Ej. Registro de ciudadano...">
-                        <label>Subir evidencia (Imagen/PDF):</label>
+                        <label>Subir evidencia (Nombre del archivo por ahora):</label>
                         <input type="file" id="file-${i}" accept=".pdf, image/*">
                     </div>
                 `;
             }
             document.getElementById('formulario-folios-area').classList.remove('hidden');
-        }
+        };
 
-        function confirmarSolicitud() {
-            let config = JSON.parse(localStorage.getItem('ine_config'));
-            let foliosAsignados = JSON.parse(localStorage.getItem('ine_folios'));
-            let nuevosFolios = [];
-            const fecha = new Date().toLocaleString('es-MX');
+        window.confirmarSolicitud = async () => {
+            const configRef = doc(db, "sistema", "config");
+            const configSnap = await getDoc(configRef);
+            let nomenclatura = configSnap.data().nomenclatura;
+            let actual = configSnap.data().actual;
+            const fechaStr = new Date().toLocaleString('es-MX');
+            const timestamp = Date.now();
 
+            // Validar que todos tengan descripción antes de guardar
+            for (let i = 0; i < foliosPendientes; i++) {
+                if (!document.getElementById(`desc-${i}`).value.trim()) {
+                    return alert('Por favor, llena la descripción de todos los folios.');
+                }
+            }
+
+            // Guardar folios en Firestore
             for (let i = 0; i < foliosPendientes; i++) {
                 const desc = document.getElementById(`desc-${i}`).value.trim();
                 const fileInput = document.getElementById(`file-${i}`);
-                // Simulamos captura del nombre del archivo por temas de seguridad de navegadores locales
                 const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : 'Sin evidencia';
-
-                if (!desc) {
-                    alert('Por favor, llena la descripción de todos los folios.');
-                    return;
-                }
-
-                const folioCompleto = `${config.nomenclatura}${config.actual}`;
+                const folioCompleto = `${nomenclatura}${actual}`;
                 
-                nuevosFolios.push({
+                await addDoc(collection(db, "folios"), {
                     idFolio: folioCompleto,
-                    usuario: currentUser.email,
+                    usuario: currentUserEmail,
                     descripcion: desc,
                     archivo: fileName,
-                    fecha: fecha
+                    fecha: fechaStr,
+                    timestamp: timestamp
                 });
-
-                config.actual++; // Aumentamos el contador global
+                actual++;
             }
 
-            // Guardamos todo
-            foliosAsignados = foliosAsignados.concat(nuevosFolios);
-            localStorage.setItem('ine_folios', JSON.stringify(foliosAsignados));
-            localStorage.setItem('ine_config', JSON.stringify(config));
+            // Actualizar el folio de inicio en la configuración global
+            await setDoc(configRef, { nomenclatura: nomenclatura, actual: actual, configurado: true });
 
-            alert(`¡Se han asignado ${foliosPendientes} folios exitosamente!`);
+            alert(`¡Se han asignado ${foliosPendientes} folios exitosamente en la nube!`);
             
-            // Limpiamos
             document.getElementById('formulario-folios-area').classList.add('hidden');
             document.getElementById('cantidad-folios').value = '';
             actualizarTablaUsuario();
-        }
+        };
 
-        function actualizarTablaUsuario() {
-            const todosLosFolios = JSON.parse(localStorage.getItem('ine_folios'));
-            const misFolios = todosLosFolios.filter(f => f.usuario === currentUser.email);
+        async function actualizarTablaUsuario() {
+            const q = query(collection(db, "folios"), where("usuario", "==", currentUserEmail));
+            const querySnapshot = await getDocs(q);
+            
             const tbody = document.getElementById('user-tabla-folios');
             tbody.innerHTML = '';
+            
+            let misFolios = [];
+            querySnapshot.forEach((doc) => misFolios.push(doc.data()));
+            
+            // Ordenar por fecha (los más recientes primero)
+            misFolios.sort((a, b) => b.timestamp - a.timestamp);
+
+            if(misFolios.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">Aún no has solicitado folios.</td></tr>';
+                return;
+            }
 
             misFolios.forEach(f => {
                 tbody.innerHTML += `
