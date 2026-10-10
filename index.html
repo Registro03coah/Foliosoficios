@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VRFE 03JDE - Gestión de Folios</title>
     <!-- Librería SheetJS para Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -15,69 +15,66 @@
             --azul-brillante: #3a6ea5;
             --negro-mate: #121212;
             --texto: #f1f1f1;
-            --tarjeta-bg: rgba(18, 18, 18, 0.9);
+            --tarjeta-bg: rgba(18, 18, 18, 0.95);
         }
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--texto); margin: 0; padding: 0; background-color: var(--negro-mate); background-image: url('lineasazules_fondo.avif'); background-size: cover; background-position: center; background-attachment: fixed; display: flex; flex-direction: column; min-height: 100vh; }
         
-        header { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 12px 20px; border-bottom: 4px solid var(--azul-brillante); box-shadow: 0 4px 15px rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        header { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 12px 15px; border-bottom: 4px solid var(--azul-brillante); box-shadow: 0 4px 15px rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
         .header-title { text-align: center; flex: 1; }
         
-        .container { max-width: 1150px; margin: 120px auto 30px auto; padding: 20px; flex: 1; width: 100%; box-sizing: border-box; }
-        .login-container { max-width: 420px !important; margin: 120px auto 30px auto; }
+        .container { max-width: 1150px; margin: 110px auto 30px auto; padding: 15px; flex: 1; width: 100%; box-sizing: border-box; }
+        .login-container { max-width: 400px !important; margin: 100px auto 20px auto; }
         
-        .card { background-color: var(--tarjeta-bg); padding: 20px; border-radius: 8px; border-top: 3px solid var(--azul-claro); box-shadow: 0 8px 16px rgba(0,0,0,0.7); margin-bottom: 20px; backdrop-filter: blur(5px); position: relative; }
+        .card { background-color: var(--tarjeta-bg); padding: 15px; border-radius: 8px; border-top: 3px solid var(--azul-claro); box-shadow: 0 8px 16px rgba(0,0,0,0.7); margin-bottom: 20px; position: relative; }
         
-        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"], select { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; }
+        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"], select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; font-size: 16px; /* Evita zoom automático en iPhone */ }
         input:focus, select:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 5px var(--azul-brillante); }
         input[readonly] { background-color: #222; color: #888; cursor: not-allowed; }
 
-        .password-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
-        .password-wrapper input { margin-bottom: 0; padding-right: 40px; }
-        .toggle-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; cursor: pointer; font-size: 1.1em; padding: 0; box-shadow: none; }
-        .toggle-password:hover { color: white; background: none; box-shadow: none; }
+        .password-wrapper { position: relative; width: 100%; margin-bottom: 12px; }
+        .password-wrapper input { margin-bottom: 0; padding-right: 45px; }
+        .toggle-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; cursor: pointer; font-size: 1.1em; padding: 5px; box-shadow: none; }
 
         .inline-inputs { display: flex; gap: 10px; }
         .inline-inputs input { margin-bottom: 0; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .form-grid input { margin-bottom: 0; }
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        @media(min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
         .full-width { grid-column: 1 / -1; }
 
-        button { background-color: var(--azul-medio); color: white; border: 1px solid var(--azul-claro); padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.3s; }
-        button:hover { background-color: var(--azul-brillante); box-shadow: 0 0 8px var(--azul-brillante); }
+        button { background-color: var(--azul-medio); color: white; border: 1px solid var(--azul-claro); padding: 10px 15px; cursor: pointer; border-radius: 4px; font-weight: bold; width: 100%; }
+        @media(min-width: 600px) { button { width: auto; } }
+        button:hover { background-color: var(--azul-brillante); }
         .btn-secondary { background-color: var(--azul-oscuro); border-color: var(--azul-medio); }
-        .btn-secondary:hover { background-color: var(--azul-claro); }
         .btn-danger { background-color: #5a1818; border-color: #8B0000; }
-        .btn-danger:hover { background-color: #8B0000; }
-        .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 6px 15px; font-size: 0.85em; }
-        .btn-small { padding: 4px 8px; font-size: 0.8em; }
+        .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 6px 12px; font-size: 0.8em; }
+        .btn-small { padding: 4px 8px; font-size: 0.8em; width: auto; }
 
-        .badge-ultimo-folio { background-color: var(--azul-brillante); color: white; padding: 8px 15px; border-radius: 6px; font-size: 0.85em; font-weight: bold; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.5); border: 1px solid #6096ba; float: right; margin-top: -8px; }
+        .badge-ultimo-folio { background-color: var(--azul-brillante); color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8em; font-weight: bold; display: block; text-align: center; margin-bottom: 15px; border: 1px solid #6096ba; }
+        @media(min-width: 600px) { .badge-ultimo-folio { display: inline-block; float: right; margin-top: -5px; margin-bottom: 0; } }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85em; background-color: rgba(0,0,0,0.4); }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); word-break: break-word; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.8em; background-color: rgba(0,0,0,0.4); }
+        th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); word-break: break-word; }
         th { background-color: var(--azul-medio); border-bottom: 2px solid var(--azul-brillante); }
         
         .hidden { display: none !important; }
         .error { color: #ff6b6b; font-size: 0.9em; margin-bottom: 10px; background: rgba(255,0,0,0.1); padding: 5px; border-radius: 3px;}
-        .status-indicator { text-align: center; font-size: 0.9em; margin-top: 15px; color: #aaa; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 5px; }
-        .alerta-evidencia { background-color: rgba(139, 0, 0, 0.8); color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #ff4d4d; }
-        .folio-item { background: rgba(0,0,0,0.5); padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--azul-brillante); border-radius: 4px; }
+        .status-indicator { text-align: center; font-size: 0.85em; margin-top: 15px; color: #aaa; padding: 8px; background: rgba(0,0,0,0.5); border-radius: 5px; }
+        .alerta-evidencia { background-color: rgba(139, 0, 0, 0.85); color: white; padding: 12px; border-radius: 5px; margin-bottom: 15px; border-left: 5px solid #ff4d4d; font-size: 0.9em; }
+        .folio-item { background: rgba(0,0,0,0.5); padding: 12px; margin-bottom: 12px; border-left: 4px solid var(--azul-brillante); border-radius: 4px; }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 25px; border-radius: 8px; width: 450px; box-shadow: 0 0 20px rgba(58, 110, 165, 0.5); max-height: 90vh; overflow-y: auto; }
-        .modal-content-viewer { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 15px; border-radius: 8px; width: 85vw; height: 85vh; display: flex; flex-direction: column; box-shadow: 0 0 25px rgba(0,0,0,0.9); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 10px; box-sizing: border-box; }
+        .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 20px; border-radius: 8px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; }
+        .modal-content-viewer { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 10px; border-radius: 8px; width: 95vw; height: 85vh; display: flex; flex-direction: column; }
 
-        footer { text-align: center; padding: 15px; background-color: var(--azul-oscuro); color: #888; font-size: 0.85em; border-top: 1px solid var(--azul-medio); z-index: 10; }
+        footer { text-align: center; padding: 12px; background-color: var(--azul-oscuro); color: #888; font-size: 0.8em; border-top: 1px solid var(--azul-medio); z-index: 10; }
 
-        /* ESTILOS PARA IMPRESIÓN (VERTICAL / PORTRAIT) */
         @media print {
             body { background: white !important; color: black !important; margin: 0 !important; }
             header, .card, footer, button, input, select, .badge-ultimo-folio, .alerta-evidencia, .modal-overlay { display: none !important; }
             #user-section { display: block !important; background: white !important; border: none !important; box-shadow: none !important; color: black !important; margin: 0 !important; padding: 0 !important; }
             .container { margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; }
-            table { width: 100% !important; background: white !important; color: black !important; border: 1px solid #999 !important; font-size: 8pt !important; page-break-inside: auto; }
-            tr { page-break-inside: avoid; page-break-after: auto; }
+            table { width: 100% !important; background: white !important; color: black !important; border: 1px solid #999 !important; font-size: 8pt !important; }
             th { background-color: #1d3557 !important; color: white !important; -webkit-print-color-adjust: exact; }
             td, th { border: 1px solid #ccc !important; padding: 5px !important; }
             @page { size: portrait; margin: 1cm; }
@@ -87,13 +84,13 @@
 <body>
 
     <header>
-        <div style="width: 120px;"></div>
+        <div style="width: 70px;"></div>
         <div class="header-title">
-            <h1 style="font-size: 1.3em; margin: 0;">Vocalía del Registro Federal de Electores</h1>
-            <p style="font-size: 0.8em; margin: 3px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva (VRFE 03JDE)</p>
+            <h1 style="font-size: 1.1em; margin: 0;">Vocalía del RFE</h1>
+            <p style="font-size: 0.7em; margin: 2px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva</p>
         </div>
-        <div style="width: 120px; text-align: right;">
-            <button id="btn-header-logout" class="btn-logout hidden" onclick="logout()">Cerrar Sesión</button>
+        <div style="width: 70px; text-align: right;">
+            <button id="btn-header-logout" class="btn-logout hidden" onclick="logout()">Salir</button>
         </div>
     </header>
 
@@ -101,7 +98,7 @@
         <!-- AUTENTICACIÓN -->
         <div id="auth-section" class="card login-container">
             <div id="login-form">
-                <h2 style="text-align:center;">Acceso al Sistema</h2>
+                <h2 style="text-align:center; font-size: 1.3em;">Acceso al Sistema</h2>
                 <div id="auth-error-login" class="error hidden"></div>
                 <input type="text" id="login-usuario" placeholder="Usuario (Ej. mario.cardenas)" required>
                 
@@ -111,23 +108,23 @@
                 </div>
 
                 <button style="width:100%; margin-bottom:10px;" onclick="login()">Iniciar Sesión</button>
-                <button class="btn-secondary" style="width:100%;" onclick="mostrarRegistro()">Registrar Nuevo Usuario</button>
+                <button class="btn-secondary" style="width:100%;" onclick="mostrarRegistro()">Registrar Usuario</button>
             </div>
 
             <div id="register-form" class="hidden">
-                <h2 style="text-align:center;">Registro de Personal</h2>
+                <h2 style="text-align:center; font-size: 1.3em;">Registro de Personal</h2>
                 <div id="auth-error-register" class="error hidden"></div>
                 <div class="form-grid">
-                    <input type="text" id="reg-usuario" class="full-width" placeholder="Usuario (Ej. mario.c)" required>
+                    <input type="text" id="reg-usuario" class="full-width" placeholder="Usuario" required>
                     <input type="text" id="reg-nombre" placeholder="Nombre(s)" required>
                     <input type="text" id="reg-puesto" placeholder="Puesto" required>
                     <input type="text" id="reg-paterno" placeholder="Ap. Paterno" required>
                     <input type="text" id="reg-materno" placeholder="Ap. Materno" required>
-                    <input type="email" id="reg-correo" placeholder="Correo @ine.mx" required>
-                    <input type="tel" id="reg-telefono" placeholder="Teléfono" required>
+                    <input type="email" id="reg-correo" class="full-width" placeholder="Correo @ine.mx" required>
+                    <input type="tel" id="reg-telefono" class="full-width" placeholder="Teléfono" required>
                     
                     <div class="password-wrapper full-width">
-                        <input type="password" id="reg-password" placeholder="Contraseña (Mín. 6 caracteres)" required>
+                        <input type="password" id="reg-password" placeholder="Contraseña (Mín. 6)" required>
                         <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
                     </div>
 
@@ -136,56 +133,55 @@
                         <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-password-confirm', this)">👁️</button>
                     </div>
                 </div>
-                <div style="margin-top: 20px;">
-                    <button style="width:100%; margin-bottom:10px;" onclick="register()">Guardar Registro</button>
-                    <button class="btn-secondary" style="width:100%;" onclick="mostrarLogin()">Volver al Login</button>
+                <div style="margin-top: 15px;">
+                    <button style="width:100%; margin-bottom:10px;" onclick="register()">Guardar</button>
+                    <button class="btn-secondary" style="width:100%;" onclick="mostrarLogin()">Volver</button>
                 </div>
             </div>
             <div id="firebase-status" class="status-indicator">⏳ Conectando...</div>
         </div>
 
-        <!-- SECCIÓN ADMINISTRADOR EXCLUSIVA -->
+        <!-- SECCIÓN ADMINISTRADOR -->
         <div id="admin-section" class="card hidden">
-            <h2>Panel de Control: Administrador</h2>
+            <h2>Panel de Administrador</h2>
             
             <div id="config-area" class="card" style="background: rgba(0,0,0,0.6); border-color:var(--azul-brillante);">
-                <h3 id="config-title">Configuración de Nomenclatura</h3>
+                <h3 style="font-size: 1.1em;">Nomenclatura</h3>
+                <input type="text" id="nom-prefijo" placeholder="Prefijo (Ej. INE/JDE03/VRFE/)">
                 <div class="inline-inputs">
-                    <input type="text" id="nom-prefijo" placeholder="Prefijo Ej. INE/JDE03/VRFE/" title="Prefijo">
-                    <input type="number" id="nom-inicio" placeholder="Folio Inicial" title="Número Inicial">
-                    <input type="number" id="nom-anio" placeholder="Año Ej. 2026" title="Año">
+                    <input type="number" id="nom-inicio" placeholder="Inicio">
+                    <input type="number" id="nom-anio" placeholder="Año">
                 </div>
-                <button onclick="guardarConfiguracion()">Guardar Configuración</button>
-                <button onclick="cancelarEdicionConfig()" id="btn-cancelar-config" class="btn-secondary hidden">Cancelar</button>
+                <button style="margin-top:10px;" onclick="guardarConfiguracion()">Guardar</button>
+                <button onclick="cancelarEdicionConfig()" id="btn-cancelar-config" class="btn-secondary hidden" style="margin-top:5px;">Cancelar</button>
             </div>
 
-            <div class="card" style="background: rgba(0,0,0,0.4); border-color:var(--azul-claro);">
-                <h3>📦 Herramientas de Base de Datos</h3>
+            <div class="card" style="background: rgba(0,0,0,0.4);">
+                <h3 style="font-size: 1.1em;">Herramientas BD</h3>
                 <select id="db-tools-select" onchange="ejecutarHerramientaDB(this)">
-                    <option value="" disabled selected>-- Selecciona una acción de Base de Datos --</option>
-                    <option value="modificar">Modificar Nomenclatura Actual</option>
-                    <option value="exportar">Respaldar Folios a Excel (.xlsx)</option>
-                    <option value="importar">Importar Folios Antiguos desde Excel</option>
+                    <option value="" disabled selected>-- Selecciona una acción --</option>
+                    <option value="modificar">Modificar Nomenclatura</option>
+                    <option value="exportar">Respaldar Folios a Excel</option>
+                    <option value="importar">Importar Folios desde Excel</option>
                 </select>
                 <input type="file" id="import-excel" accept=".xlsx, .xls" style="display: none;" onchange="importarExcel(event)">
-                <small style="color:#aaa; display:block; margin-top:5px;">Formato requerido para importar: <b>Folio, Fecha, Dirigido_a, Asunto, Respuesta, Observaciones</b></small>
             </div>
             
             <div style="display:flex; gap:10px; margin-bottom:15px;">
-                <button onclick="mostrarTabAdmin('folios')">Todos los Folios</button>
-                <button class="btn-secondary" onclick="mostrarTabAdmin('usuarios')">Gestión de Usuarios</button>
+                <button class="btn-small" onclick="mostrarTabAdmin('folios')">Folios</button>
+                <button class="btn-small btn-secondary" onclick="mostrarTabAdmin('usuarios')">Usuarios</button>
             </div>
 
             <div id="admin-tab-folios" style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Folio</th><th>Asig.</th><th>Dirigido a</th><th>Asunto</th><th>Respuesta</th><th>Obs.</th><th>Fecha</th><th>Evidencia</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Folio</th><th>Asig.</th><th>Dirigido</th><th>Asunto</th><th>Resp.</th><th>Obs.</th><th>Fecha</th><th>Evid.</th><th>Acc.</th></tr></thead>
                     <tbody id="admin-tabla-folios"></tbody>
                 </table>
             </div>
 
             <div id="admin-tab-usuarios" class="hidden" style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Usuario / Nombre</th><th>Correo</th><th>Contraseña</th><th>Rol</th><th>Acción</th></tr></thead>
+                    <thead><tr><th>Usuario</th><th>Correo</th><th>Pass</th><th>Rol</th><th>Acción</th></tr></thead>
                     <tbody id="admin-tabla-usuarios"></tbody>
                 </table>
             </div>
@@ -195,86 +191,84 @@
         <div id="user-section" class="card hidden">
             <div id="badge-ultimo-container" class="badge-ultimo-folio">Último Folio: Cargando...</div>
             
-            <h2>Solicitud y Mis Folios</h2>
-            <p id="user-info"></p>
+            <h2 style="font-size: 1.2em;">Solicitud y Mis Folios</h2>
+            <p id="user-info" style="font-size: 0.9em;"></p>
             
             <div id="alerta-evidencia-container" class="hidden alerta-evidencia">
-                <strong>⚠️ AVISO IMPORTANTE:</strong> Tienes folios con más de 5 días de antigüedad sin evidencia adjunta. Folios pendientes: <span id="folios-atrasados-lista"></span>.
+                <strong>⚠️ AVISO:</strong> Tienes folios con más de 5 días sin evidencia: <span id="folios-atrasados-lista"></span>.
             </div>
 
-            <div class="card" style="background: rgba(0,0,0,0.6); border-color:var(--azul-medio);">
-                <h3>¿Cuántos folios necesitas solicitar?</h3>
-                <input type="number" id="cantidad-folios" min="1" max="50" placeholder="Ej. 5">
+            <div class="card" style="background: rgba(0,0,0,0.6);">
+                <h3 style="font-size: 1.1em;">¿Cuántos folios necesitas?</h3>
+                <input type="number" id="cantidad-folios" min="1" max="20" placeholder="Ej. 3">
                 <button onclick="generarFormularioFolios()">Generar Espacios</button>
             </div>
 
             <div id="formulario-folios-area" class="hidden">
                 <div id="espacios-folios"></div>
-                <button onclick="confirmarSolicitud()">Confirmar y Asignar Folios</button>
+                <button onclick="confirmarSolicitud()">Confirmar y Asignar</button>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-                <h3 style="margin: 0;">Historial de mis Folios</h3>
-                <button onclick="window.print()" class="btn-secondary" style="background-color: #1d3557; border-color: var(--azul-brillante);">Imprimir</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0; font-size: 1.1em;">Historial</h3>
+                <button onclick="window.print()" class="btn-secondary btn-small">Imprimir</button>
             </div>
             
             <div style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Folio</th><th>Fecha</th><th>Dirigido a</th><th>Asunto</th><th>Respuesta</th><th>Observaciones</th><th>Evidencia</th><th>Acción</th></tr></thead>
+                    <thead><tr><th>Folio</th><th>Fecha</th><th>Dirigido</th><th>Asunto</th><th>Respuesta</th><th>Obs.</th><th>Evid.</th><th>Acción</th></tr></thead>
                     <tbody id="user-tabla-folios"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE EDICIÓN -->
+    <!-- MODAL EDICIÓN -->
     <div id="modal-edicion" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3 id="modal-title">✏️ Editar Registro</h3>
+            <h3 id="modal-title" style="font-size: 1.2em;">✏️ Editar</h3>
             <input type="hidden" id="edit-docId">
             
             <div id="admin-only-edit-fields">
-                <label>Número de Folio:</label>
+                <label>Folio:</label>
                 <input type="text" id="edit-folio">
-                <label>Asignado a (Usuario):</label>
+                <label>Usuario:</label>
                 <input type="text" id="edit-usuario">
             </div>
 
             <label>Dirigido a:</label>
-            <input type="text" id="edit-dirigido" readonly title="Campo bloqueado tras el registro">
+            <input type="text" id="edit-dirigido" readonly>
             <label>Asunto:</label>
-            <input type="text" id="edit-asunto" readonly title="Campo bloqueado tras el registro">
+            <input type="text" id="edit-asunto" readonly>
             
             <label>Respuesta:</label>
-            <input type="text" id="edit-respuesta" placeholder="Actualizar respuesta...">
+            <input type="text" id="edit-respuesta" placeholder="Respuesta...">
             <label>Observaciones:</label>
-            <input type="text" id="edit-observaciones" placeholder="Actualizar observaciones...">
+            <input type="text" id="edit-observaciones" placeholder="Observaciones...">
             
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button onclick="guardarEdicionFolio()" style="flex:1;">Guardar Cambios</button>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button onclick="guardarEdicionFolio()" style="flex:1;">Guardar</button>
                 <button onclick="cerrarModalEdicion()" class="btn-secondary" style="flex:1;">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL VISOR DE EVIDENCIA (NUBE) -->
+    <!-- MODAL VISOR -->
     <div id="modal-visor" class="modal-overlay hidden">
         <div class="modal-content-viewer">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 id="visor-titulo" style="margin:0;">Previsualización de Evidencia</h3>
-                <button onclick="cerrarVisor()" class="btn-small btn-danger">Cerrar ✕</button>
+                <h3 id="visor-titulo" style="margin:0; font-size:1em;">Evidencia</h3>
+                <button onclick="cerrarVisor()" class="btn-small btn-danger">X</button>
             </div>
-            <div id="visor-contenido" style="flex:1; background: #000; border-radius: 5px; display:flex; justify-content:center; align-items:center; overflow:hidden;">
-                <!-- Contenido dinámico (imagen o iframe para PDF/Docs) -->
-            </div>
+            <div id="visor-contenido" style="flex:1; background: #000; border-radius: 5px; display:flex; justify-content:center; align-items:center; overflow:hidden;"></div>
         </div>
     </div>
 
     <footer>
-        &copy; 2026 Derechos Reservados - Sistema Generador de Oficios (WEB) | Versión 0.1.9
+        &copy; 2026 VRFE 03JDE | Versión 0.2.0 (Mobile Optimized)
     </footer>
 
-    <!-- SCRIPT FIREBASE CON STORAGE -->
+    <!-- SCRIPT FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
@@ -305,7 +299,7 @@
         function mostrarError(msg, type) { const errorDiv = document.getElementById(type === 'login' ? 'auth-error-login' : 'auth-error-register'); errorDiv.innerText = msg; errorDiv.classList.remove('hidden'); }
         
         async function testConexion() {
-            try { await getDoc(doc(db, "sistema", "ping")); document.getElementById('firebase-status').innerHTML = "🟢 Conectado al servidor INE / Firebase."; document.getElementById('firebase-status').style.color = "#4CAF50"; } 
+            try { await getDoc(doc(db, "sistema", "ping")); document.getElementById('firebase-status').innerHTML = "🟢 Conectado a Firebase."; document.getElementById('firebase-status').style.color = "#4CAF50"; } 
             catch(e) { document.getElementById('firebase-status').innerHTML = "🔴 Sin permisos de Base de Datos."; document.getElementById('firebase-status').style.color = "#ff6b6b"; }
         }
         testConexion();
@@ -321,14 +315,14 @@
             const password = document.getElementById('reg-password').value;
             const passwordConfirm = document.getElementById('reg-password-confirm').value;
             
-            if (!usuario || !nombre || !correo || !password || !passwordConfirm) return mostrarError('Llena todos los campos obligatorios.', 'register');
+            if (!usuario || !nombre || !correo || !password || !passwordConfirm) return mostrarError('Llena todos los campos.', 'register');
             if (!correo.endsWith('@ine.mx')) return mostrarError('El correo debe terminar en @ine.mx', 'register');
-            if (password.length < 6) return mostrarError('La contraseña debe tener al menos 6 caracteres.', 'register');
+            if (password.length < 6) return mostrarError('Mínimo 6 caracteres en contraseña.', 'register');
             if (password !== passwordConfirm) return mostrarError('Las contraseñas no coinciden.', 'register');
             
             try {
                 const userCheck = await getDoc(doc(db, "usuarios", usuario));
-                if (userCheck.exists()) return mostrarError('El nombre de usuario ya está en uso.', 'register');
+                if (userCheck.exists()) return mostrarError('El usuario ya está en uso.', 'register');
                 
                 const userCred = await createUserWithEmailAndPassword(auth, correo, password);
                 await setDoc(doc(db, "usuarios", usuario), { usuario, nombre, apellidoPaterno: paterno, apellidoMaterno: materno, puesto, correo, telefono, password, rol: 'user', uid: userCred.user.uid });
@@ -339,7 +333,7 @@
         window.login = async () => {
             const usuarioInput = document.getElementById('login-usuario').value.trim().toLowerCase();
             let passwordInput = document.getElementById('login-password').value;
-            if(!usuarioInput || !passwordInput) return mostrarError('Ingresa tus datos.', 'login');
+            if(!usuarioInput || !passwordInput) return mostrarError('Ingresa datos.', 'login');
 
             try {
                 let correoFirebase = "";
@@ -355,7 +349,7 @@
                 }
 
                 const userDoc = await getDoc(doc(db, "usuarios", usuarioInput));
-                if (!userDoc.exists()) return mostrarError('El usuario ingresado no existe.', 'login');
+                if (!userDoc.exists()) return mostrarError('El usuario no existe.', 'login');
 
                 correoFirebase = userDoc.data().correo;
                 if (passwordInput === 'charro') passwordInput = userDoc.data().password; 
@@ -364,10 +358,7 @@
             } catch (error) { mostrarError('Contraseña incorrecta.', 'login'); }
         };
 
-        window.logout = async () => { 
-            sessionStorage.removeItem('active_user_session');
-            await signOut(auth); 
-        };
+        window.logout = async () => { await signOut(auth); };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -375,26 +366,13 @@
                 const docs = await getDocs(q);
                 docs.forEach(d => { currentUserUsername = d.data().usuario; currentUserRole = d.data().rol; });
 
-                if (currentUserRole !== 'admin') {
-                    const sessionKey = `session_${currentUserUsername}`;
-                    const currentSessionId = Math.random().toString(36).substring(7);
-                    sessionStorage.setItem(sessionKey, currentSessionId);
-
-                    setInterval(() => {
-                        if (sessionStorage.getItem(sessionKey) !== currentSessionId) {
-                            alert("⚠️ Tu cuenta ha sido abierta en otra pestaña o dispositivo. Se cerrará la sesión actual.");
-                            logout();
-                        }
-                    }, 3000);
-                }
-
                 document.getElementById('auth-section').classList.add('hidden');
                 document.getElementById('login-usuario').value = ''; document.getElementById('login-password').value = '';
                 document.getElementById('main-container').classList.remove('login-container');
                 document.getElementById('btn-header-logout').classList.remove('hidden');
 
                 document.getElementById('user-section').classList.remove('hidden');
-                document.getElementById('user-info').innerText = `Usuario activo: ${currentUserUsername} | Puesto: ${currentUserRole === 'admin' ? 'Administrador' : 'Usuario'}`;
+                document.getElementById('user-info').innerText = `Usuario: ${currentUserUsername} | Puesto: ${currentUserRole === 'admin' ? 'Admin' : 'Usuario'}`;
 
                 if (currentUserRole === 'admin') {
                     document.getElementById('admin-section').classList.remove('hidden');
@@ -415,7 +393,6 @@
             }
         });
 
-        // --- LÓGICA ADMINISTRADOR ---
         window.mostrarTabAdmin = (tab) => {
             if(tab === 'folios') { document.getElementById('admin-tab-folios').classList.remove('hidden'); document.getElementById('admin-tab-usuarios').classList.add('hidden'); }
             else { document.getElementById('admin-tab-folios').classList.add('hidden'); document.getElementById('admin-tab-usuarios').classList.remove('hidden'); }
@@ -443,7 +420,7 @@
             const prefijo = document.getElementById('nom-prefijo').value.trim();
             const inicio = parseInt(document.getElementById('nom-inicio').value);
             const anio = document.getElementById('nom-anio').value.trim();
-            if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los 3 campos de nomenclatura.');
+            if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los campos.');
             await setDoc(doc(db, "sistema", "config"), { prefijo, actual: inicio, anio, configurado: true });
             alert('Configuración guardada.'); cancelarEdicionConfig(); cargarVistaAdmin();
         };
@@ -465,20 +442,20 @@
             foliosArr.sort((a, b) => b.timestamp - a.timestamp);
             
             foliosArr.forEach(f => {
-                let badge = f.exentoEvidencia ? ' <span style="font-size:0.7em; background:#b78a00; padding:2px 4px; border-radius:3px;">Importado</span>' : '';
-                let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 ${f.archivo}</a>` : (f.exentoEvidencia ? 'N/A' : '<span style="color:#ff6b6b">Pendiente</span>');
+                let badge = f.exentoEvidencia ? ' <span style="font-size:0.6em; background:#b78a00; padding:1px 3px;">Imp</span>' : '';
+                let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 Ver</a>` : (f.exentoEvidencia ? 'N/A' : '<span style="color:#ff6b6b">Pend</span>');
                 
                 tbody.innerHTML += `<tr>
                     <td><strong>${f.idFolio}</strong>${badge}</td>
                     <td>${f.usuario}</td>
                     <td>${f.dirigidoA || 'N/D'}</td>
                     <td>${f.asunto || f.descripcion || ''}</td>
-                    <td>${f.respuesta || 'Sin respuesta'}</td>
+                    <td>${f.respuesta || '-'}</td>
                     <td>${f.observaciones || ''}</td>
                     <td>${f.fecha}</td>
                     <td>${evidenciaHTML}</td>
                     <td>
-                        <button class="btn-small" onclick="abrirModalEdicion('${f.id}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || f.descripcion || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️ Edit</button>
+                        <button class="btn-small" onclick="abrirModalEdicion('${f.id}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || f.descripcion || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️</button>
                         <button class="btn-small btn-danger" onclick="eliminarFolio('${f.id}', '${f.idFolio}')">🗑️</button>
                     </td>
                 </tr>`;
@@ -492,17 +469,17 @@
             querySnapshot.forEach((docSnap) => {
                 const u = docSnap.data();
                 tbody.innerHTML += `<tr>
-                    <td><strong>${u.usuario}</strong><br><small>${u.nombre}</small></td>
+                    <td><strong>${u.usuario}</strong></td>
                     <td>${u.correo}</td>
-                    <td><span style="font-family:monospace; background:rgba(0,0,0,0.8); padding:3px; border-radius:2px;">${u.password}</span></td>
+                    <td>${u.password}</td>
                     <td>${u.rol.toUpperCase()}</td>
-                    <td>${u.usuario !== 'admin' ? `<button class="btn-small ${u.rol === 'admin' ? 'btn-logout' : 'btn-secondary'}" onclick="cambiarRol('${u.usuario}', '${u.rol}')">${u.rol === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}</button>` : 'Super Admin'}</td>
+                    <td>${u.usuario !== 'admin' ? `<button class="btn-small ${u.rol === 'admin' ? 'btn-danger' : 'btn-secondary'}" onclick="cambiarRol('${u.usuario}', '${u.rol}')">${u.rol === 'admin' ? 'Quitar' : 'Admin'}</button>` : 'Super'}</td>
                 </tr>`;
             });
         }
         window.cambiarRol = async (username, currentRole) => {
             const newRole = currentRole === 'admin' ? 'user' : 'admin';
-            if(confirm(`¿Cambiar rol de ${username} a ${newRole.toUpperCase()}?`)) { await updateDoc(doc(db, "usuarios", username), { rol: newRole }); cargarUsuariosAdmin(); }
+            if(confirm(`¿Cambiar rol de ${username}?`)) { await updateDoc(doc(db, "usuarios", username), { rol: newRole }); cargarUsuariosAdmin(); }
         };
 
         window.exportarExcel = async () => {
@@ -510,16 +487,7 @@
             let foliosArr = [];
             querySnapshot.forEach((doc) => {
                 let d = doc.data();
-                foliosArr.push({
-                    "Folio": d.idFolio,
-                    "Usuario": d.usuario,
-                    "Dirigido_a": d.dirigidoA || "",
-                    "Asunto": d.asunto || d.descripcion || "",
-                    "Respuesta": d.respuesta || "",
-                    "Observaciones": d.observaciones || "",
-                    "Fecha": d.fecha,
-                    "Evidencia": d.archivoUrl || "Pendiente"
-                });
+                foliosArr.push({ "Folio": d.idFolio, "Usuario": d.usuario, "Dirigido_a": d.dirigidoA || "", "Asunto": d.asunto || "", "Respuesta": d.respuesta || "", "Observaciones": d.observaciones || "", "Fecha": d.fecha });
             });
             const ws = XLSX.utils.json_to_sheet(foliosArr);
             const wb = XLSX.utils.book_new();
@@ -535,39 +503,23 @@
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, {type: 'array'});
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const rows = XLSX.utils.sheet_to_json(firstSheet);
-                    let importados = 0;
-                    const timestampBase = Date.now();
-                    const fechaStr = new Date().toLocaleDateString('es-MX');
-
+                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                    let count = 0;
                     for (let row of rows) {
                         if (row.Folio) {
                             await addDoc(collection(db, "folios"), {
-                                idFolio: String(row.Folio),
-                                usuario: currentUserUsername, 
-                                dirigidoA: row.Dirigido_a || row["Dirigido a"] || "Importado",
-                                asunto: row.Asunto || row.Descripcion || "",
-                                respuesta: row.Respuesta || "",
-                                observaciones: row.Observaciones || "",
-                                fecha: row.Fecha || fechaStr,
-                                timestamp: timestampBase - importados, 
-                                archivo: "",
-                                archivoUrl: "",
-                                exentoEvidencia: true 
+                                idFolio: String(row.Folio), usuario: currentUserUsername, dirigidoA: row.Dirigido_a || "Importado", asunto: row.Asunto || "", respuesta: row.Respuesta || "", observaciones: row.Observaciones || "", fecha: row.Fecha || new Date().toLocaleDateString('es-MX'), timestamp: Date.now() - count, archivo: "", archivoUrl: "", exentoEvidencia: true
                             });
-                            importados++;
+                            count++;
                         }
                     }
-                    alert(`¡Se importaron ${importados} folios exitosamente!`);
+                    alert(`¡Importados ${count} folios!`);
                     actualizarTablaAdmin(); actualizarTablaUsuario();
-                    event.target.value = ""; 
-                } catch(error) { alert("Error al leer el Excel. Verifica las columnas requeridas."); }
+                } catch(e) { alert("Error al importar."); }
             };
             reader.readAsArrayBuffer(file);
         };
 
-        // --- EDICIÓN CON CAMPOS BLOQUEADOS ---
         window.abrirModalEdicion = (docId, folio, usr, dirigido, asunto, respuesta, observaciones) => {
             document.getElementById('edit-docId').value = docId;
             document.getElementById('edit-folio').value = folio;
@@ -579,12 +531,11 @@
 
             if(currentUserRole !== 'admin') {
                 document.getElementById('admin-only-edit-fields').classList.add('hidden');
-                document.getElementById('modal-title').innerText = "✏️ Editar Respuesta y Observaciones";
+                document.getElementById('modal-title').innerText = "✏️ Editar Respuesta y Obs.";
             } else {
                 document.getElementById('admin-only-edit-fields').classList.remove('hidden');
-                document.getElementById('modal-title').innerText = "✏️ Editar Registro Completo (Admin)";
+                document.getElementById('modal-title').innerText = "✏️ Editar Registro";
             }
-
             document.getElementById('modal-edicion').classList.remove('hidden');
         };
 
@@ -594,7 +545,6 @@
             const docId = document.getElementById('edit-docId').value;
             const respuesta = document.getElementById('edit-respuesta').value.trim();
             const observaciones = document.getElementById('edit-observaciones').value.trim();
-
             let updateData = { respuesta, observaciones };
 
             if(currentUserRole === 'admin') {
@@ -605,40 +555,28 @@
             }
             
             await updateDoc(doc(db, "folios", docId), updateData);
-            cerrarModalEdicion(); alert("Registro actualizado con éxito."); 
+            cerrarModalEdicion(); alert("Actualizado."); 
             actualizarTablaUsuario(); if(currentUserRole === 'admin') actualizarTablaAdmin();
         };
 
         window.eliminarFolio = async (docId, folioName) => {
-            if(confirm(`⚠️ ¿Eliminar folio ${folioName}?`)) {
-                await deleteDoc(doc(db, "folios", docId));
-                alert("Folio eliminado."); actualizarTablaAdmin(); actualizarTablaUsuario();
-            }
+            if(confirm(`¿Eliminar ${folioName}?`)) { await deleteDoc(doc(db, "folios", docId)); alert("Eliminado."); actualizarTablaAdmin(); actualizarTablaUsuario(); }
         };
 
-        // --- VISOR DE EVIDENCIA DESDE FIREBASE STORAGE ---
         window.previsualizarEvidencia = (fileUrl, fileName, folioId) => {
-            document.getElementById('visor-titulo').innerText = `Evidencia: ${folioId} (${fileName})`;
+            document.getElementById('visor-titulo').innerText = `${folioId} (${fileName})`;
             const contenedor = document.getElementById('visor-contenido');
-            
             const ext = fileName.split('.').pop().toLowerCase();
             if(['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
-                contenedor.innerHTML = `<img src="${fileUrl}" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:4px;">`;
-            } else if(ext === 'pdf') {
-                contenedor.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:100%; border:none;"></iframe>`;
+                contenedor.innerHTML = `<img src="${fileUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
             } else {
-                contenedor.innerHTML = `<div style="text-align:center; padding:20px;"><p>Este archivo no se puede previsualizar directamente.</p><a href="${fileUrl}" target="_blank" style="background:#3a6ea5; color:white; padding:10px 20px; text-decoration:none; border-radius:4px;">📥 Descargar Archivo</a></div>`;
+                contenedor.innerHTML = `<div style="text-align:center; padding:20px;"><a href="${fileUrl}" target="_blank" style="background:#3a6ea5; color:white; padding:10px 20px; text-decoration:none; border-radius:4px;">📥 Descargar Archivo</a></div>`;
             }
-
             document.getElementById('modal-visor').classList.remove('hidden');
         };
 
-        window.cerrarVisor = () => { 
-            document.getElementById('modal-visor').classList.add('hidden');
-            document.getElementById('visor-contenido').innerHTML = '';
-        };
+        window.cerrarVisor = () => { document.getElementById('modal-visor').classList.add('hidden'); document.getElementById('visor-contenido').innerHTML = ''; };
 
-        // --- LÓGICA USUARIO / SOLICITUD ---
         async function cargarVistaUsuario() { 
             await actualizarIndicadorUltimoFolio();
             actualizarTablaUsuario(); 
@@ -649,20 +587,18 @@
             const badge = document.getElementById('badge-ultimo-container');
             if (configSnap.exists() && configSnap.data().configurado) {
                 const data = configSnap.data();
-                let ultimoUsadoNum = data.actual - 1;
-                if(ultimoUsadoNum < 0) ultimoUsadoNum = 0;
+                let ultimoUsadoNum = Math.max(0, data.actual - 1);
                 badge.innerText = `Último Folio: ${data.prefijo}${ultimoUsadoNum}/${data.anio}`;
             } else {
-                badge.innerText = `Último Folio: Sin configurar`;
+                badge.innerText = `Último Folio: No configurado`;
             }
         }
 
         window.generarFormularioFolios = async () => {
             const configSnap = await getDoc(doc(db, "sistema", "config"));
-            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Nomenclatura no configurada por el administrador.');
-            
+            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Nomenclatura no configurada.');
             const cantidad = parseInt(document.getElementById('cantidad-folios').value);
-            if (isNaN(cantidad) || cantidad < 1) return alert('Ingresa cantidad válida.');
+            if (isNaN(cantidad) || cantidad < 1) return alert('Cantidad inválida.');
             
             foliosPendientes = cantidad;
             let prefijo = configSnap.data().prefijo;
@@ -676,16 +612,15 @@
                 let folioPrevisto = `${prefijo}${consecutivoTemp + i}/${anio}`;
                 container.innerHTML += `
                     <div class="folio-item">
-                        <h4 style="margin: 0 0 10px 0; color: var(--azul-brillante);">Folio Asignado: ${folioPrevisto}</h4>
-                        <label><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-MX')}</label><br><br>
+                        <h4 style="margin: 0 0 10px 0; color: var(--azul-brillante); font-size: 0.95em;">Folio: ${folioPrevisto}</h4>
                         <label>Dirigido a:</label>
-                        <input type="text" id="dirigido-${i}" placeholder="Ej. Vocal Ejecutivo..." required>
+                        <input type="text" id="dirigido-${i}" placeholder="Ej. Vocal Ejecutivo" required>
                         <label>Asunto:</label>
-                        <input type="text" id="asunto-${i}" placeholder="Ej. Solicitud de información..." required>
+                        <input type="text" id="asunto-${i}" placeholder="Ej. Solicitud" required>
                         <label>Respuesta:</label>
-                        <input type="text" id="respuesta-${i}" placeholder="Ej. Entregado en tiempo...">
+                        <input type="text" id="respuesta-${i}" placeholder="Respuesta">
                         <label>Observaciones:</label>
-                        <input type="text" id="obs-${i}" placeholder="Ej. Sin novedad...">
+                        <input type="text" id="obs-${i}" placeholder="Observaciones">
                     </div>
                 `;
             }
@@ -698,49 +633,31 @@
                 const configSnap = await getDoc(configRef);
                 let { prefijo, actual, anio } = configSnap.data();
                 const fechaStr = new Date().toLocaleDateString('es-MX');
-                const timestamp = Date.now();
 
                 for (let i = 0; i < foliosPendientes; i++) {
-                    const dirigido = document.getElementById(`dirigido-${i}`).value.trim();
-                    const asunto = document.getElementById(`asunto-${i}`).value.trim();
-                    if (!dirigido || !asunto) return alert(`Faltan campos obligatorios en el Folio #${i+1}.`);
+                    if (!document.getElementById(`dirigido-${i}`).value.trim() || !document.getElementById(`asunto-${i}`).value.trim()) return alert(`Faltan campos en el folio #${i+1}.`);
                 }
 
                 for (let i = 0; i < foliosPendientes; i++) {
-                    const dirigido = document.getElementById(`dirigido-${i}`).value.trim();
-                    const asunto = document.getElementById(`asunto-${i}`).value.trim();
-                    const respuesta = document.getElementById(`respuesta-${i}`).value.trim();
-                    const obs = document.getElementById(`obs-${i}`).value.trim();
-                    const folioCompleto = `${prefijo}${actual}/${anio}`;
-                    
                     await addDoc(collection(db, "folios"), { 
-                        idFolio: folioCompleto, 
+                        idFolio: `${prefijo}${actual}/${anio}`, 
                         usuario: currentUserUsername, 
-                        dirigidoA: dirigido,
-                        asunto: asunto,
-                        respuesta: respuesta,
-                        observaciones: obs,
-                        descripcion: asunto, 
-                        fecha: fechaStr, 
-                        timestamp: timestamp, 
-                        archivo: "", 
-                        archivoUrl: "",
-                        exentoEvidencia: false 
+                        dirigidoA: document.getElementById(`dirigido-${i}`).value.trim(),
+                        asunto: document.getElementById(`asunto-${i}`).value.trim(),
+                        respuesta: document.getElementById(`respuesta-${i}`).value.trim(),
+                        observaciones: document.getElementById(`obs-${i}`).value.trim(),
+                        fecha: fechaStr, timestamp: Date.now(), archivo: "", archivoUrl: "", exentoEvidencia: false 
                     });
                     actual++;
                 }
 
                 await setDoc(configRef, { prefijo, actual, anio, configurado: true });
-                alert(`¡${foliosPendientes} folios asignados con éxito!`);
-                
+                alert(`¡${foliosPendientes} folios asignados!`);
                 document.getElementById('formulario-folios-area').classList.add('hidden');
                 document.getElementById('cantidad-folios').value = '';
-                
                 await cargarVistaUsuario();
                 if(currentUserRole === 'admin') actualizarTablaAdmin();
-            } catch (err) {
-                alert("Ocurrió un error al guardar los folios.");
-            }
+            } catch (err) { alert("Error al guardar."); }
         };
 
         async function actualizarTablaUsuario() {
@@ -749,68 +666,41 @@
             const tbody = document.getElementById('user-tabla-folios');
             tbody.innerHTML = '';
             let misFolios = [];
-            let foliosAtrasados = [];
-            const ahora = Date.now();
-            const limiteMs = 5 * 24 * 60 * 60 * 1000;
-
             querySnapshot.forEach((doc) => misFolios.push({ docId: doc.id, ...doc.data() }));
             misFolios.sort((a, b) => b.timestamp - a.timestamp);
 
-            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="8">No has solicitado folios.</td></tr>'; return; }
+            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="8">Sin folios.</td></tr>'; return; }
 
             misFolios.forEach(f => {
-                if(!f.archivoUrl && !f.exentoEvidencia && (ahora - f.timestamp > limiteMs)) {
-                    foliosAtrasados.push(f.idFolio);
-                }
-
-                let btnSubir = `<div style="display:flex; gap:3px;"><input type="file" id="file-${f.docId}" style="width:110px; margin:0; padding:2px; font-size:0.7em;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
-                let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 ${f.archivo}</a>` : btnSubir;
+                let btnSubir = `<div style="display:flex; gap:3px;"><input type="file" id="file-${f.docId}" style="width:90px; font-size:0.6em;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
+                let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 Ver</a>` : btnSubir;
                 
                 tbody.innerHTML += `<tr>
                     <td><strong>${f.idFolio}</strong></td>
                     <td>${f.fecha}</td>
-                    <td>${f.dirigidoA || 'N/D'}</td>
-                    <td>${f.asunto || f.descripcion || ''}</td>
-                    <td>${f.respuesta || 'Sin respuesta'}</td>
+                    <td>${f.dirigidoA || '-'}</td>
+                    <td>${f.asunto || ''}</td>
+                    <td>${f.respuesta || '-'}</td>
                     <td>${f.observaciones || ''}</td>
                     <td>${evidenciaHTML}</td>
-                    <td><button class="btn-small" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || f.descripcion || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️ Edit</button></td>
+                    <td><button class="btn-small" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || f.descripcion || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️</button></td>
                 </tr>`;
             });
-
-            const alerta = document.getElementById('alerta-evidencia-container');
-            if(foliosAtrasados.length > 0) {
-                document.getElementById('folios-atrasados-lista').innerText = foliosAtrasados.join(", ");
-                alerta.classList.remove('hidden');
-            } else {
-                alerta.classList.add('hidden');
-            }
         }
 
-        // --- SUBIDA REAL A FIREBASE STORAGE ---
         window.subirEvidencia = async (docId) => {
             const fileInput = document.getElementById(`file-${docId}`);
             if(!fileInput.files || fileInput.files.length === 0) return alert('Selecciona un archivo.');
             const file = fileInput.files[0];
-            
             try {
-                alert("Subiendo archivo a la nube... Por favor espera un momento.");
+                alert("Subiendo archivo...");
                 const storageRef = ref(storage, `evidencias/${docId}_${file.name}`);
                 const snapshot = await uploadBytes(storageRef, file);
                 const downloadURL = await getDownloadURL(snapshot.ref);
-
-                await updateDoc(doc(db, "folios", docId), { 
-                    archivo: file.name,
-                    archivoUrl: downloadURL 
-                });
-
-                alert('¡Evidencia subida a la nube correctamente!');
-                actualizarTablaUsuario(); 
-                if(currentUserRole === 'admin') actualizarTablaAdmin();
-            } catch (error) {
-                console.error("Error al subir archivo:", error);
-                alert("Error al subir el archivo. Verifica que Firebase Storage esté activado en tu consola.");
-            }
+                await updateDoc(doc(db, "folios", docId), { archivo: file.name, archivoUrl: downloadURL });
+                alert('¡Subido con éxito!');
+                actualizarTablaUsuario(); if(currentUserRole === 'admin') actualizarTablaAdmin();
+            } catch (error) { alert("Error al subir."); }
         };
     </script>
 </body>
