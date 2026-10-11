@@ -62,12 +62,14 @@
         .btn-danger { background-color: #5a1818; border-color: #8B0000; }
         .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 5px 12px; font-size: 0.75em; }
         .btn-small { padding: 3px 6px; font-size: 0.7em; }
+        
+        /* Botones de iconos compactos */
+        .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 1.15em; padding: 2px 4px; transition: transform 0.1s; }
+        .btn-icon:hover { transform: scale(1.15); }
 
-        /* Estilos para el botón de subir dinámico (Gris inactivo / Azul activo) */
         .btn-subir-inactivo { background-color: #444 !important; color: #888 !important; border-color: #555 !important; cursor: not-allowed !important; }
         .btn-subir-activo { background-color: var(--azul-brillante) !important; color: white !important; border-color: #6096ba !important; cursor: pointer !important; box-shadow: 0 0 6px var(--azul-brillante); }
 
-        /* Tooltip flotante para vista previa al pasar el cursor */
         .tooltip-container { position: relative; display: inline-block; }
         .tooltip-content { visibility: hidden; width: 160px; background-color: #1a1a1a; color: #fff; text-align: center; border-radius: 6px; padding: 6px; position: absolute; z-index: 1000; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; border: 1px solid var(--azul-brillante); box-shadow: 0 4px 10px rgba(0,0,0,0.8); font-size: 0.7em; }
         .tooltip-container:hover .tooltip-content { visibility: visible; opacity: 1; }
@@ -98,7 +100,7 @@
         .col-respuesta { width: 140px; }
         .col-obs { width: 120px; }
         .col-evid { width: 85px; white-space: nowrap; }
-        .col-acc { width: 75px; white-space: nowrap; text-align: center; }
+        .col-acc { width: 60px; white-space: nowrap; text-align: center; }
 
         .hidden { display: none !important; }
         .error { color: #ff6b6b; font-size: 0.85em; margin-bottom: 8px; background: rgba(255,0,0,0.1); padding: 4px; border-radius: 3px;}
@@ -391,7 +393,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 0.3.6</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 0.3.7</div>
         <div class="footer-status">
             <span id="footer-dot" class="footer-dot dot-offline"></span>
             <span id="footer-status-text" style="color: #ff3333;">offline</span>
@@ -923,7 +925,6 @@
                         foliosAtrasados.push(f.idFolio);
                     }
 
-                    // Interfaz dinámica de subida con botón gris/azul y previsualización tooltip
                     let btnSubir = `
                         <div style="display:flex; flex-direction:column; gap:3px;">
                             <input type="file" id="file-${f.docId}" onchange="actualizarEstadoBotonSubir('${f.docId}')" style="width:75px; font-size:0.55em; margin:0;">
@@ -947,7 +948,7 @@
                         <td class="col-respuesta">${f.respuesta || '-'}</td>
                         <td class="col-obs">${f.observaciones || ''}</td>
                         <td class="col-evid">${evidenciaHTML}</td>
-                        <td class="col-acc"><button class="btn-small" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️ Edit</button></td>
+                        <td class="col-acc"><button class="btn-icon" title="Editar" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️</button></td>
                     </tr>`;
                 });
 
@@ -961,7 +962,6 @@
             }, 5);
         };
 
-        // Función que detecta cuando seleccionas un archivo y prende el botón en azul
         window.actualizarEstadoBotonSubir = (docId) => {
             const fileInput = document.getElementById(`file-${docId}`);
             const btnSubir = document.getElementById(`btn-subir-${docId}`);
@@ -1008,8 +1008,8 @@
                         </div>` : (f.exentoEvidencia ? 'N/A' : '<span style="color:#ff6b6b">Pend</span>');
                     
                     let btnAccionesAdmin = currentUserRole === 'admin' ? 
-                        `<button class="btn-small" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️</button>
-                         <button class="btn-small btn-danger" onclick="eliminarFolio('${f.docId}', '${f.idFolio}')">🗑️</button>` : 
+                        `<button class="btn-icon" title="Editar" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️</button>
+                         <button class="btn-icon" title="Eliminar" onclick="eliminarFolio('${f.docId}', '${f.idFolio}')">🗑️</button>` : 
                         `<span style="color:#888; font-size:0.7em;">Lectura</span>`;
 
                     tbody.innerHTML += `<tr>
@@ -1021,7 +1021,7 @@
                         <td class="col-obs">${f.observaciones || ''}</td>
                         <td class="col-fecha">${f.fecha}</td>
                         <td class="col-evid">${evidenciaHTML}</td>
-                        <td class="col-acc">${btnAccionesAdmin}</td>
+                        <td class="col-acc" style="white-space:nowrap;">${btnAccionesAdmin}</td>
                     </tr>`;
                 });
             }, 5);
