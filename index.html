@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v1.0.9</title>
+    <title>VRFE 03JDE - Gestión de Folios v1.0.10</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -128,8 +128,8 @@
         <div class="header-title"><h1 style="font-size: 0.95em; margin: 0;">Vocalía del RFE</h1><p style="font-size: 0.6em; margin: 1px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva</p></div>
         <div style="text-align: right; display: flex; align-items: center; gap: 8px; justify-content: flex-end;">
             <div id="header-status-dot-container" style="display:flex; align-items:center; gap:4px; font-size:0.7em;">
-                <span id="header-top-dot" class="footer-dot dot-offline"></span>
-                <span id="header-top-status-text" style="color: #ff3333; font-weight: bold;">offline</span>
+                <span id="header-top-dot" class="footer-dot dot-online"></span>
+                <span id="header-top-status-text" style="color: #00ff66; font-weight: bold;">online</span>
             </div>
             <button id="btn-header-logout" class="btn-logout hidden" onclick="logout()">Salir</button>
         </div>
@@ -479,14 +479,14 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.9</div>
-        <div class="footer-status"><span id="footer-dot" class="footer-dot dot-offline"></span><span id="footer-status-text" style="color: #ff3333;">offline</span></div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.10</div>
+        <div class="footer-status"><span id="footer-dot" class="footer-dot dot-online"></span><span id="footer-status-text" style="color: #00ff66;">online</span></div>
     </footer>
 
     <!-- SCRIPT Y LÓGICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, getDocs, query, where, writeBatch, runTransaction } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBpmtUCDLKDkhGx9zh2IkQ65Yrob13gjxE", authDomain: "foliosvrfe03.firebaseapp.com", projectId: "foliosvrfe03", appId: "1:493793399671:web:bfdcedf6260818851dc772" };
         const app = initializeApp(firebaseConfig);
@@ -498,22 +498,6 @@
 
         let sortConfigUser = { column: 'folio', asc: false };
         let sortConfigGlobal = { column: 'folio', asc: false };
-
-        function setConexionEstado(online) {
-            const dot = document.getElementById('footer-dot'); const txt = document.getElementById('footer-status-text');
-            const topDot = document.getElementById('header-top-dot'); const topTxt = document.getElementById('header-top-status-text');
-            const ring = document.getElementById('header-avatar-ring');
-            if(online) { 
-                if(dot) { dot.className = "footer-dot dot-online"; txt.innerText = "online"; txt.style.color = "#00ff66"; }
-                if(topDot) { topDot.className = "footer-dot dot-online"; topTxt.innerText = "online"; topTxt.style.color = "#00ff66"; }
-                if(ring) { ring.className = "avatar-ring online"; }
-            } else { 
-                if(dot) { dot.className = "footer-dot dot-offline"; txt.innerText = "offline"; txt.style.color = "#ff3333"; }
-                if(topDot) { topDot.className = "footer-dot dot-offline"; topTxt.innerText = "offline"; topTxt.style.color = "#ff3333"; }
-                if(ring) { ring.className = "avatar-ring offline"; }
-            }
-        }
-        setInterval(async () => { try { await getDoc(doc(db, "sistema", "ping")); setConexionEstado(true); } catch(e) { setConexionEstado(false); } }, 30000);
 
         window.togglePasswordVisibility = (idField, btn) => { const input = document.getElementById(idField); if (input.type === "password") { input.type = "text"; btn.innerText = " Ocultar "; } else { input.type = "password"; btn.innerText = "👁️"; } };
         window.mostrarRegistro = () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); };
@@ -683,37 +667,40 @@
         };
 
         async function cargarDatosSistemaAsync() {
-            const configSnap = await getDoc(doc(db, "sistema", "config"));
-            if (configSnap.exists() && configSnap.data().configurado) {
-                document.getElementById('config-area').classList.add('hidden');
-                document.getElementById('nom-prefijo').value = configSnap.data().prefijo;
-                document.getElementById('nom-inicio').value = configSnap.data().actual;
-                document.getElementById('nom-anio').value = configSnap.data().anio;
-                document.getElementById('nom-drive-url').value = configSnap.data().urlDriveScript || "";
-                urlDriveScriptGlobal = configSnap.data().urlDriveScript || "";
-            } else { document.getElementById('config-area').classList.remove('hidden'); }
+            try {
+                const configSnap = await getDoc(doc(db, "sistema", "config"));
+                if (configSnap.exists() && configSnap.data().configurado) {
+                    document.getElementById('config-area').classList.add('hidden');
+                    document.getElementById('nom-prefijo').value = configSnap.data().prefijo;
+                    document.getElementById('nom-inicio').value = configSnap.data().actual;
+                    document.getElementById('nom-anio').value = configSnap.data().anio;
+                    document.getElementById('nom-drive-url').value = configSnap.data().urlDriveScript || "";
+                    urlDriveScriptGlobal = configSnap.data().urlDriveScript || "";
+                } else { document.getElementById('config-area').classList.remove('hidden'); }
 
-            const qFolios = await getDocs(collection(db, "folios"));
-            cacheFoliosGlobal = []; qFolios.forEach((d) => cacheFoliosGlobal.push({ docId: d.id, ...d.data() }));
+                const qFolios = await getDocs(collection(db, "folios"));
+                cacheFoliosGlobal = []; qFolios.forEach((d) => cacheFoliosGlobal.push({ docId: d.id, ...d.data() }));
 
-            const qUsers = await getDocs(collection(db, "usuarios"));
-            cacheUsuariosGlobal = []; qUsers.forEach((d) => cacheUsuariosGlobal.push({ id: d.id, ...d.data() }));
+                const qUsers = await getDocs(collection(db, "usuarios"));
+                cacheUsuariosGlobal = []; qUsers.forEach((d) => cacheUsuariosGlobal.push({ id: d.id, ...d.data() }));
 
-            const qMsg = await getDocs(collection(db, "mensajes"));
-            cacheMensajesGlobal = []; qMsg.forEach((d) => cacheMensajesGlobal.push({ id: d.id, ...d.data() }));
+                const qMsg = await getDocs(collection(db, "mensajes"));
+                cacheMensajesGlobal = []; qMsg.forEach((d) => cacheMensajesGlobal.push({ id: d.id, ...d.data() }));
 
-            if(currentUserUsername) {
-                const uDoc = cacheUsuariosGlobal.find(u => u.usuario === currentUserUsername);
-                if(uDoc) currentUserDataFull = uDoc;
-                actualizarAvatarHeaderUI();
+                if(currentUserUsername) {
+                    const uDoc = cacheUsuariosGlobal.find(u => u.usuario === currentUserUsername);
+                    if(uDoc) currentUserDataFull = uDoc;
+                    actualizarAvatarHeaderUI();
+                }
+
+                await actualizarIndicadorUltimoFolioDinamico();
+                if(currentUserRole === 'admin') cargarUsuariosAdmin();
+                renderizarTablaUsuario();
+                if(currentUserRole === 'admin') renderizarTablaGlobal();
+                renderizarBuzonMensajes();
+            } catch(err) {
+                console.error("Error al cargar datos:", err);
             }
-
-            await actualizarIndicadorUltimoFolioDinamico();
-            if(currentUserRole === 'admin') cargarUsuariosAdmin();
-            renderizarTablaUsuario();
-            if(currentUserRole === 'admin') renderizarTablaGlobal();
-            renderizarBuzonMensajes();
-            setConexionEstado(true);
         }
 
         window.habilitarEdicionConfig = () => { document.getElementById('config-area').classList.remove('hidden'); document.getElementById('btn-cancelar-config').classList.remove('hidden'); };
@@ -849,32 +836,38 @@
 
             if(foliosAcrear.length === 0) return alert('No hay folios válidos para registrar.');
 
-            const configRef = doc(db, "sistema", "config");
             const fechaSoloDia = obtenerFechaSoloDiaISO();
 
             try {
-                await runTransaction(db, async (transaction) => {
-                    const configDoc = await transaction.get(configRef);
-                    if (!configDoc.exists()) throw "Falta config";
-                    let info = configDoc.data();
-                    
-                    let maxActual = parseInt(info.actual) || 1;
-                    foliosAcrear.forEach((item, idx) => {
-                        let newRef = doc(collection(db, "folios"));
-                        transaction.set(newRef, {
-                            idFolio: item.folio, usuario: currentUserUsername, 
-                            dirigidoA: item.dirigido, asunto: item.asunto,
-                            respuesta: "", observaciones: "", fecha: fechaSoloDia, timestamp: Date.now() + idx, 
-                            fotoBase64: "", docDriveUrl: "", docDriveName: ""
-                        });
-                        let num = extraerNumeroFolio(item.folio);
-                        if(num >= maxActual) maxActual = num + 1;
-                    });
+                const configRef = doc(db, "sistema", "config");
+                const configSnap = await getDoc(configRef);
+                if (!configSnap.exists()) return alert("Configuración no encontrada.");
+                let info = configSnap.data();
+                let maxActual = parseInt(info.actual) || 1;
 
-                    transaction.update(configRef, { actual: maxActual });
+                const batch = writeBatch(db);
+                foliosAcrear.forEach((item, idx) => {
+                    let newRef = doc(collection(db, "folios"));
+                    batch.set(newRef, {
+                        idFolio: item.folio, usuario: currentUserUsername, 
+                        dirigidoA: item.dirigido, asunto: item.asunto,
+                        respuesta: "", observaciones: "", fecha: fechaSoloDia, timestamp: Date.now() + idx, 
+                        fotoBase64: "", docDriveUrl: "", docDriveName: ""
+                    });
+                    let num = extraerNumeroFolio(item.folio);
+                    if(num >= maxActual) maxActual = num + 1;
                 });
-                alert('¡Folios asignados con éxito!'); cancelarFormularioFolios(); cargarDatosSistemaAsync();
-            } catch (err) { alert("Error al asignar folios. Verifica la configuración en el Panel Admin."); }
+
+                batch.update(configRef, { actual: maxActual });
+                await batch.commit();
+
+                alert('¡Folios asignados con éxito!'); 
+                cancelarFormularioFolios(); 
+                cargarDatosSistemaAsync();
+            } catch (err) { 
+                console.error(err);
+                alert("Error al asignar folios. Verifica la conexión."); 
+            }
         };
 
         window.subirFotoRapida = async (docId, fileInputId) => {
