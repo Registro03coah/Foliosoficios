@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v1.0.10</title>
+    <title>VRFE 03JDE - Gestión de Folios v1.0.11</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -48,7 +48,7 @@
         button:hover { background-color: var(--azul-brillante); }
         
         .btn-db-action { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 7px 12px; border-radius: 5px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; color: white; font-size: 0.8em; transition: 0.2s; }
-        .btn-config { background-color: #1d3557; } .btn-export { background-color: #2a9d8f; }
+        .btn-config { background-color: #1d3557; } .btn-export { background-color: #2a9d8f; } .btn-import { background-color: #e9c46a; color: #000; }
         .btn-delete-db { background-color: #9d0208; border-color: #d90429; }
         .btn-secondary { background-color: var(--azul-oscuro); border-color: var(--azul-medio); }
         .btn-danger { background-color: #5a1818; border-color: #8B0000; }
@@ -213,9 +213,14 @@
 
                 <div class="card" style="background: rgba(0,0,0,0.4);">
                     <h3 style="font-size: 0.95em; margin-top:0; margin-bottom: 8px;">📦 Herramientas de Base de Datos</h3>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                         <button class="btn-db-action btn-config" onclick="habilitarEdicionConfig()">⚙️ Modificar Config.</button>
                         <button class="btn-db-action btn-export" onclick="exportarExcel()">📥 Exportar a Excel</button>
+                        
+                        <label class="btn-db-action btn-import" style="margin:0; cursor:pointer;">
+                            📤 Subir Base de Datos <input type="file" id="input-subir-db" accept=".xlsx, .xls" style="display:none;" onchange="importarBaseDeDatosExcel(event)">
+                        </label>
+
                         <button class="btn-db-action btn-delete-db" onclick="borrarBaseDeDatosCompleta()">🗑️ Borrar DB</button>
                     </div>
                 </div>
@@ -479,7 +484,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.10</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.11</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-online"></span><span id="footer-status-text" style="color: #00ff66;">online</span></div>
     </footer>
 
@@ -1469,6 +1474,67 @@
             }));
             const ws = XLSX.utils.json_to_sheet(arr); const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Folios"); XLSX.writeFile(wb, "Respaldo_Folios_VRFE03.xlsx");
+        };
+
+        window.importarBaseDeDatosExcel = async (event) => {
+            if(currentUserRole !== 'admin') return;
+            const file = event.target.files[0];
+            if(!file) return;
+
+            if(!confirm("⚠️ ¿Deseas importar y restaurar los folios desde este archivo Excel? Se agregarán a la base de datos actual.")) {
+                event.target.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonRows = XLSX.utils.sheet_to_json(worksheet);
+
+                    if(jsonRows.length === 0) return alert("El archivo Excel está vacío o no tiene el formato correcto.");
+
+                    const batch = writeBatch(db);
+                    let contador = 0;
+
+                    jsonRows.forEach((row, idx) => {
+                        let folioVal = row["Folio"] || row["folio"] || "";
+                        if(folioVal) {
+                            let newRef = doc(collection(db, "folios"));
+                            batch.set(newRef, {
+                                idFolio: String(folioVal),
+                                usuario: String(row["Usuario"] || row["usuario"] || currentUserUsername),
+                                dirigidoA: String(row["Dirigido_a"] || row["Dirigido a"] || ""),
+                                asunto: String(row["Asunto"] || ""),
+                                respuesta: String(row["Respuesta"] || ""),
+                                observaciones: String(row["Observaciones"] || ""),
+                                fecha: String(row["Fecha"] || obtenerFechaSoloDiaISO()),
+                                timestamp: Date.now() + idx,
+                                fotoBase64: "",
+                                docDriveUrl: "",
+                                docDriveName: ""
+                            });
+                            contador++;
+                        }
+                    });
+
+                    if(contador > 0) {
+                        await batch.commit();
+                        alert(`¡Se importaron ${contador} registros con éxito!`);
+                        cargarDatosSistemaAsync();
+                    } else {
+                        alert("No se encontraron columnas de Folio válidas en el archivo.");
+                    }
+                } catch(err) {
+                    console.error(err);
+                    alert("Error al procesar el archivo Excel.");
+                }
+                event.target.value = "";
+            };
+            reader.readAsArrayBuffer(file);
         };
 
         window.borrarBaseDeDatosCompleta = async () => {
