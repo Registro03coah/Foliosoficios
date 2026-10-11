@@ -112,16 +112,6 @@
         .footer-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
         .dot-online { background-color: #00ff66; box-shadow: 0 0 6px #00ff66; }
         .dot-offline { background-color: #ff3333; box-shadow: 0 0 6px #ff3333; }
-
-        @media print {
-            body { background: white !important; color: black !important; margin: 0 !important; }
-            header, .card, footer, button, input, select, .badge-ultimo-folio, .alerta-evidencia, .modal-overlay, .nav-tabs, .sort-bar { display: none !important; }
-            .container { margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; }
-            table { width: 100% !important; background: white !important; color: black !important; border: 1px solid #999 !important; font-size: 7pt !important; table-layout: auto !important; }
-            th { background-color: #1d3557 !important; color: white !important; -webkit-print-color-adjust: exact; }
-            td, th { border: 1px solid #ccc !important; padding: 3px !important; white-space: normal !important; width: auto !important; }
-            @page { size: portrait; margin: 0.8cm; }
-        }
     </style>
 </head>
 <body>
@@ -389,7 +379,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 0.3.9</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 0.4.0</div>
         <div class="footer-status">
             <span id="footer-dot" class="footer-dot dot-offline"></span>
             <span id="footer-status-text" style="color: #ff3333;">offline</span>
@@ -895,9 +885,12 @@
             } catch (err) { alert("Error al guardar."); }
         };
 
+        // Renderizado optimizado y por lotes para evitar que el navegador se trabe
         window.renderizarTablaUsuario = () => {
+            const tbody = document.getElementById('user-tabla-folios');
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:15px;">Cargando registros...</td></tr>';
+            
             setTimeout(() => {
-                const tbody = document.getElementById('user-tabla-folios');
                 tbody.innerHTML = '';
                 let misFolios = cacheFoliosGlobal.filter(f => f.usuario === currentUserUsername);
                 let foliosAtrasados = [];
@@ -916,12 +909,12 @@
 
                 if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="8">No has solicitado folios.</td></tr>'; return; }
 
+                let htmlContent = '';
                 misFolios.forEach(f => {
                     if(!f.archivoUrl && !f.exentoEvidencia && (ahora - f.timestamp > limiteMs)) {
                         foliosAtrasados.push(f.idFolio);
                     }
 
-                    // Interfaz dinámica: Icono de hoja si ya tiene archivo, o botón adjuntar si está pendiente
                     let evidenciaHTML = '';
                     if (f.archivoUrl) {
                         evidenciaHTML = `
@@ -944,7 +937,7 @@
                             </div>`;
                     }
                     
-                    tbody.innerHTML += `<tr>
+                    htmlContent += `<tr>
                         <td class="col-folio"><strong>${f.idFolio}</strong></td>
                         <td class="col-fecha">${f.fecha}</td>
                         <td class="col-dirigido">${f.dirigidoA || '-'}</td>
@@ -956,6 +949,8 @@
                     </tr>`;
                 });
 
+                tbody.innerHTML = htmlContent;
+
                 const alerta = document.getElementById('alerta-evidencia-container');
                 if(foliosAtrasados.length > 0) {
                     document.getElementById('folios-atrasados-lista').innerText = foliosAtrasados.join(", ");
@@ -963,10 +958,9 @@
                 } else {
                     alerta.classList.add('hidden');
                 }
-            }, 5);
+            }, 10);
         };
 
-        // Función que sube el archivo automáticamente a Firebase Storage al seleccionarlo
         window.subirEvidenciaAutomatica = async (docId) => {
             const fileInput = document.getElementById(`file-${docId}`);
             if(!fileInput.files || fileInput.files.length === 0) return;
@@ -987,8 +981,10 @@
 
         window.renderizarTablaGlobal = () => {
             if(currentUserRole !== 'admin') return;
+            const tbody = document.getElementById('global-tabla-folios');
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:15px;">Cargando historial global...</td></tr>';
+
             setTimeout(() => {
-                const tbody = document.getElementById('global-tabla-folios');
                 tbody.innerHTML = '';
                 let foliosArr = [...cacheFoliosGlobal];
 
@@ -1005,6 +1001,7 @@
 
                 if(foliosArr.length === 0) { tbody.innerHTML = '<tr><td colspan="9">No hay folios registrados.</td></tr>'; return; }
 
+                let htmlContent = '';
                 foliosArr.forEach(f => {
                     let badge = f.exentoEvidencia ? ' <span style="font-size:0.55em; background:#b78a00; padding:1px 2px;">Imp</span>' : '';
                     let evidenciaHTML = f.archivoUrl ? `
@@ -1021,7 +1018,7 @@
                          <button class="btn-icon" title="Eliminar" onclick="eliminarFolio('${f.docId}', '${f.idFolio}')">🗑️</button>` : 
                         `<span style="color:#888; font-size:0.7em;">Lectura</span>`;
 
-                    tbody.innerHTML += `<tr>
+                    htmlContent += `<tr>
                         <td class="col-folio"><strong>${f.idFolio}</strong>${badge}</td>
                         <td class="col-usuario">${f.usuario}</td>
                         <td class="col-dirigido">${f.dirigidoA || '-'}</td>
@@ -1033,7 +1030,8 @@
                         <td class="col-acc" style="white-space:nowrap;">${btnAccionesAdmin}</td>
                     </tr>`;
                 });
-            }, 5);
+                tbody.innerHTML = htmlContent;
+            }, 10);
         };
     </script>
 </body>
