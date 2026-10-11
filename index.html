@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v1.0.3</title>
+    <title>VRFE 03JDE - Gestión de Folios v1.0.7</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -17,11 +17,11 @@
         header { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 6px 15px; border-bottom: 3px solid var(--azul-brillante); box-shadow: 0 3px 10px rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
         
         .header-user-badge { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .avatar-ring { width: 38px; height: 38px; border-radius: 50%; padding: 2px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 8px #00ff66; background: rgba(0,0,0,0.5); transition: 0.3s; }
+        .avatar-ring { width: 36px; height: 36px; border-radius: 50%; padding: 2px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 8px #00ff66; background: rgba(0,0,0,0.5); transition: 0.3s; }
         .avatar-ring.online { box-shadow: 0 0 8px #00ff66; border: 2px solid #00ff66; }
         .avatar-ring.offline { box-shadow: 0 0 8px #ff3333; border: 2px solid #ff3333; }
         .header-avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        .header-username { color: #00d2ff; font-weight: bold; font-size: 0.9em; text-shadow: 0 0 5px rgba(0, 210, 255, 0.5); }
+        .header-username { color: #00d2ff; font-weight: bold; font-size: 0.85em; text-shadow: 0 0 5px rgba(0, 210, 255, 0.5); }
         
         .header-title { text-align: center; flex: 1; }
         .container { max-width: 1550px; margin: 85px auto 20px auto; padding: 10px; flex: 1; width: 98%; box-sizing: border-box; }
@@ -30,13 +30,13 @@
         
         .card { background-color: var(--tarjeta-bg); padding: 14px; border-radius: 6px; border-top: 3px solid var(--azul-claro); box-shadow: 0 5px 12px rgba(0,0,0,0.7); margin-bottom: 15px; position: relative; text-align: left; }
         
-        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="date"], textarea, select { width: 100%; padding: 8px 10px; margin-bottom: 10px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="date"], textarea, select { width: 100%; padding: 7px 9px; margin-bottom: 8px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; font-size: 13px; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 4px var(--azul-brillante); }
         input[readonly] { background-color: #222; color: #888; cursor: not-allowed; }
 
-        .password-wrapper { position: relative; width: 100%; margin-bottom: 10px; }
-        .password-wrapper input { margin-bottom: 0; padding-right: 40px; }
-        .toggle-password { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; cursor: pointer; font-size: 1em; padding: 4px; box-shadow: none; }
+        .password-wrapper { position: relative; width: 100%; margin-bottom: 8px; }
+        .password-wrapper input { margin-bottom: 0; padding-right: 38px; }
+        .toggle-password { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; cursor: pointer; font-size: 0.9em; padding: 4px; box-shadow: none; }
 
         .inline-inputs { display: flex; gap: 8px; }
         .inline-inputs input { margin-bottom: 0; }
@@ -44,53 +44,53 @@
         @media(min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
         .full-width { grid-column: 1 / -1; }
 
-        button { background-color: var(--azul-medio); color: white; border: 1px solid var(--azul-claro); padding: 8px 14px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 0.85em; }
+        button { background-color: var(--azul-medio); color: white; border: 1px solid var(--azul-claro); padding: 7px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 0.8em; }
         button:hover { background-color: var(--azul-brillante); }
         
-        .btn-db-action { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 8px 14px; border-radius: 5px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; color: white; font-size: 0.85em; transition: 0.2s; }
+        .btn-db-action { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 7px 12px; border-radius: 5px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; color: white; font-size: 0.8em; transition: 0.2s; }
         .btn-config { background-color: #1d3557; } .btn-export { background-color: #2a9d8f; }
         .btn-delete-db { background-color: #9d0208; border-color: #d90429; }
         .btn-secondary { background-color: var(--azul-oscuro); border-color: var(--azul-medio); }
         .btn-danger { background-color: #5a1818; border-color: #8B0000; }
-        .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 5px 12px; font-size: 0.75em; }
-        .btn-small { padding: 3px 6px; font-size: 0.7em; }
-        .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 1.15em; padding: 2px 4px; transition: transform 0.1s; }
+        .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 5px 10px; font-size: 0.7em; }
+        .btn-small { padding: 3px 6px; font-size: 0.68em; }
+        .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 1.1em; padding: 2px 4px; transition: transform 0.1s; }
         .btn-icon:hover { transform: scale(1.15); }
         
         .tooltip-container { position: relative; display: inline-block; cursor: pointer; }
-        .tooltip-img { max-width: 45px; max-height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--azul-brillante); }
-        .tooltip-icon { font-size: 2em; text-decoration: none; display: inline-block; }
-        .table-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--azul-brillante); cursor: pointer; }
+        .tooltip-img { max-width: 42px; max-height: 42px; object-fit: cover; border-radius: 4px; border: 1px solid var(--azul-brillante); }
+        .tooltip-icon { font-size: 1.8em; text-decoration: none; display: inline-block; }
+        .table-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid var(--azul-brillante); cursor: pointer; }
 
-        .badge-ultimo-folio { background-color: var(--azul-brillante); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; font-weight: bold; display: block; text-align: center; margin-bottom: 12px; border: 1px solid #6096ba; }
+        .badge-ultimo-folio { background-color: var(--azul-brillante); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.78em; font-weight: bold; display: block; text-align: center; margin-bottom: 12px; border: 1px solid #6096ba; }
         @media(min-width: 600px) { .badge-ultimo-folio { display: inline-block; float: right; margin-top: -3px; margin-bottom: 0; } }
 
         .nav-tabs { display: flex; gap: 4px; margin-bottom: 15px; border-bottom: 2px solid var(--azul-medio); padding-bottom: 8px; flex-wrap: wrap; }
-        .nav-tab-btn { background-color: rgba(20, 33, 61, 0.6); color: #aaa; border: 1px solid var(--azul-claro); padding: 8px 15px; border-radius: 5px 5px 0 0; cursor: pointer; font-weight: bold; font-size: 0.85em; }
+        .nav-tab-btn { background-color: rgba(20, 33, 61, 0.6); color: #aaa; border: 1px solid var(--azul-claro); padding: 7px 12px; border-radius: 5px 5px 0 0; cursor: pointer; font-weight: bold; font-size: 0.8em; }
         .nav-tab-btn.active { background-color: var(--azul-medio); color: white; border-bottom: 2px solid var(--azul-brillante); }
 
         table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.73em; background-color: rgba(0,0,0,0.4); table-layout: fixed; }
         th, td { padding: 6px 4px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); vertical-align: middle; overflow-wrap: break-word; word-wrap: break-word; }
-        th { background-color: var(--azul-medio); border-bottom: 2px solid var(--azul-brillante); font-size: 0.75em; white-space: nowrap; cursor: pointer; user-select: none; }
+        th { background-color: var(--azul-medio); border-bottom: 2px solid var(--azul-brillante); font-size: 0.73em; white-space: nowrap; cursor: pointer; user-select: none; }
         th:hover { background-color: var(--azul-claro); }
         
         .col-folio { width: 140px; white-space: nowrap; font-weight: bold; }
-        .col-fecha { width: 105px; white-space: nowrap; }
-        .col-usuario { width: 75px; white-space: nowrap; font-size: 0.9em; text-align: center; }
+        .col-fecha { width: 95px; white-space: nowrap; }
+        .col-usuario { width: 75px; white-space: nowrap; font-size: 0.85em; text-align: center; }
         .col-dirigido { width: 140px; }
         .col-asunto { width: 140px; }
-        .col-respuesta { width: 105px; }
-        .col-obs { width: 100px; }
-        .col-foto { width: 70px; text-align: center; }
-        .col-doc { width: 70px; text-align: center; }
-        .col-acc { width: 60px; white-space: nowrap; text-align: center; }
+        .col-respuesta { width: 100px; }
+        .col-obs { width: 95px; }
+        .col-foto { width: 65px; text-align: center; }
+        .col-doc { width: 65px; text-align: center; }
+        .col-acc { width: 55px; white-space: nowrap; text-align: center; }
 
         .hidden { display: none !important; }
-        .error { color: #ff6b6b; font-size: 0.85em; margin-bottom: 8px; background: rgba(255,0,0,0.1); padding: 4px; border-radius: 3px;}
+        .error { color: #ff6b6b; font-size: 0.8em; margin-bottom: 8px; background: rgba(255,0,0,0.1); padding: 4px; border-radius: 3px;}
         .folio-item { background: rgba(0,0,0,0.5); padding: 10px; margin-bottom: 10px; border-left: 3px solid var(--azul-brillante); border-radius: 4px; }
         
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 10px; box-sizing: border-box; }
-        .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 18px; border-radius: 6px; width: 100%; max-width: 450px; max-height: 92vh; overflow-y: auto; }
+        .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 14px; border-radius: 6px; width: 100%; max-width: 410px; max-height: 92vh; overflow-y: auto; }
         .modal-content-viewer { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 8px; border-radius: 6px; width: 92vw; height: 82vh; display: flex; flex-direction: column; }
 
         .print-only-container { display: none; }
@@ -102,29 +102,38 @@
             @page { size: letter; margin: 15mm; }
         }
 
-        footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: var(--azul-oscuro); color: #888; font-size: 0.75em; border-top: 1px solid var(--azul-medio); z-index: 10; box-sizing: border-box; }
-        .footer-status { display: flex; align-items: center; gap: 6px; font-weight: bold; }
-        .footer-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        footer { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; background-color: var(--azul-oscuro); color: #888; font-size: 0.72em; border-top: 1px solid var(--azul-medio); z-index: 10; box-sizing: border-box; }
+        .footer-status { display: flex; align-items: center; gap: 5px; font-weight: bold; }
+        .footer-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
         .dot-online { background-color: #00ff66; box-shadow: 0 0 6px #00ff66; }
         .dot-offline { background-color: #ff3333; box-shadow: 0 0 6px #ff3333; }
-        .upload-label { background:#222; border:1px dashed var(--azul-brillante); padding:3px 6px; font-size:0.6em; text-align:center; cursor:pointer; border-radius:3px; display:block; }
+        .upload-label { background:#222; border:1px dashed var(--azul-brillante); padding:3px 6px; font-size:0.58em; text-align:center; cursor:pointer; border-radius:3px; display:block; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-user-badge" onclick="abrirMiPerfilModal()">
-            <div id="header-avatar-ring" class="avatar-ring online">
-                <img id="header-user-avatar" src="" class="header-avatar-img" style="display:none;">
-                <span id="header-avatar-fallback" style="font-size: 1.1em;">👤</span>
-            </div>
-            <div>
-                <span id="header-username-display" class="header-username"></span>
-                <div style="font-size:0.6em; color:#a8dadc;">Ver Perfil / Mensajes</div>
+        <!-- Oculto en login, se muestra al iniciar sesión -->
+        <div id="header-user-badge-container" class="hidden" onclick="abrirMiPerfilModal()">
+            <div class="header-user-badge">
+                <div id="header-avatar-ring" class="avatar-ring online">
+                    <img id="header-user-avatar" src="" class="header-avatar-img" style="display:none;">
+                    <span id="header-avatar-fallback" style="font-size: 1em;">👤</span>
+                </div>
+                <div>
+                    <span id="header-username-display" class="header-username"></span>
+                    <div style="font-size:0.55em; color:#a8dadc;">Ver Perfil / Mensajes</div>
+                </div>
             </div>
         </div>
-        <div class="header-title"><h1 style="font-size: 1em; margin: 0;">Vocalía del RFE</h1><p style="font-size: 0.65em; margin: 1px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva</p></div>
-        <div style="text-align: right;"><button id="btn-header-logout" class="btn-logout hidden" onclick="logout()">Salir</button></div>
+        <div class="header-title"><h1 style="font-size: 0.95em; margin: 0;">Vocalía del RFE</h1><p style="font-size: 0.6em; margin: 1px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva</p></div>
+        <div style="text-align: right; display: flex; align-items: center; gap: 8px; justify-content: flex-end;">
+            <div id="header-status-dot-container" style="display:flex; align-items:center; gap:4px; font-size:0.7em;">
+                <span id="header-top-dot" class="footer-dot dot-offline"></span>
+                <span id="header-top-status-text" style="color: #ff3333; font-weight: bold;">offline</span>
+            </div>
+            <button id="btn-header-logout" class="btn-logout hidden" onclick="logout()">Salir</button>
+        </div>
     </header>
 
     <div class="container" id="main-container">
@@ -133,7 +142,7 @@
             <div class="login-main-title">Sistema de Gestión de Folios</div>
             <div class="card">
                 <div id="login-form">
-                    <h2 style="text-align:center; font-size: 1.15em; margin-top:0;">Acceso al Sistema</h2>
+                    <h2 style="text-align:center; font-size: 1.1em; margin-top:0;">Acceso al Sistema</h2>
                     <div id="auth-error-login" class="error hidden"></div>
                     <input type="text" id="login-usuario" placeholder="Usuario (Ej. mario.cardenas)" required>
                     <div class="password-wrapper">
@@ -145,7 +154,7 @@
                 </div>
 
                 <div id="register-form" class="hidden">
-                    <h2 style="text-align:center; font-size: 1.15em; margin-top:0;">Registro de Personal</h2>
+                    <h2 style="text-align:center; font-size: 1.1em; margin-top:0;">Registro de Personal</h2>
                     <div id="auth-error-register" class="error hidden"></div>
                     <div class="form-grid">
                         <input type="text" id="reg-usuario" class="full-width" placeholder="Usuario" required>
@@ -164,12 +173,12 @@
                             <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-password-confirm', this)">👁️</button>
                         </div>
                         <div class="full-width">
-                            <label style="font-size:0.8em; color:#a8dadc;">Fotografía de Perfil:</label>
+                            <label style="font-size:0.78em; color:#a8dadc;">Fotografía de Perfil:</label>
                             <input type="file" id="reg-foto-input" accept="image/*">
                         </div>
                     </div>
-                    <div style="margin-top: 12px;">
-                        <button style="width:100%; margin-bottom:8px;" onclick="register()">Guardar Registro</button>
+                    <div style="margin-top: 10px;">
+                        <button style="width:100%; margin-bottom:6px;" onclick="register()">Guardar Registro</button>
                         <button class="btn-secondary" style="width:100%;" onclick="mostrarLogin()">Volver</button>
                     </div>
                 </div>
@@ -179,7 +188,7 @@
         <!-- APP -->
         <div id="app-container" class="hidden">
             <div class="nav-tabs" id="main-nav-tabs">
-                <button class="nav-tab-btn active" id="tab-btn-admin" onclick="cambiarPestana('admin')">⚙️ Panel Administrador</button>
+                <button class="nav-tab-btn active" id="tab-btn-admin" onclick="cambiarPestana('admin')">⚙️ Panel Admin</button>
                 <button class="nav-tab-btn" id="tab-btn-mis-folios" onclick="cambiarPestana('mis-folios')">📝 Mis Folios</button>
                 <button class="nav-tab-btn" id="tab-btn-historial" onclick="cambiarPestana('historial')">📊 Historial General</button>
                 <button class="nav-tab-btn" id="tab-btn-mensajes" onclick="cambiarPestana('mensajes')">💬 Buzón de Mensajes</button>
@@ -187,24 +196,24 @@
 
             <!-- ADMIN -->
             <div id="pestana-admin" class="card">
-                <h2 style="margin-top:0; font-size: 1.15em;">Panel de Control del Administrador</h2>
+                <h2 style="margin-top:0; font-size: 1.1em;">Panel de Control del Administrador</h2>
                 
                 <div id="config-area" class="card hidden" style="background: rgba(0,0,0,0.6); border-color:var(--azul-brillante);">
-                    <h3 style="font-size: 1em; margin-top:0;">Configuración General</h3>
-                    <label style="font-size:0.8em; color:#aaa;">Nomenclatura (Prefijo, Número Inicial, Año)</label>
-                    <div class="inline-inputs" style="margin-bottom:10px;">
+                    <h3 style="font-size: 0.95em; margin-top:0;">Configuración General</h3>
+                    <label style="font-size:0.75em; color:#aaa;">Nomenclatura (Prefijo, Número Inicial, Año)</label>
+                    <div class="inline-inputs" style="margin-bottom:8px;">
                         <input type="text" id="nom-prefijo" placeholder="Ej. INE/JDE03/VRFE/">
                         <input type="number" id="nom-inicio" placeholder="Inicio">
                         <input type="number" id="nom-anio" placeholder="Año">
                     </div>
-                    <label style="font-size:0.8em; color:#aaa;">Enlace Script Google Drive (Para subir PDFs)</label>
+                    <label style="font-size:0.75em; color:#aaa;">Enlace Script Google Drive (Para subir PDFs)</label>
                     <input type="text" id="nom-drive-url" placeholder="https://script.google.com/macros/s/AKfyc.../exec">
-                    <button style="margin-top:8px;" onclick="guardarConfiguracion()">Guardar Configuración</button>
+                    <button style="margin-top:6px;" onclick="guardarConfiguracion()">Guardar Configuración</button>
                     <button onclick="cancelarEdicionConfig()" id="btn-cancelar-config" class="btn-secondary hidden" style="margin-top:4px;">Cancelar</button>
                 </div>
 
                 <div class="card" style="background: rgba(0,0,0,0.4);">
-                    <h3 style="font-size: 1em; margin-top:0; margin-bottom: 10px;">📦 Herramientas de Base de Datos</h3>
+                    <h3 style="font-size: 0.95em; margin-top:0; margin-bottom: 8px;">📦 Herramientas de Base de Datos</h3>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <button class="btn-db-action btn-config" onclick="habilitarEdicionConfig()">⚙️ Modificar Config.</button>
                         <button class="btn-db-action btn-export" onclick="exportarExcel()">📥 Exportar a Excel</button>
@@ -212,22 +221,22 @@
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
-                    <h3 style="font-size: 1em; margin:0;">Gestión de Personal y Autorizaciones</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+                    <h3 style="font-size: 0.95em; margin:0;">Gestión de Personal y Autorizaciones</h3>
                     <button class="btn-small" onclick="abrirModalCrearUsuario()">+ Nuevo Usuario</button>
                 </div>
-                <div style="overflow-x: auto; margin-top:8px;">
+                <div style="overflow-x: auto; margin-top:6px;">
                     <table>
                         <thead>
                             <tr>
-                                <th style="width:65px; text-align:center;">Foto</th>
-                                <th style="width:100px;">Usuario</th>
-                                <th style="width:130px;">Nombre</th>
-                                <th style="width:150px;">Correo</th>
-                                <th style="width:110px;">Contraseña</th>
-                                <th style="width:75px;">Rol</th>
-                                <th style="width:90px; text-align:center;">Acceso</th>
-                                <th style="width:110px;">Acciones</th>
+                                <th style="width:60px; text-align:center;">Foto</th>
+                                <th style="width:95px;">Usuario</th>
+                                <th style="width:125px;">Nombre</th>
+                                <th style="width:145px;">Correo</th>
+                                <th style="width:100px;">Contraseña</th>
+                                <th style="width:70px;">Rol</th>
+                                <th style="width:85px; text-align:center;">Acceso</th>
+                                <th style="width:100px;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="admin-tabla-usuarios"></tbody>
@@ -238,17 +247,17 @@
             <!-- MIS FOLIOS -->
             <div id="pestana-mis-folios" class="card hidden">
                 <div id="badge-ultimo-container" class="badge-ultimo-folio">Último Folio: Cargando...</div>
-                <h2 style="margin-top:0; font-size: 1.15em;">Solicitud de Nuevos Folios</h2>
+                <h2 style="margin-top:0; font-size: 1.1em;">Solicitud de Nuevos Folios</h2>
                 
                 <div class="card" style="background: rgba(0,0,0,0.6);">
-                    <h3 style="font-size: 1em; margin-top:0;">¿Cuántos folios necesitas solicitar?</h3>
+                    <h3 style="font-size: 0.95em; margin-top:0;">¿Cuántos folios necesitas solicitar?</h3>
                     <input type="number" id="cantidad-folios" min="1" max="20" placeholder="Ej. 3">
                     <button onclick="generarFormularioFolios()">Generar Espacios</button>
                 </div>
 
                 <div id="formulario-folios-area" class="hidden">
-                    <div style="margin-bottom: 12px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 4px;">
-                        <label style="font-size:0.85em; cursor:pointer;"><input type="checkbox" id="check-repetir-dirigido" onchange="toggleRepetirDirigido()"> Repetir el mismo "Dirigido a" para todos los folios</label>
+                    <div style="margin-bottom: 10px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 4px;">
+                        <label style="font-size:0.8em; cursor:pointer;"><input type="checkbox" id="check-repetir-dirigido" onchange="toggleRepetirDirigido()"> Repetir el mismo "Dirigido a" para todos los folios</label>
                         <input type="text" id="input-dirigido-global" class="hidden" placeholder="Dirigido a general..." style="margin-top:6px;" oninput="aplicarDirigidoGlobal()">
                     </div>
                     <div id="espacios-folios"></div>
@@ -258,17 +267,17 @@
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 8px;">
-                    <h3 style="margin: 0; font-size: 1em;">Mis Folios Registrados</h3>
-                    <div style="display: flex; gap: 6px; align-items: center;">
-                        <span style="font-size: 0.8em; color:#a8dadc;">Periodo:</span>
-                        <input type="date" id="print-user-desde" style="margin:0; width:120px; padding:4px; font-size:0.8em;">
-                        <input type="date" id="print-user-hasta" style="margin:0; width:120px; padding:4px; font-size:0.8em;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 8px;">
+                    <h3 style="margin: 0; font-size: 0.95em;">Mis Folios Registrados</h3>
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        <span style="font-size: 0.75em; color:#a8dadc;">Periodo:</span>
+                        <input type="date" id="print-user-desde" style="margin:0; width:115px; padding:3px; font-size:0.75em;">
+                        <input type="date" id="print-user-hasta" style="margin:0; width:115px; padding:3px; font-size:0.75em;">
                         <button onclick="imprimirReporteRango('user')" class="btn-secondary btn-small">🖨️ Imprimir Reporte</button>
                     </div>
                 </div>
 
-                <div style="overflow-x: auto; margin-top: 10px;">
+                <div style="overflow-x: auto; margin-top: 8px;">
                     <table>
                         <thead>
                             <tr>
@@ -291,16 +300,16 @@
             <!-- HISTORIAL GLOBAL -->
             <div id="pestana-historial" class="card hidden">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <h2 style="margin:0; font-size: 1.15em;">Historial General de Folios</h2>
-                    <div style="display: flex; gap: 6px; align-items: center;">
-                        <span style="font-size: 0.8em; color:#a8dadc;">Periodo:</span>
-                        <input type="date" id="print-global-desde" style="margin:0; width:120px; padding:4px; font-size:0.8em;">
-                        <input type="date" id="print-global-hasta" style="margin:0; width:120px; padding:4px; font-size:0.8em;">
+                    <h2 style="margin:0; font-size: 1.1em;">Historial General de Folios</h2>
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        <span style="font-size: 0.75em; color:#a8dadc;">Periodo:</span>
+                        <input type="date" id="print-global-desde" style="margin:0; width:115px; padding:3px; font-size:0.75em;">
+                        <input type="date" id="print-global-hasta" style="margin:0; width:115px; padding:3px; font-size:0.75em;">
                         <button onclick="imprimirReporteRango('global')" class="btn-secondary btn-small">🖨️ Imprimir Historial</button>
                     </div>
                 </div>
 
-                <div style="overflow-x: auto; margin-top: 10px;">
+                <div style="overflow-x: auto; margin-top: 8px;">
                     <table>
                         <thead>
                             <tr>
@@ -321,81 +330,88 @@
 
             <!-- BUZÓN DE MENSAJES -->
             <div id="pestana-mensajes" class="card hidden">
-                <h2 style="margin-top:0; font-size: 1.15em;">💬 Buzón de Mensajería y Solicitudes</h2>
+                <h2 style="margin-top:0; font-size: 1.1em;">💬 Buzón de Mensajería y Solicitudes</h2>
                 <div class="card" style="background: rgba(0,0,0,0.5);">
-                    <h3 style="font-size: 0.95em; margin-top:0;">Enviar Mensaje / Solicitud al Administrador</h3>
+                    <h3 style="font-size: 0.9em; margin-top:0;">Enviar Mensaje / Solicitud al Administrador</h3>
                     <textarea id="msg-texto" rows="3" placeholder="Escribe tu mensaje, petición o reporte aquí..."></textarea>
-                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
                         <div>
-                            <label style="font-size:0.75em; color:#a8dadc;">Adjuntar Imagen / Archivo:</label>
-                            <input type="file" id="msg-archivo" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="font-size:0.8em;">
+                            <label style="font-size:0.72em; color:#a8dadc;">Adjuntar Imagen / Archivo:</label>
+                            <input type="file" id="msg-archivo" accept="image/*,video/*,audio/*,.pdf,.doc,.docx" style="font-size:0.78em;">
                         </div>
                     </div>
                     <button onclick="enviarMensajeAlAdmin()">📤 Enviar Mensaje</button>
                 </div>
 
-                <h3 style="font-size: 1em; margin-top: 15px;">Historial de Mensajes y Respuestas</h3>
-                <div id="buzon-mensajes-container" style="display:flex; flex-direction:column; gap:10px; max-height:450px; overflow-y:auto;"></div>
+                <h3 style="font-size: 0.95em; margin-top: 12px;">Historial de Mensajes y Respuestas</h3>
+                <div id="buzon-mensajes-container" style="display:flex; flex-direction:column; gap:8px; max-height:420px; overflow-y:auto;"></div>
             </div>
         </div>
     </div>
 
-    <!-- CONTENEDOR OCULTO PARA IMPRESIÓN INSTITUCIONAL DE REPORTES -->
+    <!-- CONTENEDOR OCULTO PARA IMPRESIÓN INSTITUCIONAL -->
     <div id="print-institutional-area" class="print-only-container"></div>
 
-    <!-- MODAL PERFIL DE USUARIO / DETALLE Y EDICIÓN PERSONAL -->
+    <!-- MODAL PERFIL DE USUARIO (Compacto) -->
     <div id="modal-perfil" class="modal-overlay hidden">
         <div class="modal-content" style="text-align:center;">
-            <h3 style="font-size: 1.1em; margin-top:0;">👤 Ficha y Edición de Perfil</h3>
-            <div id="perfil-modal-avatar-container" style="margin-bottom:12px;"></div>
+            <h3 style="font-size: 1em; margin-top:0; margin-bottom: 8px;">👤 Ficha y Edición de Perfil</h3>
+            <div id="perfil-modal-avatar-container" style="margin-bottom:8px;"></div>
             
-            <div style="text-align:left; background:rgba(0,0,0,0.5); padding:12px; border-radius:5px; font-size:0.85em; line-height:1.5;">
-                <label style="font-size:0.75em; color:#aaa;">Usuario (No modificable):</label>
-                <input type="text" id="p-usuario" readonly style="margin-bottom:8px;">
+            <div style="text-align:left; background:rgba(0,0,0,0.5); padding:10px; border-radius:5px; font-size:0.8em; line-height:1.4;">
+                <label style="font-size:0.7em; color:#a8dadc;">Cambiar Fotografía de Perfil:</label>
+                <input type="file" id="perfil-foto-input" accept="image/*" style="margin-bottom:6px; font-size:0.75em;">
 
-                <label style="font-size:0.75em; color:#a8dadc;">Nombre Completo:</label>
-                <input type="text" id="p-nombre" style="margin-bottom:8px;">
+                <label style="font-size:0.7em; color:#aaa;">Usuario (No modificable):</label>
+                <input type="text" id="p-usuario" readonly style="margin-bottom:6px; padding:6px 8px; font-size:12px;">
 
-                <label style="font-size:0.75em; color:#a8dadc;">Puesto:</label>
-                <input type="text" id="p-puesto" style="margin-bottom:8px;">
+                <label style="font-size:0.7em; color:#a8dadc;">Nombre Completo:</label>
+                <input type="text" id="p-nombre" style="margin-bottom:6px; padding:6px 8px; font-size:12px;">
 
-                <label style="font-size:0.75em; color:#aaa;">Correo (No modificable):</label>
-                <input type="text" id="p-correo" readonly style="margin-bottom:8px;">
+                <label style="font-size:0.7em; color:#a8dadc;">Puesto:</label>
+                <input type="text" id="p-puesto" style="margin-bottom:6px; padding:6px 8px; font-size:12px;">
 
-                <label style="font-size:0.75em; color:#a8dadc;">Teléfono:</label>
-                <input type="tel" id="p-telefono" style="margin-bottom:8px;">
+                <label style="font-size:0.7em; color:#aaa;">Correo (No modificable):</label>
+                <input type="text" id="p-correo" readonly style="margin-bottom:6px; padding:6px 8px; font-size:12px;">
 
-                <label style="font-size:0.75em; color:#aaa;">Rol en el Sistema (No modificable):</label>
-                <input type="text" id="p-rol" readonly style="margin-bottom:8px;">
+                <label style="font-size:0.7em; color:#a8dadc;">Teléfono:</label>
+                <input type="tel" id="p-telefono" style="margin-bottom:6px; padding:6px 8px; font-size:12px;">
 
-                <button class="btn-small" style="width:100%; background:#2a9d8f; margin-top:4px;" onclick="guardarMiPerfilModal()">💾 Guardar Cambios de Perfil</button>
+                <label style="font-size:0.7em; color:#aaa;">Rol en el Sistema (No modificable):</label>
+                <input type="text" id="p-rol" readonly style="margin-bottom:6px; padding:6px 8px; font-size:12px;">
+
+                <button class="btn-small" style="width:100%; background:#2a9d8f; margin-top:2px;" onclick="guardarMiPerfilModal()">💾 Guardar Cambios de Perfil</button>
             </div>
 
-            <div style="text-align:left; background:rgba(0,0,0,0.4); padding:10px; border-radius:5px; margin-top:10px;">
-                <h4 style="margin:0 0 8px 0; font-size:0.9em; color:var(--azul-brillante);">🔑 Cambiar Contraseña</h4>
-                <div class="password-wrapper" style="margin-bottom:6px;">
-                    <input type="password" id="cambio-pass-actual" placeholder="Contraseña actual" style="margin-bottom:0; padding-right:35px;">
-                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('cambio-pass-actual', this)">👁️</button>
+            <!-- Sección Contraseña Colapsada -->
+            <div style="text-align:left; background:rgba(0,0,0,0.4); padding:8px; border-radius:5px; margin-top:8px;">
+                <button class="btn-small btn-secondary" style="width:100%; margin-bottom:4px;" onclick="toggleSeccionCambioPassword()">🔑 Cambiar Contraseña</button>
+                
+                <div id="seccion-cambio-pass" class="hidden">
+                    <div class="password-wrapper" style="margin-bottom:5px;">
+                        <input type="password" id="cambio-pass-actual" placeholder="Contraseña actual" style="margin-bottom:0; padding:5px 30px 5px 8px; font-size:12px;">
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('cambio-pass-actual', this)" style="font-size:0.8em;">👁️</button>
+                    </div>
+                    <div class="password-wrapper" style="margin-bottom:5px;">
+                        <input type="password" id="cambio-pass-nueva" placeholder="Nueva contraseña (Mín. 6)" style="margin-bottom:0; padding:5px 30px 5px 8px; font-size:12px;">
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('cambio-pass-nueva', this)" style="font-size:0.8em;">👁️</button>
+                    </div>
+                    <div class="password-wrapper" style="margin-bottom:6px;">
+                        <input type="password" id="cambio-pass-confirmar" placeholder="Confirmar nueva contraseña" style="margin-bottom:0; padding:5px 30px 5px 8px; font-size:12px;">
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('cambio-pass-confirmar', this)" style="font-size:0.8em;">👁️</button>
+                    </div>
+                    <button class="btn-small" style="width:100%; background:#2a9d8f;" onclick="ejecutarCambioPassword()">Actualizar Contraseña</button>
                 </div>
-                <div class="password-wrapper" style="margin-bottom:6px;">
-                    <input type="password" id="cambio-pass-nueva" placeholder="Nueva contraseña (Mín. 6)" style="margin-bottom:0; padding-right:35px;">
-                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('cambio-pass-nueva', this)">👁️</button>
-                </div>
-                <div class="password-wrapper" style="margin-bottom:8px;">
-                    <input type="password" id="cambio-pass-confirmar" placeholder="Confirmar nueva contraseña" style="margin-bottom:0; padding-right:35px;">
-                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('cambio-pass-confirmar', this)">👁️</button>
-                </div>
-                <button class="btn-small btn-secondary" style="width:100%;" onclick="ejecutarCambioPassword()">Actualizar Contraseña</button>
             </div>
 
-            <button onclick="cerrarMiPerfilModal()" class="btn-secondary" style="width:100%; margin-top:12px;">Cerrar Ventana</button>
+            <button onclick="cerrarMiPerfilModal()" class="btn-secondary" style="width:100%; margin-top:10px;">Cerrar Ventana</button>
         </div>
     </div>
 
     <!-- MODAL EDICIÓN AVANZADA DE FOLIO -->
     <div id="modal-edicion" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3 id="modal-title" style="font-size: 1.1em; margin-top:0;">✏️ Editar Registro y Evidencias</h3>
+            <h3 id="modal-title" style="font-size: 1em; margin-top:0;">✏️ Editar Registro y Evidencias</h3>
             <input type="hidden" id="edit-docId">
             <div id="admin-only-edit-fields">
                 <label>Número de Folio:</label><input type="text" id="edit-folio">
@@ -406,23 +422,23 @@
             <label>Respuesta:</label><input type="text" id="edit-respuesta" placeholder="Respuesta...">
             <label>Observaciones:</label><input type="text" id="edit-observaciones" placeholder="Observaciones...">
             
-            <hr style="border-color:#333; margin:12px 0;">
-            <label style="font-size:0.85em; color:var(--azul-brillante); font-weight:bold;">Evidencias Adjuntas:</label>
-            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.4); padding:8px; border-radius:4px; margin-bottom:10px;">
-                <div id="modal-preview-foto" style="font-size:0.85em;">Foto: Ninguna</div>
-                <div id="modal-preview-doc" style="font-size:0.85em;">Doc: Ninguno</div>
+            <hr style="border-color:#333; margin:10px 0;">
+            <label style="font-size:0.8em; color:var(--azul-brillante); font-weight:bold;">Evidencias Adjuntas:</label>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.4); padding:6px; border-radius:4px; margin-bottom:8px;">
+                <div id="modal-preview-foto" style="font-size:0.8em;">Foto: Ninguna</div>
+                <div id="modal-preview-doc" style="font-size:0.8em;">Doc: Ninguno</div>
             </div>
             
-            <div style="display:flex; gap:8px; margin-bottom:12px;">
+            <div style="display:flex; gap:8px; margin-bottom:10px;">
                 <div style="flex:1;">
                     <label for="edit-input-foto" class="upload-label">📷 Cambiar Foto</label>
                     <input type="file" id="edit-input-foto" accept="image/*" style="display:none;" onchange="document.getElementById('lbl-foto-status').innerText='Foto lista ✓'">
-                    <span id="lbl-foto-status" style="font-size:0.6em; color:#00ff66;"></span>
+                    <span id="lbl-foto-status" style="font-size:0.58em; color:#00ff66;"></span>
                 </div>
                 <div style="flex:1;">
                     <label for="edit-input-doc" class="upload-label">📄 Cambiar Doc</label>
                     <input type="file" id="edit-input-doc" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="document.getElementById('lbl-doc-status').innerText='Doc listo ✓'">
-                    <span id="lbl-doc-status" style="font-size:0.6em; color:#00ff66;"></span>
+                    <span id="lbl-doc-status" style="font-size:0.58em; color:#00ff66;"></span>
                 </div>
             </div>
 
@@ -436,7 +452,7 @@
     <!-- MODAL CREAR USUARIO ADMIN -->
     <div id="modal-usuario" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3 style="font-size: 1.1em; margin-top:0;">👤 Registrar Nuevo Personal</h3>
+            <h3 style="font-size: 1em; margin-top:0;">👤 Registrar Nuevo Personal</h3>
             <input type="text" id="admin-reg-usuario" placeholder="Usuario (Ej. ana.gomez)" required>
             <input type="text" id="admin-reg-nombre" placeholder="Nombre completo" required>
             <input type="text" id="admin-reg-puesto" placeholder="Puesto" required>
@@ -447,9 +463,9 @@
                 <option value="user">Usuario Normal</option>
                 <option value="admin">Administrador</option>
             </select>
-            <label style="font-size:0.8em; color:#a8dadc;">Fotografía:</label>
+            <label style="font-size:0.75em; color:#a8dadc;">Fotografía:</label>
             <input type="file" id="admin-reg-foto" accept="image/*">
-            <div style="display:flex; gap:8px; margin-top:12px;">
+            <div style="display:flex; gap:8px; margin-top:10px;">
                 <button onclick="crearUsuarioAdminModal()" style="flex:1;">Crear Usuario</button>
                 <button onclick="cerrarModalCrearUsuario()" class="btn-secondary" style="flex:1;">Cancelar</button>
             </div>
@@ -459,13 +475,13 @@
     <!-- VISOR FOTOS -->
     <div id="modal-visor" class="modal-overlay hidden" onclick="cerrarVisor()">
         <div class="modal-content-viewer" style="background:transparent; border:none; box-shadow:none; align-items:center; justify-content:center;" onclick="event.stopPropagation()">
-            <div style="text-align:right; width:100%;"><button onclick="cerrarVisor()" class="btn-small btn-danger" style="margin-bottom:10px; padding:6px 15px; font-size:1em;">Cerrar (X)</button></div>
+            <div style="text-align:right; width:100%;"><button onclick="cerrarVisor()" class="btn-small btn-danger" style="margin-bottom:8px; padding:5px 12px; font-size:0.9em;">Cerrar (X)</button></div>
             <img id="visor-img" src="" style="max-width:100%; max-height:85vh; border:3px solid var(--azul-brillante); border-radius:8px; background:#000;">
         </div>
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.3</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.7</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-offline"></span><span id="footer-status-text" style="color: #ff3333;">offline</span></div>
     </footer>
 
@@ -487,12 +503,15 @@
 
         function setConexionEstado(online) {
             const dot = document.getElementById('footer-dot'); const txt = document.getElementById('footer-status-text');
+            const topDot = document.getElementById('header-top-dot'); const topTxt = document.getElementById('header-top-status-text');
             const ring = document.getElementById('header-avatar-ring');
             if(online) { 
                 if(dot) { dot.className = "footer-dot dot-online"; txt.innerText = "online"; txt.style.color = "#00ff66"; }
+                if(topDot) { topDot.className = "footer-dot dot-online"; topTxt.innerText = "online"; topTxt.style.color = "#00ff66"; }
                 if(ring) { ring.className = "avatar-ring online"; }
             } else { 
                 if(dot) { dot.className = "footer-dot dot-offline"; txt.innerText = "offline"; txt.style.color = "#ff3333"; }
+                if(topDot) { topDot.className = "footer-dot dot-offline"; topTxt.innerText = "offline"; topTxt.style.color = "#ff3333"; }
                 if(ring) { ring.className = "avatar-ring offline"; }
             }
         }
@@ -520,6 +539,15 @@
                 };
                 reader.onerror = error => reject(error);
             });
+        }
+
+        // Función para obtener fecha actual sin hora YYYY-MM-DD
+        function obtenerFechaSoloDiaISO() {
+            const ahora = new Date();
+            const yyyy = ahora.getFullYear();
+            const mm = String(ahora.getMonth() + 1).padStart(2, '0');
+            const dd = String(ahora.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
         }
 
         window.register = async () => {
@@ -589,16 +617,11 @@
 
             document.getElementById('auth-section').classList.add('hidden');
             document.getElementById('btn-header-logout').classList.remove('hidden');
+            document.getElementById('header-user-badge-container').classList.remove('hidden');
             document.getElementById('app-container').classList.remove('hidden');
             document.getElementById('header-username-display').innerText = `${currentUserUsername}`;
 
-            const imgEl = document.getElementById('header-user-avatar');
-            const fallbackEl = document.getElementById('header-avatar-fallback');
-            if(currentUserDataFull && currentUserDataFull.fotoBase64) {
-                imgEl.src = currentUserDataFull.fotoBase64; imgEl.style.display = "block"; fallbackEl.style.display = "none";
-            } else {
-                imgEl.style.display = "none"; fallbackEl.style.display = "block";
-            }
+            actualizarAvatarHeaderUI();
 
             if (currentUserRole === 'admin') {
                 document.getElementById('tab-btn-admin').classList.remove('hidden');
@@ -612,10 +635,21 @@
             cargarDatosSistemaAsync();
         }
 
+        function actualizarAvatarHeaderUI() {
+            const imgEl = document.getElementById('header-user-avatar');
+            const fallbackEl = document.getElementById('header-avatar-fallback');
+            if(currentUserDataFull && currentUserDataFull.fotoBase64) {
+                imgEl.src = currentUserDataFull.fotoBase64; imgEl.style.display = "block"; fallbackEl.style.display = "none";
+            } else {
+                imgEl.style.display = "none"; fallbackEl.style.display = "block";
+            }
+        }
+
         window.logout = () => { 
             currentUserUsername = null; currentUserRole = 'user'; currentUserDataFull = null;
             cancelarFormularioFolios();
             document.getElementById('app-container').classList.add('hidden'); 
+            document.getElementById('header-user-badge-container').classList.add('hidden');
             document.getElementById('auth-section').classList.remove('hidden'); 
             document.getElementById('btn-header-logout').classList.add('hidden'); 
             mostrarLogin(); 
@@ -671,10 +705,10 @@
             const qMsg = await getDocs(collection(db, "mensajes"));
             cacheMensajesGlobal = []; qMsg.forEach((d) => cacheMensajesGlobal.push({ id: d.id, ...d.data() }));
 
-            // Actualizar currentUserDataFull si está logueado
             if(currentUserUsername) {
                 const uDoc = cacheUsuariosGlobal.find(u => u.usuario === currentUserUsername);
                 if(uDoc) currentUserDataFull = uDoc;
+                actualizarAvatarHeaderUI();
             }
 
             await actualizarIndicadorUltimoFolioDinamico();
@@ -805,7 +839,7 @@
             if(foliosAcrear.length === 0) return alert('No hay folios válidos para registrar.');
 
             const configRef = doc(db, "sistema", "config");
-            const fechaStr = new Date().toLocaleDateString('es-MX') + ', ' + new Date().toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'});
+            const fechaSoloDia = obtenerFechaSoloDiaISO(); // Solo YYYY-MM-DD sin hora
 
             try {
                 await runTransaction(db, async (transaction) => {
@@ -819,7 +853,7 @@
                         transaction.set(newRef, {
                             idFolio: item.folio, usuario: currentUserUsername, 
                             dirigidoA: item.dirigido, asunto: item.asunto,
-                            respuesta: "", observaciones: "", fecha: fechaStr, timestamp: Date.now() + idx, 
+                            respuesta: "", observaciones: "", fecha: fechaSoloDia, timestamp: Date.now() + idx, 
                             fotoBase64: "", docDriveUrl: "", docDriveName: ""
                         });
                         let num = extraerNumeroFolio(item.folio);
@@ -867,11 +901,11 @@
 
         function generarCeldasEvidencia(f) {
             let fotoHTML = f.fotoBase64 ? 
-                `<div class="tooltip-container" onclick="abrirVisorFoto('${f.fotoBase64}')"><img src="${f.fotoBase64}" class="tooltip-img"></div><label style="font-size:0.55em; color:#a8dadc; cursor:pointer;"><input type="file" id="f-${f.docId}" accept="image/*" style="display:none;" onchange="subirFotoRapida('${f.docId}', 'f-${f.docId}')">Cambiar</label>` :
+                `<div class="tooltip-container" onclick="abrirVisorFoto('${f.fotoBase64}')"><img src="${f.fotoBase64}" class="tooltip-img"></div><label style="font-size:0.52em; color:#a8dadc; cursor:pointer;"><input type="file" id="f-${f.docId}" accept="image/*" style="display:none;" onchange="subirFotoRapida('${f.docId}', 'f-${f.docId}')">Cambiar</label>` :
                 `<label class="upload-label"><input type="file" id="f-${f.docId}" accept="image/*" style="display:none;" onchange="subirFotoRapida('${f.docId}', 'f-${f.docId}')">📷 Foto</label>`;
 
             let docHTML = f.docDriveUrl ? 
-                `<a href="${f.docDriveUrl}" target="_blank" class="tooltip-icon" title="Ver PDF">📄</a><label style="font-size:0.55em; color:#a8dadc; cursor:pointer;"><input type="file" id="d-${f.docId}" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="subirDocRapido('${f.docId}', '${f.idFolio}', 'd-${f.docId}')">Cambiar</label>` :
+                `<a href="${f.docDriveUrl}" target="_blank" class="tooltip-icon" title="Ver PDF">📄</a><label style="font-size:0.52em; color:#a8dadc; cursor:pointer;"><input type="file" id="d-${f.docId}" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="subirDocRapido('${f.docId}', '${f.idFolio}', 'd-${f.docId}')">Cambiar</label>` :
                 `<label class="upload-label"><input type="file" id="d-${f.docId}" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="subirDocRapido('${f.docId}', '${f.idFolio}', 'd-${f.docId}')">📄 Doc</label>`;
 
             return `<td class="col-foto">${fotoHTML}</td><td class="col-doc">${docHTML}</td>`;
@@ -906,7 +940,7 @@
                 if (sortConfigUser.column === 'folio') {
                     valA = extraerNumeroFolio(a.idFolio); valB = extraerNumeroFolio(b.idFolio);
                 } else if (sortConfigUser.column === 'fecha') {
-                    valA = a.timestamp; valB = b.timestamp;
+                    valA = a.fecha || ''; valB = b.fecha || '';
                 } else {
                     valA = a[sortConfigUser.column === 'dirigido' ? 'dirigidoA' : sortConfigUser.column] || '';
                     valB = b[sortConfigUser.column === 'dirigido' ? 'dirigidoA' : sortConfigUser.column] || '';
@@ -921,7 +955,7 @@
             let html = '';
             misFolios.forEach(f => {
                 html += `<tr>
-                    <td class="col-folio"><strong>${f.idFolio}</strong></td><td class="col-fecha">${f.fecha}</td>
+                    <td class="col-folio"><strong>${f.idFolio}</strong></td><td class="col-fecha">${f.fecha || '-'}</td>
                     <td class="col-dirigido">${f.dirigidoA || '-'}</td><td class="col-asunto">${f.asunto || ''}</td>
                     <td class="col-respuesta">${f.respuesta || '-'}</td><td class="col-obs">${f.observaciones || ''}</td>
                     ${generarCeldasEvidencia(f)}
@@ -949,7 +983,7 @@
                 if (sortConfigGlobal.column === 'folio') {
                     valA = extraerNumeroFolio(a.idFolio); valB = extraerNumeroFolio(b.idFolio);
                 } else if (sortConfigGlobal.column === 'fecha') {
-                    valA = a.timestamp; valB = b.timestamp;
+                    valA = a.fecha || ''; valB = b.fecha || '';
                 } else {
                     let colName = sortConfigGlobal.column === 'dirigido' ? 'dirigidoA' : sortConfigGlobal.column;
                     valA = a[colName] || ''; valB = b[colName] || '';
@@ -965,7 +999,7 @@
                 let docH = f.docDriveUrl ? `<a href="${f.docDriveUrl}" target="_blank" class="tooltip-icon">📄</a>` : '-';
                 html += `<tr>
                     <td class="col-folio"><strong>${f.idFolio}</strong></td><td class="col-usuario">${f.usuario}</td>
-                    <td class="col-dirigido">${f.dirigidoA || '-'}</td><td class="col-asunto">${f.asunto || ''}</td><td class="col-fecha">${f.fecha}</td>
+                    <td class="col-dirigido">${f.dirigidoA || '-'}</td><td class="col-asunto">${f.asunto || ''}</td><td class="col-fecha">${f.fecha || '-'}</td>
                     <td class="col-foto">${fotoH}</td><td class="col-doc">${docH}</td>
                     <td class="col-acc" style="white-space:nowrap;">
                         <button class="btn-icon" onclick="abrirModalEdicion('${f.docId}')">✏️</button>
@@ -982,16 +1016,11 @@
 
             let foliosFiltrados = cacheFoliosGlobal.filter(f => {
                 if (tipo === 'user' && f.usuario !== currentUserUsername) return false;
-                if (!f.timestamp) return true;
+                if (!f.fecha) return false;
                 
-                let fechaFolio = new Date(f.timestamp);
-                let yyyy = fechaFolio.getFullYear();
-                let mm = String(fechaFolio.getMonth() + 1).padStart(2, '0');
-                let dd = String(fechaFolio.getDate()).padStart(2, '0');
-                let fechaStrFormat = `${yyyy}-${mm}-${dd}`;
-
-                if (desdeVal && fechaStrFormat < desdeVal) return false;
-                if (hastaVal && fechaStrFormat > hastaVal) return false;
+                // Comparación directa de fechas YYYY-MM-DD
+                if (desdeVal && f.fecha < desdeVal) return false;
+                if (hastaVal && f.fecha > hastaVal) return false;
                 return true;
             });
 
@@ -1008,12 +1037,12 @@
             foliosFiltrados.forEach(f => {
                 filasHTML += `
                     <tr>
-                        <td style="border: 1px solid #b0c4de; padding: 6px;"><strong>${f.idFolio}</strong></td>
-                        <td style="border: 1px solid #b0c4de; padding: 6px;">${f.fecha}</td>
-                        <td style="border: 1px solid #b0c4de; padding: 6px;">${f.dirigidoA || '-'}</td>
-                        <td style="border: 1px solid #b0c4de; padding: 6px;">${f.asunto || ''}</td>
-                        <td style="border: 1px solid #b0c4de; padding: 6px;">${f.respuesta || '-'}</td>
-                        <td style="border: 1px solid #b0c4de; padding: 6px;">${f.observaciones || '-'}</td>
+                        <td style="border: 1px solid #b0c4de; padding: 5px;"><strong>${f.idFolio}</strong></td>
+                        <td style="border: 1px solid #b0c4de; padding: 5px;">${f.fecha || '-'}</td>
+                        <td style="border: 1px solid #b0c4de; padding: 5px;">${f.dirigidoA || '-'}</td>
+                        <td style="border: 1px solid #b0c4de; padding: 5px;">${f.asunto || ''}</td>
+                        <td style="border: 1px solid #b0c4de; padding: 5px;">${f.respuesta || '-'}</td>
+                        <td style="border: 1px solid #b0c4de; padding: 5px;">${f.observaciones || '-'}</td>
                     </tr>
                 `;
             });
@@ -1031,7 +1060,7 @@
                         </div>
                     </div>
 
-                    <div style="background: #1d3557; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8em; margin-bottom: 10px; text-align: center; letter-spacing: 0.5px;">
+                    <div style="background: #1d3557; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8em; margin-bottom: 10px; text-align: center;">
                         REPORTE DE ACTIVIDAD Y FOLIOS &bull; ${periodoTexto}
                     </div>
 
@@ -1049,12 +1078,12 @@
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 0.75em; table-layout: fixed;">
                         <thead>
                             <tr style="background-color: #14213d; color: white;">
-                                <th style="border: 1px solid #b0c4de; padding: 6px; width: 16%;">Folio</th>
-                                <th style="border: 1px solid #b0c4de; padding: 6px; width: 13%;">Fecha</th>
-                                <th style="border: 1px solid #b0c4de; padding: 6px; width: 18%;">Dirigido a</th>
-                                <th style="border: 1px solid #b0c4de; padding: 6px; width: 19%;">Asunto</th>
-                                <th style="border: 1px solid #b0c4de; padding: 6px; width: 15%;">Respuesta</th>
-                                <th style="border: 1px solid #b0c4de; padding: 6px; width: 19%;">Observaciones</th>
+                                <th style="border: 1px solid #b0c4de; padding: 5px; width: 16%;">Folio</th>
+                                <th style="border: 1px solid #b0c4de; padding: 5px; width: 13%;">Fecha</th>
+                                <th style="border: 1px solid #b0c4de; padding: 5px; width: 18%;">Dirigido a</th>
+                                <th style="border: 1px solid #b0c4de; padding: 5px; width: 19%;">Asunto</th>
+                                <th style="border: 1px solid #b0c4de; padding: 5px; width: 15%;">Respuesta</th>
+                                <th style="border: 1px solid #b0c4de; padding: 5px; width: 19%;">Observaciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1062,10 +1091,10 @@
                         </tbody>
                     </table>
 
-                    <div style="margin-top: 50px; text-align: center; page-break-inside: avoid;">
-                        <div style="width: 260px; border-top: 1px solid #333; margin: 0 auto 5px auto;"></div>
-                        <div style="font-weight: bold; font-size: 0.9em; color: #0a1128;">${nombreFuncionario}</div>
-                        <div style="font-size: 0.8em; color: #555;">${puestoFuncionario}</div>
+                    <div style="margin-top: 40px; text-align: center; page-break-inside: avoid;">
+                        <div style="width: 250px; border-top: 1px solid #333; margin: 0 auto 5px auto;"></div>
+                        <div style="font-weight: bold; font-size: 0.85em; color: #0a1128;">${nombreFuncionario}</div>
+                        <div style="font-size: 0.78em; color: #555;">${puestoFuncionario}</div>
                     </div>
                 </div>
             `;
@@ -1182,9 +1211,9 @@
                     <td style="text-align:center;">${fotoHtml}</td>
                     <td><strong style="cursor:pointer; color:#00d2ff;" onclick="verFichaUsuarioAdmin('${u.usuario}')">${u.usuario}</strong></td>
                     <td>${u.nombre || '-'}</td><td>${u.correo}</td>
-                    <td><input type="text" id="pass-${u.usuario}" value="${u.password}" style="width:80px; padding:2px; font-size:0.8em;"></td>
+                    <td><input type="text" id="pass-${u.usuario}" value="${u.password}" style="width:75px; padding:2px; font-size:0.75em;"></td>
                     <td>
-                        <select id="rol-${u.usuario}" onchange="cambiarRolUser('${u.usuario}')" style="width:75px; padding:2px; font-size:0.8em; margin:0;">
+                        <select id="rol-${u.usuario}" onchange="cambiarRolUser('${u.usuario}')" style="width:70px; padding:2px; font-size:0.75em; margin:0;">
                             <option value="user" ${u.rol==='user'?'selected':''}>User</option>
                             <option value="admin" ${u.rol==='admin'?'selected':''}>Admin</option>
                         </select>
@@ -1203,14 +1232,14 @@
             cargarUsuariosAdmin();
         };
 
-        // Ver perfil propio o del admin hacia otro usuario
         window.abrirMiPerfilModal = () => {
             if(!currentUserUsername) return;
             const u = currentUserDataFull || cacheUsuariosGlobal.find(item => item.usuario === currentUserUsername);
             if(!u) return;
 
-            let avatarC = u.fotoBase64 ? `<img src="${u.fotoBase64}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--azul-brillante);">` : `<span style="font-size:3em;">👤</span>`;
+            let avatarC = u.fotoBase64 ? `<img src="${u.fotoBase64}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; border:2px solid var(--azul-brillante);">` : `<span style="font-size:2.5em;">👤</span>`;
             document.getElementById('perfil-modal-avatar-container').innerHTML = avatarC;
+            document.getElementById('perfil-foto-input').value = "";
             document.getElementById('p-usuario').value = u.usuario;
             document.getElementById('p-nombre').value = u.nombre || '';
             document.getElementById('p-puesto').value = u.puesto || '';
@@ -1218,7 +1247,7 @@
             document.getElementById('p-telefono').value = u.telefono || '';
             document.getElementById('p-rol').value = (u.rol || 'user').toUpperCase();
 
-            // Limpiar campos de cambio de contraseña
+            document.getElementById('seccion-cambio-pass').classList.add('hidden');
             document.getElementById('cambio-pass-actual').value = "";
             document.getElementById('cambio-pass-nueva').value = "";
             document.getElementById('cambio-pass-confirmar').value = "";
@@ -1227,18 +1256,29 @@
         };
 
         window.verFichaUsuarioAdmin = (username) => {
-            // Si el admin hace clic en la tabla de usuarios
             const u = cacheUsuariosGlobal.find(item => item.usuario === username || item.id === username);
             if(!u) return;
-            let avatarC = u.fotoBase64 ? `<img src="${u.fotoBase64}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--azul-brillante);">` : `<span style="font-size:3em;">👤</span>`;
+            let avatarC = u.fotoBase64 ? `<img src="${u.fotoBase64}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; border:2px solid var(--azul-brillante);">` : `<span style="font-size:2.5em;">👤</span>`;
             document.getElementById('perfil-modal-avatar-container').innerHTML = avatarC;
+            document.getElementById('perfil-foto-input').value = "";
             document.getElementById('p-usuario').value = u.usuario;
             document.getElementById('p-nombre').value = u.nombre || '';
             document.getElementById('p-puesto').value = u.puesto || '';
             document.getElementById('p-correo').value = u.correo || '';
             document.getElementById('p-telefono').value = u.telefono || '';
             document.getElementById('p-rol').value = (u.rol || 'user').toUpperCase();
+            
+            document.getElementById('seccion-cambio-pass').classList.add('hidden');
+            document.getElementById('cambio-pass-actual').value = "";
+            document.getElementById('cambio-pass-nueva').value = "";
+            document.getElementById('cambio-pass-confirmar').value = "";
+
             document.getElementById('modal-perfil').classList.remove('hidden');
+        };
+
+        window.toggleSeccionCambioPassword = () => {
+            const sec = document.getElementById('seccion-cambio-pass');
+            sec.classList.toggle('hidden');
         };
 
         window.guardarMiPerfilModal = async () => {
@@ -1246,20 +1286,32 @@
             const nuevoNombre = document.getElementById('p-nombre').value.trim();
             const nuevoPuesto = document.getElementById('p-puesto').value.trim();
             const nuevoTelefono = document.getElementById('p-telefono').value.trim();
+            const fotoInput = document.getElementById('perfil-foto-input');
 
             if(!nuevoNombre || !nuevoPuesto) return alert('El nombre y el puesto no pueden estar vacíos.');
 
             try {
-                await updateDoc(doc(db, "usuarios", username), {
+                let updatePayload = {
                     nombre: nuevoNombre,
                     puesto: nuevoPuesto,
                     telefono: nuevoTelefono
-                });
+                };
+
+                if(fotoInput.files && fotoInput.files.length > 0) {
+                    let nuevaFotoBase64 = await comprimirImagenABase64(fotoInput.files[0], 400);
+                    updatePayload.fotoBase64 = nuevaFotoBase64;
+                    if(username === currentUserUsername && currentUserDataFull) {
+                        currentUserDataFull.fotoBase64 = nuevaFotoBase64;
+                    }
+                }
+
+                await updateDoc(doc(db, "usuarios", username), updatePayload);
 
                 if(username === currentUserUsername && currentUserDataFull) {
                     currentUserDataFull.nombre = nuevoNombre;
                     currentUserDataFull.puesto = nuevoPuesto;
                     currentUserDataFull.telefono = nuevoTelefono;
+                    actualizarAvatarHeaderUI();
                 }
 
                 alert('¡Perfil actualizado con éxito!');
@@ -1291,6 +1343,7 @@
                 document.getElementById('cambio-pass-actual').value = "";
                 document.getElementById('cambio-pass-nueva').value = "";
                 document.getElementById('cambio-pass-confirmar').value = "";
+                document.getElementById('seccion-cambio-pass').classList.add('hidden');
             } catch(e) {
                 alert('Error al actualizar la contraseña.');
             }
@@ -1355,11 +1408,11 @@
                 archivoBase64 = await comprimirImagenABase64(file, 900);
             }
 
-            const fechaStr = new Date().toLocaleDateString('es-MX') + ', ' + new Date().toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'});
+            const fechaSoloDia = obtenerFechaSoloDiaISO();
             
             await addDoc(collection(db, "mensajes"), {
                 remitente: currentUserUsername, rol: currentUserRole, texto, archivoBase64, archivoNombre,
-                respuestaAdmin: "", fecha: fechaStr, timestamp: Date.now()
+                respuestaAdmin: "", fecha: fechaSoloDia, timestamp: Date.now()
             });
 
             document.getElementById('msg-texto').value = "";
@@ -1377,17 +1430,17 @@
 
             let html = '';
             mensajesAMostrar.forEach(m => {
-                let archivoHtml = m.archivoBase64 ? `<div style="margin-top:6px;"><a href="javascript:void(0)" onclick="abrirVisorFoto('${m.archivoBase64}')" style="color:#00d2ff; text-decoration:underline;">📎 Ver Archivo Adjunto (${m.archivoNombre || 'Evidencia'})</a></div>` : '';
+                let archivoHtml = m.archivoBase64 ? `<div style="margin-top:5px;"><a href="javascript:void(0)" onclick="abrirVisorFoto('${m.archivoBase64}')" style="color:#00d2ff; text-decoration:underline;">📎 Ver Archivo Adjunto (${m.archivoNombre || 'Evidencia'})</a></div>` : '';
                 let respuestaHtml = m.respuestaAdmin ? 
-                    `<div style="background:rgba(42,157,143,0.2); border-left:3px solid #2a9d8f; padding:8px; margin-top:8px; border-radius:3px;"><strong>Respuesta del Admin:</strong> ${m.respuestaAdmin}</div>` : 
-                    (currentUserRole === 'admin' ? `<div style="margin-top:8px;"><input type="text" id="resp-msg-${m.id}" placeholder="Escribe respuesta..." style="margin-bottom:4px;"><button class="btn-small" onclick="responderMensajeAdmin('${m.id}')">Enviar Respuesta</button></div>` : `<div style="color:#e9c46a; font-size:0.8em; margin-top:6px;">⏳ Pendiente de respuesta</div>`);
+                    `<div style="background:rgba(42,157,143,0.2); border-left:3px solid #2a9d8f; padding:6px; margin-top:6px; border-radius:3px;"><strong>Respuesta del Admin:</strong> ${m.respuestaAdmin}</div>` : 
+                    (currentUserRole === 'admin' ? `<div style="margin-top:6px;"><input type="text" id="resp-msg-${m.id}" placeholder="Escribe respuesta..." style="margin-bottom:4px;"><button class="btn-small" onclick="responderMensajeAdmin('${m.id}')">Enviar Respuesta</button></div>` : `<div style="color:#e9c46a; font-size:0.75em; margin-top:5px;">⏳ Pendiente de respuesta</div>`);
 
                 html += `<div class="card" style="background:rgba(0,0,0,0.6); margin-bottom:8px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.8em; color:#a8dadc; margin-bottom:4px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.75em; color:#a8dadc; margin-bottom:4px;">
                         <span>De: <strong>${m.remitente}</strong> (${m.rol})</span>
-                        <span>${m.fecha}</span>
+                        <span>${m.fecha || '-'}</span>
                     </div>
-                    <p style="margin:4px 0; font-size:0.9em;">${m.texto || ''}</p>
+                    <p style="margin:4px 0; font-size:0.85em;">${m.texto || ''}</p>
                     ${archivoHtml}
                     ${respuestaHtml}
                 </div>`;
@@ -1406,7 +1459,7 @@
         window.exportarExcel = async () => {
             if(currentUserRole !== 'admin') return;
             let arr = cacheFoliosGlobal.map(d => ({
-                "Folio": d.idFolio, "Usuario": d.usuario, "Dirigido_a": d.dirigidoA || "", "Asunto": d.asunto || "", "Respuesta": d.respuesta || "", "Observaciones": d.observaciones || "", "Fecha": d.fecha
+                "Folio": d.idFolio, "Usuario": d.usuario, "Dirigido_a": d.dirigidoA || "", "Asunto": d.asunto || "", "Respuesta": d.respuesta || "", "Observaciones": d.observaciones || "", "Fecha": d.fecha || ""
             }));
             const ws = XLSX.utils.json_to_sheet(arr); const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Folios"); XLSX.writeFile(wb, "Respaldo_Folios_VRFE03.xlsx");
