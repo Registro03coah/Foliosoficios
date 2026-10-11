@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v0.8.0</title>
+    <title>VRFE 03JDE - Gestión de Folios v0.9.0</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -44,7 +44,7 @@
         
         .btn-db-action { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 8px 14px; border-radius: 5px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; color: white; font-size: 0.85em; transition: 0.2s; }
         .btn-config { background-color: #1d3557; } .btn-export { background-color: #2a9d8f; }
-        .btn-import { background-color: #e9c46a; color: #121212; } .btn-delete-db { background-color: #9d0208; border-color: #d90429; }
+        .btn-delete-db { background-color: #9d0208; border-color: #d90429; }
         .btn-secondary { background-color: var(--azul-oscuro); border-color: var(--azul-medio); }
         .btn-danger { background-color: #5a1818; border-color: #8B0000; }
         .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 5px 12px; font-size: 0.75em; }
@@ -63,21 +63,20 @@
         .nav-tab-btn { background-color: rgba(20, 33, 61, 0.6); color: #aaa; border: 1px solid var(--azul-claro); padding: 8px 15px; border-radius: 5px 5px 0 0; cursor: pointer; font-weight: bold; font-size: 0.85em; }
         .nav-tab-btn.active { background-color: var(--azul-medio); color: white; border-bottom: 2px solid var(--azul-brillante); }
 
-        .sort-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 0.8em; background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 5px; }
-        
         table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.73em; background-color: rgba(0,0,0,0.4); table-layout: fixed; }
         th, td { padding: 6px 4px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); vertical-align: middle; overflow-wrap: break-word; word-wrap: break-word; }
-        th { background-color: var(--azul-medio); border-bottom: 2px solid var(--azul-brillante); font-size: 0.75em; white-space: nowrap; }
+        th { background-color: var(--azul-medio); border-bottom: 2px solid var(--azul-brillante); font-size: 0.75em; white-space: nowrap; cursor: pointer; user-select: none; }
+        th:hover { background-color: var(--azul-claro); }
         
-        .col-folio { width: 150px; white-space: nowrap; font-weight: bold; }
-        .col-fecha { width: 115px; white-space: nowrap; }
+        .col-folio { width: 145px; white-space: nowrap; font-weight: bold; }
+        .col-fecha { width: 110px; white-space: nowrap; }
         .col-usuario { width: 75px; white-space: nowrap; font-size: 0.9em; text-align: center; }
-        .col-dirigido { width: 150px; }
-        .col-asunto { width: 150px; }
-        .col-respuesta { width: 120px; }
-        .col-obs { width: 110px; }
-        .col-foto { width: 85px; text-align: center; }
-        .col-doc { width: 85px; text-align: center; }
+        .col-dirigido { width: 145px; }
+        .col-asunto { width: 145px; }
+        .col-respuesta { width: 110px; }
+        .col-obs { width: 105px; }
+        .col-foto { width: 75px; text-align: center; }
+        .col-doc { width: 75px; text-align: center; }
         .col-acc { width: 60px; white-space: nowrap; text-align: center; }
 
         .hidden { display: none !important; }
@@ -220,23 +219,23 @@
                     </div>
                 </div>
 
-                <div class="sort-bar" style="margin-top: 20px;">
-                    <span>🔀 Ordenar por:</span>
-                    <select id="sort-user-select" onchange="renderizarTablaUsuario()">
-                        <option value="fecha-desc">Fecha (Más reciente)</option>
-                        <option value="fecha-asc">Fecha (Más antiguo)</option>
-                        <option value="folio">Número de Folio</option>
-                    </select>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                    <h3 style="margin: 0; font-size: 1em;">Mis Folios Registrados</h3>
+                    <button onclick="window.print()" class="btn-secondary btn-small">Imprimir Reporte</button>
                 </div>
 
-                <div style="overflow-x: auto;">
+                <div style="overflow-x: auto; margin-top: 10px;">
                     <table>
                         <thead>
                             <tr>
-                                <th class="col-folio">Folio</th><th class="col-fecha">Fecha</th>
-                                <th class="col-dirigido">Dirigido a</th><th class="col-asunto">Asunto</th>
-                                <th class="col-respuesta">Respuesta</th><th class="col-obs">Obs.</th>
-                                <th class="col-foto">Foto</th><th class="col-doc">Doc</th>
+                                <th class="col-folio" onclick="ordenarTablaUser('folio')">Folio <span id="sort-u-folio">↕️</span></th>
+                                <th class="col-fecha" onclick="ordenarTablaUser('fecha')">Fecha <span id="sort-u-fecha">↕️</span></th>
+                                <th class="col-dirigido" onclick="ordenarTablaUser('dirigido')">Dirigido a <span id="sort-u-dirigido">↕️</span></th>
+                                <th class="col-asunto" onclick="ordenarTablaUser('asunto')">Asunto <span id="sort-u-asunto">↕️</span></th>
+                                <th class="col-respuesta">Respuesta</th>
+                                <th class="col-obs">Obs.</th>
+                                <th class="col-foto">Foto</th>
+                                <th class="col-doc">Doc</th>
                                 <th class="col-acc">Acción</th>
                             </tr>
                         </thead>
@@ -247,25 +246,22 @@
 
             <!-- HISTORIAL GLOBAL -->
             <div id="pestana-historial" class="card hidden">
-                <h2 style="margin-top:0; font-size: 1.15em;">Historial General de Folios</h2>
-                <div class="sort-bar">
-                    <span>🔀 Ordenar por:</span>
-                    <select id="sort-global-select" onchange="renderizarTablaGlobal()">
-                        <option value="fecha-desc">Fecha (Más reciente)</option>
-                        <option value="fecha-asc">Fecha (Más antiguo)</option>
-                        <option value="folio">Número de Folio</option>
-                        <option value="usuario">Usuario Asignado</option>
-                    </select>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="margin:0; font-size: 1.15em;">Historial General de Folios</h2>
+                    <button onclick="window.print()" class="btn-secondary btn-small">Imprimir Historial</button>
                 </div>
 
-                <div style="overflow-x: auto;">
+                <div style="overflow-x: auto; margin-top: 10px;">
                     <table>
                         <thead>
                             <tr>
-                                <th class="col-folio">Folio</th><th class="col-usuario">Asignado</th>
-                                <th class="col-dirigido">Dirigido a</th><th class="col-asunto">Asunto</th>
-                                <th class="col-fecha">Fecha</th>
-                                <th class="col-foto">Foto</th><th class="col-doc">Doc</th>
+                                <th class="col-folio" onclick="ordenarTablaGlobal('folio')">Folio <span id="sort-g-folio">↕️</span></th>
+                                <th class="col-usuario" onclick="ordenarTablaGlobal('usuario')">Asignado <span id="sort-g-usuario">↕️</span></th>
+                                <th class="col-dirigido" onclick="ordenarTablaGlobal('dirigido')">Dirigido a <span id="sort-g-dirigido">↕️</span></th>
+                                <th class="col-asunto" onclick="ordenarTablaGlobal('asunto')">Asunto <span id="sort-g-asunto">↕️</span></th>
+                                <th class="col-fecha" onclick="ordenarTablaGlobal('fecha')">Fecha <span id="sort-g-fecha">↕️</span></th>
+                                <th class="col-foto">Foto</th>
+                                <th class="col-doc">Doc</th>
                                 <th class="col-acc">Acciones</th>
                             </tr>
                         </thead>
@@ -279,7 +275,7 @@
     <!-- MODAL EDICIÓN AVANZADA -->
     <div id="modal-edicion" class="modal-overlay hidden">
         <div class="modal-content">
-            <h3 id="modal-title" style="font-size: 1.1em; margin-top:0;">✏️ Editar Registro</h3>
+            <h3 id="modal-title" style="font-size: 1.1em; margin-top:0;">✏️ Editar Registro y Evidencias</h3>
             <input type="hidden" id="edit-docId">
             <div id="admin-only-edit-fields">
                 <label>Número de Folio:</label><input type="text" id="edit-folio">
@@ -291,7 +287,7 @@
             <label>Observaciones:</label><input type="text" id="edit-observaciones" placeholder="Observaciones...">
             
             <hr style="border-color:#333; margin:12px 0;">
-            <label style="font-size:0.85em; color:var(--azul-brillante); font-weight:bold;">Evidencias Actuales:</label>
+            <label style="font-size:0.85em; color:var(--azul-brillante); font-weight:bold;">Evidencias Adjuntas:</label>
             <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.4); padding:8px; border-radius:4px; margin-bottom:10px;">
                 <div id="modal-preview-foto">Foto: Ninguna</div>
                 <div id="modal-preview-doc">Doc: Ninguno</div>
@@ -345,7 +341,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 0.8.0</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 0.9.0</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-offline"></span><span id="footer-status-text" style="color: #ff3333;">offline</span></div>
     </footer>
 
@@ -360,6 +356,10 @@
 
         let currentUserUsername = null; let currentUserRole = 'user'; let foliosPendientes = 0; let cacheFoliosGlobal = [];
         let urlDriveScriptGlobal = "";
+
+        // Variables para ordenamiento con flechitas
+        let sortConfigUser = { column: 'fecha', asc: false };
+        let sortConfigGlobal = { column: 'fecha', asc: false };
 
         function setConexionEstado(online) {
             const dot = document.getElementById('footer-dot'); const txt = document.getElementById('footer-status-text');
@@ -409,18 +409,46 @@
             document.getElementById('btn-header-logout').classList.remove('hidden');
             document.getElementById('app-container').classList.remove('hidden');
             document.getElementById('header-username-display').innerText = `👤 ${currentUserUsername}`;
-            cambiarPestana(role === 'admin' ? 'admin' : 'mis-folios');
-            if(role === 'admin') { document.getElementById('tab-btn-admin').classList.remove('hidden'); document.getElementById('tab-btn-historial').classList.remove('hidden'); }
+
+            // Control estricto de visibilidad por rol
+            if (currentUserRole === 'admin') {
+                document.getElementById('tab-btn-admin').classList.remove('hidden');
+                document.getElementById('tab-btn-historial').classList.remove('hidden');
+                cambiarPestana('admin');
+            } else {
+                document.getElementById('tab-btn-admin').classList.add('hidden');
+                document.getElementById('tab-btn-historial').classList.add('hidden');
+                cambiarPestana('mis-folios');
+            }
             cargarDatosSistemaAsync();
         }
+
         window.logout = () => { currentUserUsername = null; document.getElementById('app-container').classList.add('hidden'); document.getElementById('auth-section').classList.remove('hidden'); document.getElementById('btn-header-logout').classList.add('hidden'); mostrarLogin(); };
 
         window.cambiarPestana = (pestana) => {
-            document.getElementById('pestana-admin').classList.add('hidden'); document.getElementById('pestana-mis-folios').classList.add('hidden'); document.getElementById('pestana-historial').classList.add('hidden');
+            // Protección extra: Si un usuario normal intenta entrar a admin o historial, se redirige a mis-folios
+            if (pestana !== 'mis-folios' && currentUserRole !== 'admin') {
+                pestana = 'mis-folios';
+            }
+
+            document.getElementById('pestana-admin').classList.add('hidden'); 
+            document.getElementById('pestana-mis-folios').classList.add('hidden'); 
+            document.getElementById('pestana-historial').classList.add('hidden');
             document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
-            if(pestana === 'admin') { document.getElementById('pestana-admin').classList.remove('hidden'); document.getElementById('tab-btn-admin').classList.add('active'); cargarUsuariosAdmin(); }
-            else if(pestana === 'mis-folios') { document.getElementById('pestana-mis-folios').classList.remove('hidden'); document.getElementById('tab-btn-mis-folios').classList.add('active'); renderizarTablaUsuario(); }
-            else if(pestana === 'historial') { document.getElementById('pestana-historial').classList.remove('hidden'); document.getElementById('tab-btn-historial').classList.add('active'); renderizarTablaGlobal(); }
+
+            if(pestana === 'admin' && currentUserRole === 'admin') { 
+                document.getElementById('pestana-admin').classList.remove('hidden'); 
+                document.getElementById('tab-btn-admin').classList.add('active'); 
+                cargarUsuariosAdmin(); 
+            } else if(pestana === 'mis-folios') { 
+                document.getElementById('pestana-mis-folios').classList.remove('hidden'); 
+                document.getElementById('tab-btn-mis-folios').classList.add('active'); 
+                renderizarTablaUsuario(); 
+            } else if(pestana === 'historial' && currentUserRole === 'admin') { 
+                document.getElementById('pestana-historial').classList.remove('hidden'); 
+                document.getElementById('tab-btn-historial').classList.add('active'); 
+                renderizarTablaGlobal(); 
+            }
         };
 
         async function cargarDatosSistemaAsync() {
@@ -454,7 +482,6 @@
             alert('Configuración guardada.'); cancelarEdicionConfig(); cargarDatosSistemaAsync();
         };
 
-        // Consecutivo exacto Último + 1 corregido
         async function actualizarIndicadorUltimoFolioDinamico() {
             const badge = document.getElementById('badge-ultimo-container');
             const configSnap = await getDoc(doc(db, "sistema", "config"));
@@ -605,11 +632,43 @@
             return `<td class="col-foto">${fotoHTML}</td><td class="col-doc">${docHTML}</td>`;
         }
 
+        // Ordenamiento con flechitas ↕️
+        window.ordenarTablaUser = (column) => {
+            if (sortConfigUser.column === column) { sortConfigUser.asc = !sortConfigUser.asc; } 
+            else { sortConfigUser.column = column; sortConfigUser.asc = true; }
+            renderizarTablaUsuario();
+        };
+
+        window.ordenarTablaGlobal = (column) => {
+            if (sortConfigGlobal.column === column) { sortConfigGlobal.asc = !sortConfigGlobal.asc; } 
+            else { sortConfigGlobal.column = column; sortConfigGlobal.asc = true; }
+            renderizarTablaGlobal();
+        };
+
         window.renderizarTablaUsuario = () => {
             const tbody = document.getElementById('user-tabla-folios');
             let misFolios = cacheFoliosGlobal.filter(f => f.usuario === currentUserUsername);
-            const sortBy = document.getElementById('sort-user-select').value;
-            misFolios.sort((a, b) => { if(sortBy === 'fecha-desc') return b.timestamp - a.timestamp; if(sortBy === 'fecha-asc') return a.timestamp - b.timestamp; return a.idFolio.localeCompare(b.idFolio); });
+
+            // Actualizar flechitas visuales
+            ['folio', 'fecha', 'dirigido', 'asunto'].forEach(col => {
+                const span = document.getElementById(`sort-u-${col}`);
+                if(span) {
+                    if(sortConfigUser.column === col) { span.innerText = sortConfigUser.asc ? '⬆️' : '⬇️'; } 
+                    else { span.innerText = '↕️'; }
+                }
+            });
+
+            misFolios.sort((a, b) => {
+                let valA = a[sortConfigUser.column === 'dirigido' ? 'dirigidoA' : sortConfigUser.column] || '';
+                let valB = b[sortConfigUser.column === 'dirigido' ? 'dirigidoA' : sortConfigUser.column] || '';
+                if(sortConfigUser.column === 'fecha' || sortConfigUser.column === 'folio') {
+                    valA = a.timestamp; valB = b.timestamp;
+                }
+                if(valA < valB) return sortConfigUser.asc ? -1 : 1;
+                if(valA > valB) return sortConfigUser.asc ? 1 : -1;
+                return 0;
+            });
+
             if(misFolios.length === 0) return tbody.innerHTML = '<tr><td colspan="9">No has solicitado folios.</td></tr>';
             
             let html = '';
@@ -629,8 +688,24 @@
             if(currentUserRole !== 'admin') return;
             const tbody = document.getElementById('global-tabla-folios');
             let arr = [...cacheFoliosGlobal];
-            const sortBy = document.getElementById('sort-global-select').value;
-            arr.sort((a, b) => { if(sortBy === 'fecha-desc') return b.timestamp - a.timestamp; if(sortBy === 'fecha-asc') return a.timestamp - b.timestamp; return a.idFolio.localeCompare(b.idFolio); });
+
+            // Actualizar flechitas globales
+            ['folio', 'usuario', 'dirigido', 'asunto', 'fecha'].forEach(col => {
+                const span = document.getElementById(`sort-g-${col}`);
+                if(span) {
+                    if(sortConfigGlobal.column === col) { span.innerText = sortConfigGlobal.asc ? '⬆️' : '⬇️'; } 
+                    else { span.innerText = '↕️'; }
+                }
+            });
+
+            arr.sort((a, b) => {
+                let colName = sortConfigGlobal.column === 'dirigido' ? 'dirigidoA' : sortConfigGlobal.column;
+                let valA = a[colName] || ''; let valB = b[colName] || '';
+                if(sortConfigGlobal.column === 'fecha' || sortConfigGlobal.column === 'folio') { valA = a.timestamp; valB = b.timestamp; }
+                if(valA < valB) return sortConfigGlobal.asc ? -1 : 1;
+                if(valA > valB) return sortConfigGlobal.asc ? 1 : -1;
+                return 0;
+            });
             
             let html = '';
             arr.forEach(f => {
@@ -649,7 +724,7 @@
             tbody.innerHTML = html;
         };
 
-        // Modal Edición Avanzada (con fotos y docs incluidos)
+        // Modal Edición Avanzada corregido y sincronizado
         window.abrirModalEdicion = (docId) => {
             const f = cacheFoliosGlobal.find(item => item.docId === docId);
             if(!f) return;
@@ -670,6 +745,7 @@
             else { document.getElementById('admin-only-edit-fields').classList.remove('hidden'); }
             document.getElementById('modal-edicion').classList.remove('hidden');
         };
+
         window.cerrarModalEdicion = () => { document.getElementById('modal-edicion').classList.add('hidden'); };
 
         window.guardarEdicionFolioAvanzada = async () => {
@@ -712,8 +788,8 @@
         };
 
         window.eliminarFolioAdmin = async (docId, folioName) => {
-            if(currentUserRole !== 'admin') return alert('Acceso denegado. Solo administradores pueden borrar.');
-            if(confirm(`⚠️ ¿Estás seguro de eliminar permanentemente el folio ${folioName}?`)) {
+            if(currentUserRole !== 'admin') return alert('Acceso denegado.');
+            if(confirm(`⚠️ ¿Eliminar permanentemente el folio ${folioName}?`)) {
                 await deleteDoc(doc(db, "folios", docId));
                 alert("Folio eliminado."); cargarDatosSistemaAsync();
             }
