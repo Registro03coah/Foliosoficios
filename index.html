@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor de Folios de Oficio v1.0.8</title>
+    <title>VRFE 03JDE - Gestión de Folios v1.0.9</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -113,7 +113,6 @@
 <body>
 
     <header>
-        <!-- Oculto en login, se muestra al iniciar sesión -->
         <div id="header-user-badge-container" class="hidden" onclick="abrirMiPerfilModal()">
             <div class="header-user-badge">
                 <div id="header-avatar-ring" class="avatar-ring online">
@@ -480,7 +479,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.8</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.9</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-offline"></span><span id="footer-status-text" style="color: #ff3333;">offline</span></div>
     </footer>
 
@@ -721,11 +720,23 @@
         window.cancelarEdicionConfig = () => { document.getElementById('config-area').classList.add('hidden'); document.getElementById('btn-cancelar-config').classList.add('hidden'); };
         
         window.guardarConfiguracion = async () => {
-            const prefijo = document.getElementById('nom-prefijo').value.trim(); const inicio = parseInt(document.getElementById('nom-inicio').value);
-            const anio = document.getElementById('nom-anio').value.trim(); const urlScript = document.getElementById('nom-drive-url').value.trim();
-            if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los campos.');
-            await setDoc(doc(db, "sistema", "config"), { prefijo, actual: inicio, anio, urlDriveScript: urlScript, configurado: true });
-            alert('Configuración guardada.'); cancelarEdicionConfig(); cargarDatosSistemaAsync();
+            const prefijo = document.getElementById('nom-prefijo').value.trim(); 
+            const inicio = parseInt(document.getElementById('nom-inicio').value);
+            const anio = document.getElementById('nom-anio').value.trim(); 
+            const urlScript = document.getElementById('nom-drive-url').value.trim();
+            
+            if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los campos correctamente.');
+            
+            await setDoc(doc(db, "sistema", "config"), { 
+                prefijo, 
+                actual: inicio, 
+                anio, 
+                urlDriveScript: urlScript, 
+                configurado: true 
+            });
+            alert('Configuración guardada con éxito.'); 
+            cancelarEdicionConfig(); 
+            cargarDatosSistemaAsync();
         };
 
         function extraerNumeroFolio(folioStr) {
@@ -771,6 +782,8 @@
                     }
                 });
                 badge.innerText = `Último Folio Utilizado: ${configData.prefijo}${String(maxNum).padStart(3, '0')}/${configData.anio}`;
+            } else {
+                badge.innerText = `Configura la nomenclatura en el Panel Admin`;
             }
         }
 
