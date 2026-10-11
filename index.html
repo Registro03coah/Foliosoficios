@@ -22,20 +22,17 @@
         
         header { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 8px 15px; border-bottom: 3px solid var(--azul-brillante); box-shadow: 0 3px 10px rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
         
-        .header-left-info { display: flex; align-items: center; gap: 12px; font-size: 0.85em; font-weight: bold; }
-        .status-dot-container { display: flex; align-items: center; gap: 5px; }
-        .dot-indicator { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px currentColor; }
-        .dot-online { color: #00ff66; background-color: #00ff66; }
-        .dot-offline { color: #ff3333; background-color: #ff3333; }
-        .status-text { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; }
+        .header-left-info { display: flex; align-items: center; gap: 8px; font-size: 0.85em; font-weight: bold; }
         .header-username { color: #00d2ff; text-shadow: 0 0 5px rgba(0, 210, 255, 0.5); }
 
         .header-title { text-align: center; flex: 1; }
         
         .container { max-width: 1450px; margin: 85px auto 20px auto; padding: 10px; flex: 1; width: 98%; box-sizing: border-box; }
-        .login-container { max-width: 380px !important; margin: 80px auto 20px auto; width: 100% !important; }
         
-        .card { background-color: var(--tarjeta-bg); padding: 14px; border-radius: 6px; border-top: 3px solid var(--azul-claro); box-shadow: 0 5px 12px rgba(0,0,0,0.7); margin-bottom: 15px; position: relative; }
+        .login-wrapper { max-width: 380px; margin: 40px auto 20px auto; width: 100%; text-align: center; }
+        .login-main-title { font-size: 1.5em; font-weight: bold; color: #fff; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        
+        .card { background-color: var(--tarjeta-bg); padding: 14px; border-radius: 6px; border-top: 3px solid var(--azul-claro); box-shadow: 0 5px 12px rgba(0,0,0,0.7); margin-bottom: 15px; position: relative; text-align: left; }
         
         input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"], select { width: 100%; padding: 8px 10px; margin-bottom: 10px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
         input:focus, select:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 4px var(--azul-brillante); }
@@ -79,19 +76,19 @@
         .sort-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 0.8em; background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 5px; }
         .sort-bar select { width: auto; margin-bottom: 0; padding: 4px 8px; font-size: 0.8em; }
 
-        /* TABLA COMPACTA OPTIMIZADA (LETRA MÁS PEQUEÑA Y ANCHOS PRECISOS) */
+        /* TABLAS CORREGIDAS CONTRA SOLAPAMIENTO */
         table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.73em; background-color: rgba(0,0,0,0.4); table-layout: fixed; }
         th, td { padding: 6px 4px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); vertical-align: top; overflow-wrap: break-word; word-wrap: break-word; }
         th { background-color: var(--azul-medio); border-bottom: 2px solid var(--azul-brillante); font-size: 0.75em; white-space: nowrap; }
         
-        /* Definición de anchos exactos para que quepan todas las columnas */
-        .col-folio { width: 135px; white-space: nowrap; font-weight: bold; }
+        /* Anchos ajustados para evitar que Folio y Asignado se junten */
+        .col-folio { width: 165px; white-space: nowrap; font-weight: bold; }
         .col-fecha { width: 125px; white-space: nowrap; }
-        .col-usuario { width: 90px; white-space: nowrap; }
-        .col-dirigido { width: 195px; }
-        .col-asunto { width: 195px; }
-        .col-respuesta { width: 150px; }
-        .col-obs { width: 130px; }
+        .col-usuario { width: 75px; white-space: nowrap; font-size: 0.9em; text-align: center; }
+        .col-dirigido { width: 185px; }
+        .col-asunto { width: 185px; }
+        .col-respuesta { width: 140px; }
+        .col-obs { width: 120px; }
         .col-evid { width: 85px; white-space: nowrap; }
         .col-acc { width: 75px; white-space: nowrap; text-align: center; }
 
@@ -104,7 +101,11 @@
         .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 18px; border-radius: 6px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; }
         .modal-content-viewer { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 8px; border-radius: 6px; width: 92vw; height: 82vh; display: flex; flex-direction: column; }
 
-        footer { text-align: center; padding: 10px; background-color: var(--azul-oscuro); color: #888; font-size: 0.75em; border-top: 1px solid var(--azul-medio); z-index: 10; }
+        footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: var(--azul-oscuro); color: #888; font-size: 0.75em; border-top: 1px solid var(--azul-medio); z-index: 10; box-sizing: border-box; }
+        .footer-status { display: flex; align-items: center; gap: 6px; font-weight: bold; }
+        .footer-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .dot-online { background-color: #00ff66; box-shadow: 0 0 6px #00ff66; }
+        .dot-offline { background-color: #ff3333; box-shadow: 0 0 6px #ff3333; }
 
         @media print {
             body { background: white !important; color: black !important; margin: 0 !important; }
@@ -121,10 +122,6 @@
 
     <header>
         <div class="header-left-info">
-            <div class="status-dot-container">
-                <span id="dot-indicator" class="dot-indicator dot-offline"></span>
-                <span id="status-text" class="status-text" style="color: #ff3333;">Offline</span>
-            </div>
             <span id="header-username-display" class="header-username"></span>
         </div>
 
@@ -140,46 +137,49 @@
 
     <div class="container" id="main-container">
         <!-- AUTENTICACIÓN -->
-        <div id="auth-section" class="card login-container">
-            <div id="login-form">
-                <h2 style="text-align:center; font-size: 1.2em; margin-top:0;">Acceso al Sistema</h2>
-                <div id="auth-error-login" class="error hidden"></div>
-                <input type="text" id="login-usuario" placeholder="Usuario (Ej. mario.cardenas)" required>
-                
-                <div class="password-wrapper">
-                    <input type="password" id="login-password" placeholder="Contraseña" required onkeypress="if(event.key === 'Enter') login()">
-                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
-                </div>
-
-                <button style="width:100%; margin-bottom:8px;" onclick="login()">Iniciar Sesión</button>
-                <button class="btn-secondary" style="width:100%;" onclick="mostrarRegistro()">Registrar Usuario</button>
-            </div>
-
-            <div id="register-form" class="hidden">
-                <h2 style="text-align:center; font-size: 1.2em; margin-top:0;">Registro de Personal</h2>
-                <div id="auth-error-register" class="error hidden"></div>
-                <div class="form-grid">
-                    <input type="text" id="reg-usuario" class="full-width" placeholder="Usuario" required>
-                    <input type="text" id="reg-nombre" placeholder="Nombre(s)" required>
-                    <input type="text" id="reg-puesto" placeholder="Puesto" required>
-                    <input type="text" id="reg-paterno" placeholder="Ap. Paterno" required>
-                    <input type="text" id="reg-materno" placeholder="Ap. Materno" required>
-                    <input type="email" id="reg-correo" class="full-width" placeholder="Correo @ine.mx" required>
-                    <input type="tel" id="reg-telefono" class="full-width" placeholder="Teléfono" required>
+        <div id="auth-section" class="login-wrapper">
+            <div class="login-main-title">Sistema de Gestión de Folios (SGF)</div>
+            <div class="card">
+                <div id="login-form">
+                    <h2 style="text-align:center; font-size: 1.15em; margin-top:0;">Acceso al Sistema</h2>
+                    <div id="auth-error-login" class="error hidden"></div>
+                    <input type="text" id="login-usuario" placeholder="Usuario (Ej. mario.cardenas)" required>
                     
-                    <div class="password-wrapper full-width">
-                        <input type="password" id="reg-password" placeholder="Contraseña (Mín. 6)" required>
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" placeholder="Contraseña" required onkeypress="if(event.key === 'Enter') login()">
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
                     </div>
 
-                    <div class="password-wrapper full-width">
-                        <input type="password" id="reg-password-confirm" placeholder="Confirmar Contraseña" required>
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-password-confirm', this)">👁️</button>
-                    </div>
+                    <button style="width:100%; margin-bottom:8px;" onclick="login()">Iniciar Sesión</button>
+                    <button class="btn-secondary" style="width:100%;" onclick="mostrarRegistro()">Registrar Usuario</button>
                 </div>
-                <div style="margin-top: 12px;">
-                    <button style="width:100%; margin-bottom:8px;" onclick="register()">Guardar</button>
-                    <button class="btn-secondary" style="width:100%;" onclick="mostrarLogin()">Volver</button>
+
+                <div id="register-form" class="hidden">
+                    <h2 style="text-align:center; font-size: 1.15em; margin-top:0;">Registro de Personal</h2>
+                    <div id="auth-error-register" class="error hidden"></div>
+                    <div class="form-grid">
+                        <input type="text" id="reg-usuario" class="full-width" placeholder="Usuario" required>
+                        <input type="text" id="reg-nombre" placeholder="Nombre(s)" required>
+                        <input type="text" id="reg-puesto" placeholder="Puesto" required>
+                        <input type="text" id="reg-paterno" placeholder="Ap. Paterno" required>
+                        <input type="text" id="reg-materno" placeholder="Ap. Materno" required>
+                        <input type="email" id="reg-correo" class="full-width" placeholder="Correo @ine.mx" required>
+                        <input type="tel" id="reg-telefono" class="full-width" placeholder="Teléfono" required>
+                        
+                        <div class="password-wrapper full-width">
+                            <input type="password" id="reg-password" placeholder="Contraseña (Mín. 6)" required>
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
+                        </div>
+
+                        <div class="password-wrapper full-width">
+                            <input type="password" id="reg-password-confirm" placeholder="Confirmar Contraseña" required>
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('reg-password-confirm', this)">👁️</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <button style="width:100%; margin-bottom:8px;" onclick="register()">Guardar</button>
+                        <button class="btn-secondary" style="width:100%;" onclick="mostrarLogin()">Volver</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -383,7 +383,11 @@
     </div>
 
     <footer>
-        &copy; 2026 VRFE 03JDE | Versión 0.3.3 (Secure Roles & Compact Table UI)
+        <div>&copy; 2026 VRFE 03JDE | Versión 0.3.5</div>
+        <div class="footer-status">
+            <span id="footer-dot" class="footer-dot dot-offline"></span>
+            <span id="footer-status-text" style="color: #ff3333;">offline</span>
+        </div>
     </footer>
 
     <!-- SCRIPT FIREBASE -->
@@ -408,15 +412,15 @@
         let cacheFoliosGlobal = [];
 
         function setConexionEstado(online) {
-            const dot = document.getElementById('dot-indicator');
-            const txt = document.getElementById('status-text');
+            const dot = document.getElementById('footer-dot');
+            const txt = document.getElementById('footer-status-text');
             if(online) {
-                dot.className = "dot-indicator dot-online";
-                txt.innerText = "Online";
+                dot.className = "footer-dot dot-online";
+                txt.innerText = "online";
                 txt.style.color = "#00ff66";
             } else {
-                dot.className = "dot-indicator dot-offline";
-                txt.innerText = "Offline";
+                dot.className = "footer-dot dot-offline";
+                txt.innerText = "offline";
                 txt.style.color = "#ff3333";
             }
         }
@@ -511,7 +515,6 @@
 
                 document.getElementById('header-username-display').innerText = `👤 ${currentUserUsername}`;
 
-                // RESTRICCIÓN DE PESTAÑAS SEGÚN ROL
                 if (currentUserRole === 'admin') {
                     document.getElementById('tab-btn-admin').classList.remove('hidden');
                     document.getElementById('tab-btn-historial').classList.remove('hidden');
@@ -534,7 +537,6 @@
         });
 
         window.cambiarPestana = (pestana) => {
-            // Validar acceso estricto a historial si no es admin
             if (pestana === 'historial' && currentUserRole !== 'admin') {
                 pestana = 'mis-folios';
             }
@@ -581,7 +583,7 @@
                     querySnapshot.forEach((d) => cacheFoliosGlobal.push({ docId: d.id, ...d.data() }));
 
                     if(currentUserRole === 'admin') cargarUsuariosAdmin();
-                    await actualizarIndicadorUltimoFolio();
+                    await actualizarIndicadorUltimoFolioDinamico();
                     renderizarTablaUsuario();
                     if(currentUserRole === 'admin') renderizarTablaGlobal();
                     setConexionEstado(true);
@@ -800,20 +802,28 @@
             } else {
                 contenedor.innerHTML = `<div style="text-align:center; padding:15px;"><a href="${fileUrl}" target="_blank" style="background:#3a6ea5; color:white; padding:8px 15px; text-decoration:none; border-radius:4px;">📥 Descargar Archivo</a></div>`;
             }
+            document.getElementById('modal-visor').classList.add('hidden'); // Ocultar visor inicial
             document.getElementById('modal-visor').classList.remove('hidden');
         };
 
         window.cerrarVisor = () => { document.getElementById('modal-visor').classList.add('hidden'); document.getElementById('visor-contenido').innerHTML = ''; };
 
-        async function actualizarIndicadorUltimoFolio() {
-            const configSnap = await getDoc(doc(db, "sistema", "config"));
+        // Indicador de "Último Folio" basado en el folio más alto real registrado en la BD o caché
+        async function actualizarIndicadorUltimoFolioDinamico() {
             const badge = document.getElementById('badge-ultimo-container');
-            if (configSnap.exists() && configSnap.data().configurado) {
-                const data = configSnap.data();
-                let ultimoUsadoNum = Math.max(0, data.actual - 1);
-                badge.innerText = `Último Folio: ${data.prefijo}${ultimoUsadoNum}/${data.anio}`;
+            if(cacheFoliosGlobal.length > 0) {
+                // Ordenar por timestamp o buscar el de mayor valor numérico en el ID
+                let foliosOrdenados = [...cacheFoliosGlobal].sort((a, b) => b.timestamp - a.timestamp);
+                badge.innerText = `Último Folio Utilizado: ${foliosOrdenados[0].idFolio}`;
             } else {
-                badge.innerText = `Último Folio: No configurado`;
+                const configSnap = await getDoc(doc(db, "sistema", "config"));
+                if (configSnap.exists() && configSnap.data().configurado) {
+                    const data = configSnap.data();
+                    let ultimoUsadoNum = Math.max(0, data.actual - 1);
+                    badge.innerText = `Último Folio Utilizado: ${data.prefijo}${ultimoUsadoNum}/${data.anio}`;
+                } else {
+                    badge.innerText = `Último Folio Utilizado: Ninguno`;
+                }
             }
         }
 
