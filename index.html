@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v1.0.7</title>
+    <title>Gestor de Folios de Oficio v1.0.8</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -349,10 +349,10 @@
         </div>
     </div>
 
-    <!-- CONTENEDOR OCULTO PARA IMPRESIÓN INSTITUCIONAL -->
+    <!-- CONTENEDOR OCULTO PARA IMPRESIÓN -->
     <div id="print-institutional-area" class="print-only-container"></div>
 
-    <!-- MODAL PERFIL DE USUARIO (Compacto) -->
+    <!-- MODAL PERFIL DE USUARIO -->
     <div id="modal-perfil" class="modal-overlay hidden">
         <div class="modal-content" style="text-align:center;">
             <h3 style="font-size: 1em; margin-top:0; margin-bottom: 8px;">👤 Ficha y Edición de Perfil</h3>
@@ -383,7 +383,6 @@
                 <button class="btn-small" style="width:100%; background:#2a9d8f; margin-top:2px;" onclick="guardarMiPerfilModal()">💾 Guardar Cambios de Perfil</button>
             </div>
 
-            <!-- Sección Contraseña Colapsada -->
             <div style="text-align:left; background:rgba(0,0,0,0.4); padding:8px; border-radius:5px; margin-top:8px;">
                 <button class="btn-small btn-secondary" style="width:100%; margin-bottom:4px;" onclick="toggleSeccionCambioPassword()">🔑 Cambiar Contraseña</button>
                 
@@ -481,7 +480,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.7</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.8</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-offline"></span><span id="footer-status-text" style="color: #ff3333;">offline</span></div>
     </footer>
 
@@ -541,7 +540,6 @@
             });
         }
 
-        // Función para obtener fecha actual sin hora YYYY-MM-DD
         function obtenerFechaSoloDiaISO() {
             const ahora = new Date();
             const yyyy = ahora.getFullYear();
@@ -740,7 +738,7 @@
 
         async function obtenerSiguienteNumeroFolio(configData, cantidadNecesaria) {
             let prefijo = configData.prefijo;
-            let maxConfigurado = configData.actual;
+            let maxConfigurado = parseInt(configData.actual) || 1;
             let numerosUsados = new Set();
             cacheFoliosGlobal.forEach(f => {
                 if (f.idFolio && f.idFolio.startsWith(prefijo)) {
@@ -765,7 +763,7 @@
             const configSnap = await getDoc(doc(db, "sistema", "config"));
             if (configSnap.exists() && configSnap.data().configurado) {
                 const configData = configSnap.data();
-                let maxNum = configData.actual - 1;
+                let maxNum = (parseInt(configData.actual) || 1) - 1;
                 cacheFoliosGlobal.forEach(f => {
                     if (f.idFolio && f.idFolio.startsWith(configData.prefijo)) {
                         let num = extraerNumeroFolio(f.idFolio);
@@ -778,7 +776,7 @@
 
         window.generarFormularioFolios = async () => {
             const configSnap = await getDoc(doc(db, "sistema", "config"));
-            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Configura la nomenclatura primero.');
+            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Configura la nomenclatura primero en el Panel Admin.');
             const cantidad = parseInt(document.getElementById('cantidad-folios').value);
             if (isNaN(cantidad) || cantidad < 1 || cantidad > 20) return alert('Ingresa una cantidad válida (1 a 20).');
             
@@ -828,7 +826,7 @@
             for (let i = 0; i < items.length; i++) {
                 let folioTxt = items[i].querySelector('.lbl-folio-txt').innerText;
                 let dirigidoVal = items[i].querySelector('.input-dirigido-item').value.trim();
-                let asuntoVal = items[i].querySelector('.asunto, input[id^="asunto-"]').value.trim();
+                let asuntoVal = items[i].querySelector('input[id^="asunto-"]').value.trim();
                 
                 if (!dirigidoVal && !asuntoVal && items.length > 1) { continue; }
                 if (!dirigidoVal || !asuntoVal) return alert(`Completa los campos obligatorios para el folio ${folioTxt}.`);
@@ -839,7 +837,7 @@
             if(foliosAcrear.length === 0) return alert('No hay folios válidos para registrar.');
 
             const configRef = doc(db, "sistema", "config");
-            const fechaSoloDia = obtenerFechaSoloDiaISO(); // Solo YYYY-MM-DD sin hora
+            const fechaSoloDia = obtenerFechaSoloDiaISO();
 
             try {
                 await runTransaction(db, async (transaction) => {
@@ -847,7 +845,7 @@
                     if (!configDoc.exists()) throw "Falta config";
                     let info = configDoc.data();
                     
-                    let maxActual = info.actual;
+                    let maxActual = parseInt(info.actual) || 1;
                     foliosAcrear.forEach((item, idx) => {
                         let newRef = doc(collection(db, "folios"));
                         transaction.set(newRef, {
@@ -863,7 +861,7 @@
                     transaction.update(configRef, { actual: maxActual });
                 });
                 alert('¡Folios asignados con éxito!'); cancelarFormularioFolios(); cargarDatosSistemaAsync();
-            } catch (err) { alert("Error al asignar folios."); }
+            } catch (err) { alert("Error al asignar folios. Verifica la configuración en el Panel Admin."); }
         };
 
         window.subirFotoRapida = async (docId, fileInputId) => {
@@ -1018,7 +1016,6 @@
                 if (tipo === 'user' && f.usuario !== currentUserUsername) return false;
                 if (!f.fecha) return false;
                 
-                // Comparación directa de fechas YYYY-MM-DD
                 if (desdeVal && f.fecha < desdeVal) return false;
                 if (hastaVal && f.fecha > hastaVal) return false;
                 return true;
@@ -1213,7 +1210,7 @@
                     <td>${u.nombre || '-'}</td><td>${u.correo}</td>
                     <td><input type="text" id="pass-${u.usuario}" value="${u.password}" style="width:75px; padding:2px; font-size:0.75em;"></td>
                     <td>
-                        <select id="rol-${u.usuario}" onchange="cambiarRolUser('${u.usuario}')" style="width:70px; padding:2px; font-size:0.75em; margin:0;">
+                        <select id="rol-${u.usuario}" onchange="cambiarRolUser('${u.usuario}')" style="width:70px; padding:2px; font-size:0.75em; margin:0;" ${u.usuario === 'admin' ? 'disabled' : ''}>
                             <option value="user" ${u.rol==='user'?'selected':''}>User</option>
                             <option value="admin" ${u.rol==='admin'?'selected':''}>Admin</option>
                         </select>
@@ -1228,6 +1225,7 @@
         }
 
         window.toggleAutorizarUser = async (username, estado) => {
+            if(username === 'admin') return;
             await updateDoc(doc(db, "usuarios", username), { autorizado: estado });
             cargarUsuariosAdmin();
         };
@@ -1384,12 +1382,14 @@
         };
 
         window.cambiarRolUser = async (username) => {
+            if(username === 'admin') return;
             const nuevoRol = document.getElementById(`rol-${username}`).value;
             await updateDoc(doc(db, "usuarios", username), { rol: nuevoRol });
             alert(`Rol de ${username} actualizado.`);
         };
 
         window.eliminarUsuarioAdmin = async (username) => {
+            if(username === 'admin') return alert('No se puede eliminar al Administrador principal.');
             if(confirm(`⚠️ ¿Eliminar al usuario ${username}?`)) {
                 await deleteDoc(doc(db, "usuarios", username));
                 alert("Usuario eliminado."); cargarDatosSistemaAsync();
