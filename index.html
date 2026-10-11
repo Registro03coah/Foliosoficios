@@ -4,42 +4,45 @@
     <meta charset="UTF-8">
     <title>Reporte de Folios - VRFE 03JDE</title>
     <style>
-        /* Estilos generales para pantalla y optimizados para impresión en papel */
-        body { font-family: 'Segoe UI', Arial, sans-serif; color: #111; background: #fff; margin: 0; padding: 20px; font-size: 13px; }
-        .print-container { max-width: 900px; margin: 0 auto; background: #fff; padding: 20px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #111; background: #fff; margin: 0; padding: 20px; font-size: 12px; }
+        .print-container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 20px; }
         
         /* Cabecera institucional */
-        .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px double #1d3557; padding-bottom: 12px; margin-bottom: 15px; }
-        .report-header h2 { margin: 0; font-size: 1.2em; color: #0a1128; text-transform: uppercase; }
-        .report-header p { margin: 2px 0 0 0; font-size: 0.85em; color: #555; }
-        .report-meta { text-align: right; font-size: 0.8em; color: #444; }
+        .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px double #1d3557; padding-bottom: 10px; margin-bottom: 12px; }
+        .report-header h2 { margin: 0; font-size: 1.1em; color: #0a1128; text-transform: uppercase; }
+        .report-header p { margin: 2px 0 0 0; font-size: 0.8em; color: #555; }
+        .report-meta { text-align: right; font-size: 0.75em; color: #444; }
+
+        /* Selector de periodo y filtros para pantalla */
+        .filter-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .filter-box input { padding: 5px; font-size: 0.9em; border: 1px solid #94a3b8; border-radius: 3px; }
 
         /* Tarjeta de datos del funcionario */
-        .user-info-box { background: #f8f9fa; border: 1px solid #ccd5ae; border-left: 4px solid #1d3557; padding: 10px 15px; border-radius: 4px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9em; }
-        .user-info-box p { margin: 3px 0; }
+        .user-info-box { background: #f8f9fa; border: 1px solid #ccd5ae; border-left: 4px solid #1d3557; padding: 8px 12px; border-radius: 4px; margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85em; }
+        .user-info-box p { margin: 2px 0; }
 
-        /* Barra de periodo seleccionado */
-        .period-bar { background: #1d3557; color: white; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 0.85em; margin-bottom: 15px; text-align: center; letter-spacing: 0.5px; }
+        /* Barra de periodo impreso */
+        .period-bar { background: #1d3557; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8em; margin-bottom: 12px; text-align: center; letter-spacing: 0.5px; }
 
-        /* Tabla de registros */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 0.8em; }
-        th, td { border: 1px solid #b0c4de; padding: 8px 6px; text-align: left; }
-        th { background-color: #14213d; color: white; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px; }
+        /* Tabla de registros sin fotos ni archivos */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 0.75em; table-layout: fixed; }
+        th, td { border: 1px solid #b0c4de; padding: 6px 4px; text-align: left; overflow-wrap: break-word; }
+        th { background-color: #14213d; color: white; text-transform: uppercase; font-size: 0.8em; letter-spacing: 0.5px; }
         tr:nth-child(even) { background-color: #f9fbfd; }
 
         /* Sección de firma */
-        .signature-section { margin-top: 50px; text-align: center; page-break-inside: avoid; }
-        .signature-line { width: 280px; border-top: 1px solid #333; margin: 0 auto 6px auto; }
-        .signature-name { font-weight: bold; font-size: 0.95em; color: #0a1128; }
-        .signature-role { font-size: 0.85em; color: #555; }
+        .signature-section { margin-top: 40px; text-align: center; page-break-inside: avoid; }
+        .signature-line { width: 260px; border-top: 1px solid #333; margin: 0 auto 5px auto; }
+        .signature-name { font-weight: bold; font-size: 0.9em; color: #0a1128; }
+        .signature-role { font-size: 0.8em; color: #555; }
 
         /* Botón de impresión flotante (se oculta al imprimir) */
-        .no-print { text-align: center; margin-bottom: 20px; }
-        .btn-print { background: #1d3557; color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.95em; }
+        .no-print { text-align: center; margin-bottom: 15px; }
+        .btn-print { background: #1d3557; color: white; border: none; padding: 8px 16px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.9em; }
         .btn-print:hover { background: #3a6ea5; }
 
         @media print {
-            .no-print { display: none; }
+            .no-print, .filter-box { display: none; }
             body { padding: 0; }
             .print-container { width: 100%; padding: 0; }
         }
@@ -48,9 +51,12 @@
 <body>
 
     <div class="print-container">
-        <!-- Botón de acción para el usuario -->
-        <div class="no-print">
-            <button class="btn-print" onclick="window.print()">🖨️ Imprimir Reporte Oficial</button>
+        <!-- Controles de Periodo y Botón de Impresión -->
+        <div class="filter-box no-print">
+            <span><strong>Filtrar Periodo:</strong></span>
+            <label>Desde: <input type="date" id="filtro-desde" value="2026-10-01"></label>
+            <label>Hasta: <input type="date" id="filtro-hasta" value="2026-10-11"></label>
+            <button class="btn-print" onclick="window.print()">🖨️ Imprimir Reporte Seleccionado</button>
         </div>
 
         <!-- Encabezado Institucional -->
@@ -67,7 +73,7 @@
 
         <!-- Periodo del Reporte -->
         <div class="period-bar">
-            PERIODO DEL REPORTE: DEL 01/10/2026 AL 11/10/2026
+            REPORTE DE ACTIVIDAD Y FOLIOS &bull; PERIODO: 01/10/2026 AL 11/10/2026
         </div>
 
         <!-- Datos del Funcionario / Solicitante -->
@@ -78,19 +84,20 @@
             </div>
             <div>
                 <p><strong>Correo Electrónico:</strong> mario.cardenas@ine.mx</p>
-                <p><strong>Total de Folios en este Reporte:</strong> 5 Registros</p>
+                <p><strong>Total de Registros:</strong> 2 Folios</p>
             </div>
         </div>
 
-        <!-- Tabla de Registros -->
+        <!-- Tabla de Registros (Sin fotos/docs, con Respuesta y Observaciones) -->
         <table>
             <thead>
                 <tr>
-                    <th style="width: 18%;">Folio</th>
-                    <th style="width: 15%;">Fecha</th>
-                    <th style="width: 25%;">Dirigido a</th>
-                    <th style="width: 27%;">Asunto</th>
-                    <th style="width: 15%;">Respuesta</th>
+                    <th style="width: 16%;">Folio</th>
+                    <th style="width: 12%;">Fecha</th>
+                    <th style="width: 18%;">Dirigido a</th>
+                    <th style="width: 20%;">Asunto</th>
+                    <th style="width: 17%;">Respuesta</th>
+                    <th style="width: 17%;">Observaciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -100,6 +107,7 @@
                     <td>LIC. MIGUEL CASTILLO MORALES</td>
                     <td>OFICIO DE JUSTIFICACION PARA APLICACION DE CRITERIO</td>
                     <td>ATENDIDO</td>
+                    <td>SE ENTREGO EN TIEMPO Y FORMA</td>
                 </tr>
                 <tr>
                     <td><strong>INE/JDE03/VRFE/579/2026</strong></td>
@@ -107,12 +115,12 @@
                     <td>ING. ANA LAURA RIVERA</td>
                     <td>REVISIÓN DE PADRÓN ELECTORAL SECCIÓN 0312</td>
                     <td>PENDIENTE</td>
+                    <td>EN ESPERA DE VALIDACIÓN DISTRITAL</td>
                 </tr>
-                <!-- Más filas dinámicas aquí -->
             </tbody>
         </table>
 
-        <!-- Apartado de Firma -->
+        <!-- Apartado de Firma al Pie -->
         <div class="signature-section">
             <div class="signature-line"></div>
             <div class="signature-name">Mario Alberto Cárdenas Ledezma</div>
