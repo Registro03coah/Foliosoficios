@@ -34,7 +34,7 @@
         
         .card { background-color: var(--tarjeta-bg); padding: 14px; border-radius: 6px; border-top: 3px solid var(--azul-claro); box-shadow: 0 5px 12px rgba(0,0,0,0.7); margin-bottom: 15px; position: relative; text-align: left; }
         
-        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="file"], select { width: 100%; padding: 8px 10px; margin-bottom: 10px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], select { width: 100%; padding: 8px 10px; margin-bottom: 10px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
         input:focus, select:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 4px var(--azul-brillante); }
         input[readonly] { background-color: #222; color: #888; cursor: not-allowed; }
 
@@ -63,12 +63,8 @@
         .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 5px 12px; font-size: 0.75em; }
         .btn-small { padding: 3px 6px; font-size: 0.7em; }
         
-        /* Botones de iconos compactos */
         .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 1.15em; padding: 2px 4px; transition: transform 0.1s; }
         .btn-icon:hover { transform: scale(1.15); }
-
-        .btn-subir-inactivo { background-color: #444 !important; color: #888 !important; border-color: #555 !important; cursor: not-allowed !important; }
-        .btn-subir-activo { background-color: var(--azul-brillante) !important; color: white !important; border-color: #6096ba !important; cursor: pointer !important; box-shadow: 0 0 6px var(--azul-brillante); }
 
         .tooltip-container { position: relative; display: inline-block; }
         .tooltip-content { visibility: hidden; width: 160px; background-color: #1a1a1a; color: #fff; text-align: center; border-radius: 6px; padding: 6px; position: absolute; z-index: 1000; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; border: 1px solid var(--azul-brillante); box-shadow: 0 4px 10px rgba(0,0,0,0.8); font-size: 0.7em; }
@@ -99,7 +95,7 @@
         .col-asunto { width: 185px; }
         .col-respuesta { width: 140px; }
         .col-obs { width: 120px; }
-        .col-evid { width: 85px; white-space: nowrap; }
+        .col-evid { width: 95px; white-space: nowrap; }
         .col-acc { width: 60px; white-space: nowrap; text-align: center; }
 
         .hidden { display: none !important; }
@@ -393,7 +389,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 0.3.7</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 0.3.9</div>
         <div class="footer-status">
             <span id="footer-dot" class="footer-dot dot-offline"></span>
             <span id="footer-status-text" style="color: #ff3333;">offline</span>
@@ -925,20 +921,28 @@
                         foliosAtrasados.push(f.idFolio);
                     }
 
-                    let btnSubir = `
-                        <div style="display:flex; flex-direction:column; gap:3px;">
-                            <input type="file" id="file-${f.docId}" onchange="actualizarEstadoBotonSubir('${f.docId}')" style="width:75px; font-size:0.55em; margin:0;">
-                            <button id="btn-subir-${f.docId}" class="btn-small btn-subir-inactivo" disabled onclick="subirEvidencia('${f.docId}')">Subir</button>
-                        </div>`;
-                    
-                    let evidenciaHTML = f.archivoUrl ? `
-                        <div class="tooltip-container">
-                            <a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 Ver</a>
-                            <div class="tooltip-content">
-                                <strong>${f.archivo}</strong><br>
-                                ${['jpg', 'jpeg', 'png', 'webp'].includes(f.archivo.split('.').pop().toLowerCase()) ? `<img src="${f.archivoUrl}" class="tooltip-img">` : '<em>Documento adjunto</em>'}
-                            </div>
-                        </div>` : btnSubir;
+                    // Interfaz dinámica: Icono de hoja si ya tiene archivo, o botón adjuntar si está pendiente
+                    let evidenciaHTML = '';
+                    if (f.archivoUrl) {
+                        evidenciaHTML = `
+                            <div style="display:flex; align-items:center; gap:4px;">
+                                <div class="tooltip-container">
+                                    <a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')" style="font-size:1.1em; text-decoration:none;" title="Ver archivo">📄</a>
+                                    <div class="tooltip-content">
+                                        <strong>${f.archivo}</strong><br>
+                                        ${['jpg', 'jpeg', 'png', 'webp'].includes(f.archivo.split('.').pop().toLowerCase()) ? `<img src="${f.archivoUrl}" class="tooltip-img">` : '<em>Documento adjunto</em>'}
+                                    </div>
+                                </div>
+                                <label for="file-${f.docId}" style="background:#1d3557; color:white; padding:2px 5px; font-size:0.6em; cursor:pointer; border-radius:3px;" title="Cambiar archivo">Cambiar</label>
+                                <input type="file" id="file-${f.docId}" onchange="subirEvidenciaAutomatica('${f.docId}')" style="display:none;">
+                            </div>`;
+                    } else {
+                        evidenciaHTML = `
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <label for="file-${f.docId}" id="label-file-${f.docId}" style="background:#222; border:1px dashed var(--azul-brillante); padding:3px 6px; font-size:0.6em; text-align:center; cursor:pointer; border-radius:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:85px;" title="Seleccionar archivo">📁 Adjuntar</label>
+                                <input type="file" id="file-${f.docId}" onchange="subirEvidenciaAutomatica('${f.docId}')" style="display:none;">
+                            </div>`;
+                    }
                     
                     tbody.innerHTML += `<tr>
                         <td class="col-folio"><strong>${f.idFolio}</strong></td>
@@ -962,17 +966,22 @@
             }, 5);
         };
 
-        window.actualizarEstadoBotonSubir = (docId) => {
+        // Función que sube el archivo automáticamente a Firebase Storage al seleccionarlo
+        window.subirEvidenciaAutomatica = async (docId) => {
             const fileInput = document.getElementById(`file-${docId}`);
-            const btnSubir = document.getElementById(`btn-subir-${docId}`);
-            if(fileInput.files && fileInput.files.length > 0) {
-                btnSubir.classList.remove('btn-subir-inactivo');
-                btnSubir.classList.add('btn-subir-activo');
-                btnSubir.removeAttribute('disabled');
-            } else {
-                btnSubir.classList.remove('btn-subir-activo');
-                btnSubir.classList.add('btn-subir-inactivo');
-                btnSubir.setAttribute('disabled', 'true');
+            if(!fileInput.files || fileInput.files.length === 0) return;
+            const file = fileInput.files[0];
+            
+            try {
+                alert("Subiendo archivo a la nube...");
+                const storageRef = ref(storage, `evidencias/${docId}_${file.name}`);
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+                await updateDoc(doc(db, "folios", docId), { archivo: file.name, archivoUrl: downloadURL });
+                alert('¡Evidencia subida y guardada con éxito!');
+                cargarDatosSistemaAsync();
+            } catch (error) {
+                alert("Error al subir el archivo. Inténtalo de nuevo.");
             }
         };
 
@@ -1000,7 +1009,7 @@
                     let badge = f.exentoEvidencia ? ' <span style="font-size:0.55em; background:#b78a00; padding:1px 2px;">Imp</span>' : '';
                     let evidenciaHTML = f.archivoUrl ? `
                         <div class="tooltip-container">
-                            <a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 Ver</a>
+                            <a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')" style="font-size:1.1em; text-decoration:none;">📄</a>
                             <div class="tooltip-content">
                                 <strong>${f.archivo}</strong><br>
                                 ${['jpg', 'jpeg', 'png', 'webp'].includes(f.archivo.split('.').pop().toLowerCase()) ? `<img src="${f.archivoUrl}" class="tooltip-img">` : '<em>Documento adjunto</em>'}
@@ -1025,21 +1034,6 @@
                     </tr>`;
                 });
             }, 5);
-        };
-
-        window.subirEvidencia = async (docId) => {
-            const fileInput = document.getElementById(`file-${docId}`);
-            if(!fileInput.files || fileInput.files.length === 0) return alert('Selecciona un archivo.');
-            const file = fileInput.files[0];
-            try {
-                alert("Subiendo archivo a la nube...");
-                const storageRef = ref(storage, `evidencias/${docId}_${file.name}`);
-                const snapshot = await uploadBytes(storageRef, file);
-                const downloadURL = await getDownloadURL(snapshot.ref);
-                await updateDoc(doc(db, "folios", docId), { archivo: file.name, archivoUrl: downloadURL });
-                alert('¡Evidencia subida con éxito!');
-                cargarDatosSistemaAsync();
-            } catch (error) { alert("Error al subir."); }
         };
     </script>
 </body>
