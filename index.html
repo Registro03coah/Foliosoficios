@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v0.9.0</title>
+    <title>VRFE 03JDE - Gestión de Folios v0.9.2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -289,8 +289,8 @@
             <hr style="border-color:#333; margin:12px 0;">
             <label style="font-size:0.85em; color:var(--azul-brillante); font-weight:bold;">Evidencias Adjuntas:</label>
             <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.4); padding:8px; border-radius:4px; margin-bottom:10px;">
-                <div id="modal-preview-foto">Foto: Ninguna</div>
-                <div id="modal-preview-doc">Doc: Ninguno</div>
+                <div id="modal-preview-foto" style="font-size:0.85em;">Foto: Ninguna</div>
+                <div id="modal-preview-doc" style="font-size:0.85em;">Doc: Ninguno</div>
             </div>
             
             <div style="display:flex; gap:8px; margin-bottom:12px;">
@@ -341,7 +341,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 0.9.0</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 0.9.2</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-offline"></span><span id="footer-status-text" style="color: #ff3333;">offline</span></div>
     </footer>
 
@@ -357,9 +357,8 @@
         let currentUserUsername = null; let currentUserRole = 'user'; let foliosPendientes = 0; let cacheFoliosGlobal = [];
         let urlDriveScriptGlobal = "";
 
-        // Variables para ordenamiento con flechitas
-        let sortConfigUser = { column: 'fecha', asc: false };
-        let sortConfigGlobal = { column: 'fecha', asc: false };
+        let sortConfigUser = { column: 'folio', asc: false }; // Por defecto ordenados por folio de mayor a menor
+        let sortConfigGlobal = { column: 'folio', asc: false };
 
         function setConexionEstado(online) {
             const dot = document.getElementById('footer-dot'); const txt = document.getElementById('footer-status-text');
@@ -410,7 +409,6 @@
             document.getElementById('app-container').classList.remove('hidden');
             document.getElementById('header-username-display').innerText = `👤 ${currentUserUsername}`;
 
-            // Control estricto de visibilidad por rol
             if (currentUserRole === 'admin') {
                 document.getElementById('tab-btn-admin').classList.remove('hidden');
                 document.getElementById('tab-btn-historial').classList.remove('hidden');
@@ -426,7 +424,6 @@
         window.logout = () => { currentUserUsername = null; document.getElementById('app-container').classList.add('hidden'); document.getElementById('auth-section').classList.remove('hidden'); document.getElementById('btn-header-logout').classList.add('hidden'); mostrarLogin(); };
 
         window.cambiarPestana = (pestana) => {
-            // Protección extra: Si un usuario normal intenta entrar a admin o historial, se redirige a mis-folios
             if (pestana !== 'mis-folios' && currentUserRole !== 'admin') {
                 pestana = 'mis-folios';
             }
@@ -566,7 +563,6 @@
             } catch (err) { alert("Error al asignar."); }
         };
 
-        // Compresión de fotos en Canvas
         function comprimirImagenABase64(file, maxWidth = 800) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader(); reader.readAsDataURL(file);
@@ -619,7 +615,6 @@
         window.abrirVisorFoto = (base64) => { document.getElementById('visor-img').src = base64; document.getElementById('modal-visor').classList.remove('hidden'); };
         window.cerrarVisor = () => { document.getElementById('modal-visor').classList.add('hidden'); document.getElementById('visor-img').src = ""; };
 
-        // Renderizado de Celdas con botones individuales
         function generarCeldasEvidencia(f) {
             let fotoHTML = f.fotoBase64 ? 
                 `<div class="tooltip-container" onclick="abrirVisorFoto('${f.fotoBase64}')"><img src="${f.fotoBase64}" class="tooltip-img"></div><label style="font-size:0.55em; color:#a8dadc; cursor:pointer;"><input type="file" id="f-${f.docId}" accept="image/*" style="display:none;" onchange="subirFotoRapida('${f.docId}', 'f-${f.docId}')">Cambiar</label>` :
@@ -632,7 +627,19 @@
             return `<td class="col-foto">${fotoHTML}</td><td class="col-doc">${docHTML}</td>`;
         }
 
-        // Ordenamiento con flechitas ↕️
+        // Función auxiliar para extraer el número real de un folio y ordenarlo de forma numérica exacta
+        function extraerNumeroFolio(folioStr) {
+            if (!folioStr) return 0;
+            // Busca bloques de números dentro del texto del folio (ej. extrae el 580 de INE/.../580/2026)
+            let match = folioStr.match(/\/(\d+)\//);
+            if (match && match[1]) {
+                return parseInt(match[1], 10);
+            }
+            // Fallback por si acaso: extrae cualquier número o usa 0
+            let nums = folioStr.replace(/\D/g, "");
+            return nums ? parseInt(nums, 10) : 0;
+        }
+
         window.ordenarTablaUser = (column) => {
             if (sortConfigUser.column === column) { sortConfigUser.asc = !sortConfigUser.asc; } 
             else { sortConfigUser.column = column; sortConfigUser.asc = true; }
@@ -649,7 +656,6 @@
             const tbody = document.getElementById('user-tabla-folios');
             let misFolios = cacheFoliosGlobal.filter(f => f.usuario === currentUserUsername);
 
-            // Actualizar flechitas visuales
             ['folio', 'fecha', 'dirigido', 'asunto'].forEach(col => {
                 const span = document.getElementById(`sort-u-${col}`);
                 if(span) {
@@ -659,11 +665,17 @@
             });
 
             misFolios.sort((a, b) => {
-                let valA = a[sortConfigUser.column === 'dirigido' ? 'dirigidoA' : sortConfigUser.column] || '';
-                let valB = b[sortConfigUser.column === 'dirigido' ? 'dirigidoA' : sortConfigUser.column] || '';
-                if(sortConfigUser.column === 'fecha' || sortConfigUser.column === 'folio') {
+                let valA, valB;
+                if (sortConfigUser.column === 'folio') {
+                    valA = extraerNumeroFolio(a.idFolio);
+                    valB = extraerNumeroFolio(b.idFolio);
+                } else if (sortConfigUser.column === 'fecha') {
                     valA = a.timestamp; valB = b.timestamp;
+                } else {
+                    valA = a[sortConfigUser.column === 'dirigido' ? 'dirigidoA' : sortConfigUser.column] || '';
+                    valB = b[sortConfigUser.column === 'dirigido' ? 'dirigidoA' : sortConfigUser.column] || '';
                 }
+
                 if(valA < valB) return sortConfigUser.asc ? -1 : 1;
                 if(valA > valB) return sortConfigUser.asc ? 1 : -1;
                 return 0;
@@ -689,7 +701,6 @@
             const tbody = document.getElementById('global-tabla-folios');
             let arr = [...cacheFoliosGlobal];
 
-            // Actualizar flechitas globales
             ['folio', 'usuario', 'dirigido', 'asunto', 'fecha'].forEach(col => {
                 const span = document.getElementById(`sort-g-${col}`);
                 if(span) {
@@ -699,9 +710,17 @@
             });
 
             arr.sort((a, b) => {
-                let colName = sortConfigGlobal.column === 'dirigido' ? 'dirigidoA' : sortConfigGlobal.column;
-                let valA = a[colName] || ''; let valB = b[colName] || '';
-                if(sortConfigGlobal.column === 'fecha' || sortConfigGlobal.column === 'folio') { valA = a.timestamp; valB = b.timestamp; }
+                let valA, valB;
+                if (sortConfigGlobal.column === 'folio') {
+                    valA = extraerNumeroFolio(a.idFolio);
+                    valB = extraerNumeroFolio(b.idFolio);
+                } else if (sortConfigGlobal.column === 'fecha') {
+                    valA = a.timestamp; valB = b.timestamp;
+                } else {
+                    let colName = sortConfigGlobal.column === 'dirigido' ? 'dirigidoA' : sortConfigGlobal.column;
+                    valA = a[colName] || ''; valB = b[colName] || '';
+                }
+
                 if(valA < valB) return sortConfigGlobal.asc ? -1 : 1;
                 if(valA > valB) return sortConfigGlobal.asc ? 1 : -1;
                 return 0;
@@ -724,7 +743,6 @@
             tbody.innerHTML = html;
         };
 
-        // Modal Edición Avanzada corregido y sincronizado
         window.abrirModalEdicion = (docId) => {
             const f = cacheFoliosGlobal.find(item => item.docId === docId);
             if(!f) return;
@@ -736,14 +754,34 @@
             document.getElementById('edit-respuesta').value = f.respuesta || '';
             document.getElementById('edit-observaciones').value = f.observaciones || '';
             
-            document.getElementById('modal-preview-foto').innerHTML = f.fotoBase64 ? 'Foto: <span style="color:#00ff66;">Cargada ✓</span>' : 'Foto: <span style="color:#ff6b6b;">Ninguna</span>';
-            document.getElementById('modal-preview-doc').innerHTML = f.docDriveUrl ? 'Doc: <span style="color:#00ff66;">Cargado ✓</span>' : 'Doc: <span style="color:#ff6b6b;">Ninguno</span>';
+            document.getElementById('modal-preview-foto').innerHTML = f.fotoBase64 ? 
+                `Foto: <span style="color:#00ff66;">Cargada ✓</span> <a href="javascript:void(0)" onclick="quitarEvidenciaModal('foto')" style="color:#ff6b6b; font-size:0.8em; margin-left:6px; text-decoration:underline;">Eliminar</a>` : 
+                `Foto: <span style="color:#888;">Ninguna</span>`;
+
+            document.getElementById('modal-preview-doc').innerHTML = f.docDriveUrl ? 
+                `Doc: <span style="color:#00ff66;">Cargado ✓</span> <a href="javascript:void(0)" onclick="quitarEvidenciaModal('doc')" style="color:#ff6b6b; font-size:0.8em; margin-left:6px; text-decoration:underline;">Eliminar</a>` : 
+                `Doc: <span style="color:#888;">Ninguno</span>`;
+
             document.getElementById('edit-input-foto').value = ""; document.getElementById('edit-input-doc').value = "";
             document.getElementById('lbl-foto-status').innerText = ""; document.getElementById('lbl-doc-status').innerText = "";
 
             if(currentUserRole !== 'admin') { document.getElementById('admin-only-edit-fields').classList.add('hidden'); } 
             else { document.getElementById('admin-only-edit-fields').classList.remove('hidden'); }
             document.getElementById('modal-edicion').classList.remove('hidden');
+        };
+
+        window.quitarEvidenciaModal = (tipo) => {
+            const docId = document.getElementById('edit-docId').value;
+            let f = cacheFoliosGlobal.find(item => item.docId === docId);
+            if(!f) return;
+
+            if(tipo === 'foto') {
+                f.fotoBase64 = "";
+                document.getElementById('modal-preview-foto').innerHTML = `Foto: <span style="color:#ff6b6b;">Eliminada (Guardar cambios)</span>`;
+            } else if(tipo === 'doc') {
+                f.docDriveUrl = ""; f.docDriveName = "";
+                document.getElementById('modal-preview-doc').innerHTML = `Doc: <span style="color:#ff6b6b;">Eliminado (Guardar cambios)</span>`;
+            }
         };
 
         window.cerrarModalEdicion = () => { document.getElementById('modal-edicion').classList.add('hidden'); };
@@ -753,7 +791,10 @@
             let f = cacheFoliosGlobal.find(item => item.docId === docId);
             let updateData = { 
                 respuesta: document.getElementById('edit-respuesta').value.trim(), 
-                observaciones: document.getElementById('edit-observaciones').value.trim() 
+                observaciones: document.getElementById('edit-observaciones').value.trim(),
+                fotoBase64: f.fotoBase64 || "",
+                docDriveUrl: f.docDriveUrl || "",
+                docDriveName: f.docDriveName || ""
             };
             if(currentUserRole === 'admin') {
                 updateData.idFolio = document.getElementById('edit-folio').value.trim();
@@ -795,7 +836,6 @@
             }
         };
 
-        // Gestión de Usuarios Exclusiva de Admin
         async function cargarUsuariosAdmin() {
             if(currentUserRole !== 'admin') return;
             const querySnapshot = await getDocs(collection(db, "usuarios"));
