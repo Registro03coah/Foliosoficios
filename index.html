@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v1.0.11</title>
+    <title>VRFE 03JDE - Gestión de Folios v1.0.12</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -202,7 +202,7 @@
                     <label style="font-size:0.75em; color:#aaa;">Nomenclatura (Prefijo, Número Inicial, Año)</label>
                     <div class="inline-inputs" style="margin-bottom:8px;">
                         <input type="text" id="nom-prefijo" placeholder="Ej. INE/JDE03/VRFE/">
-                        <input type="number" id="nom-inicio" placeholder="Inicio">
+                        <input type="number" id="nom-inicio" placeholder="Inicio (Automático)">
                         <input type="number" id="nom-anio" placeholder="Año">
                     </div>
                     <label style="font-size:0.75em; color:#aaa;">Enlace Script Google Drive (Para subir PDFs)</label>
@@ -484,7 +484,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.11</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.12</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-online"></span><span id="footer-status-text" style="color: #00ff66;">online</span></div>
     </footer>
 
@@ -673,16 +673,6 @@
 
         async function cargarDatosSistemaAsync() {
             try {
-                const configSnap = await getDoc(doc(db, "sistema", "config"));
-                if (configSnap.exists() && configSnap.data().configurado) {
-                    document.getElementById('config-area').classList.add('hidden');
-                    document.getElementById('nom-prefijo').value = configSnap.data().prefijo;
-                    document.getElementById('nom-inicio').value = configSnap.data().actual;
-                    document.getElementById('nom-anio').value = configSnap.data().anio;
-                    document.getElementById('nom-drive-url').value = configSnap.data().urlDriveScript || "";
-                    urlDriveScriptGlobal = configSnap.data().urlDriveScript || "";
-                } else { document.getElementById('config-area').classList.remove('hidden'); }
-
                 const qFolios = await getDocs(collection(db, "folios"));
                 cacheFoliosGlobal = []; qFolios.forEach((d) => cacheFoliosGlobal.push({ docId: d.id, ...d.data() }));
 
@@ -691,6 +681,26 @@
 
                 const qMsg = await getDocs(collection(db, "mensajes"));
                 cacheMensajesGlobal = []; qMsg.forEach((d) => cacheMensajesGlobal.push({ id: d.id, ...d.data() }));
+
+                const configSnap = await getDoc(doc(db, "sistema", "config"));
+                if (configSnap.exists() && configSnap.data().configurado) {
+                    document.getElementById('config-area').classList.add('hidden');
+                    document.getElementById('nom-prefijo').value = configSnap.data().prefijo;
+                    document.getElementById('nom-anio').value = configSnap.data().anio;
+                    document.getElementById('nom-drive-url').value = configSnap.data().urlDriveScript || "";
+                    urlDriveScriptGlobal = configSnap.data().urlDriveScript || "";
+                    
+                    let maxNumReal = 0;
+                    cacheFoliosGlobal.forEach(f => {
+                        if (f.idFolio && f.idFolio.startsWith(configSnap.data().prefijo)) {
+                            let num = extraerNumeroFolio(f.idFolio);
+                            if (num > maxNumReal) maxNumReal = num;
+                        }
+                    });
+                    document.getElementById('nom-inicio').value = maxNumReal > 0 ? maxNumReal + 1 : 1;
+                } else { 
+                    document.getElementById('config-area').classList.remove('hidden'); 
+                }
 
                 if(currentUserUsername) {
                     const uDoc = cacheUsuariosGlobal.find(u => u.usuario === currentUserUsername);
@@ -713,20 +723,28 @@
         
         window.guardarConfiguracion = async () => {
             const prefijo = document.getElementById('nom-prefijo').value.trim(); 
-            const inicio = parseInt(document.getElementById('nom-inicio').value);
             const anio = document.getElementById('nom-anio').value.trim(); 
             const urlScript = document.getElementById('nom-drive-url').value.trim();
             
-            if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los campos correctamente.');
+            if (!prefijo || !anio) return alert('Llena los campos correctamente.');
             
+            let maxNumReal = 0;
+            cacheFoliosGlobal.forEach(f => {
+                if (f.idFolio && f.idFolio.startsWith(prefijo)) {
+                    let num = extraerNumeroFolio(f.idFolio);
+                    if (num > maxNumReal) maxNumReal = num;
+                }
+            });
+            let inicioCalculado = maxNumReal > 0 ? maxNumReal + 1 : 1;
+
             await setDoc(doc(db, "sistema", "config"), { 
                 prefijo, 
-                actual: inicio, 
+                actual: inicioCalculado, 
                 anio, 
                 urlDriveScript: urlScript, 
                 configurado: true 
             });
-            alert('Configuración guardada con éxito.'); 
+            alert(`Configuración guardada. Próximo folio automático: ${inicioCalculado}`); 
             cancelarEdicionConfig(); 
             cargarDatosSistemaAsync();
         };
@@ -741,7 +759,16 @@
 
         async function obtenerSiguienteNumeroFolio(configData, cantidadNecesaria) {
             let prefijo = configData.prefijo;
-            let maxConfigurado = parseInt(configData.actual) || 1;
+            let maxNumReal = 0;
+            
+            cacheFoliosGlobal.forEach(f => {
+                if (f.idFolio && f.idFolio.startsWith(prefijo)) {
+                    let num = extraerNumeroFolio(f.idFolio);
+                    if (num > maxNumReal) maxNumReal = num;
+                }
+            });
+
+            let baseInicio = maxNumReal > 0 ? maxNumReal + 1 : 1;
             let numerosUsados = new Set();
             cacheFoliosGlobal.forEach(f => {
                 if (f.idFolio && f.idFolio.startsWith(prefijo)) {
@@ -750,14 +777,21 @@
             });
 
             let disponibles = [];
-            for(let i = 1; i < maxConfigurado; i++) {
+            for(let i = 1; i < baseInicio; i++) {
                 if(!numerosUsados.has(i)) { disponibles.push(i); }
             }
 
-            if(disponibles.length > 0) { return disponibles.slice(0, cantidadNecesaria); }
+            if(disponibles.length >= cantidadNecesaria) { 
+                return disponibles.slice(0, cantidadNecesaria); 
+            }
 
             let result = [];
-            for(let i = 0; i < cantidadNecesaria; i++) { result.push(maxConfigurado + i); }
+            let faltantes = cantidadNecesaria - disponibles.length;
+            for(let i = 0; i < disponibles.length; i++) { result.push(disponibles[i]); }
+            
+            for(let i = 0; i < faltantes; i++) { 
+                result.push(baseInicio + i); 
+            }
             return result;
         }
 
@@ -766,14 +800,18 @@
             const configSnap = await getDoc(doc(db, "sistema", "config"));
             if (configSnap.exists() && configSnap.data().configurado) {
                 const configData = configSnap.data();
-                let maxNum = (parseInt(configData.actual) || 1) - 1;
+                let maxNum = 0;
                 cacheFoliosGlobal.forEach(f => {
                     if (f.idFolio && f.idFolio.startsWith(configData.prefijo)) {
                         let num = extraerNumeroFolio(f.idFolio);
                         if (num > maxNum) { maxNum = num; }
                     }
                 });
-                badge.innerText = `Último Folio Utilizado: ${configData.prefijo}${String(maxNum).padStart(3, '0')}/${configData.anio}`;
+                if(maxNum > 0) {
+                    badge.innerText = `Último Folio Registrado: ${configData.prefijo}${String(maxNum).padStart(3, '0')}/${configData.anio} (Siguiente: ${configData.prefijo}${String(maxNum + 1).padStart(3, '0')}/${configData.anio})`;
+                } else {
+                    badge.innerText = `Base de datos vacía. Siguiente folio: ${configData.prefijo}001/${configData.anio}`;
+                }
             } else {
                 badge.innerText = `Configura la nomenclatura en el Panel Admin`;
             }
@@ -848,7 +886,6 @@
                 const configSnap = await getDoc(configRef);
                 if (!configSnap.exists()) return alert("Configuración no encontrada.");
                 let info = configSnap.data();
-                let maxActual = parseInt(info.actual) || 1;
 
                 const batch = writeBatch(db);
                 foliosAcrear.forEach((item, idx) => {
@@ -859,11 +896,21 @@
                         respuesta: "", observaciones: "", fecha: fechaSoloDia, timestamp: Date.now() + idx, 
                         fotoBase64: "", docDriveUrl: "", docDriveName: ""
                     });
-                    let num = extraerNumeroFolio(item.folio);
-                    if(num >= maxActual) maxActual = num + 1;
                 });
 
-                batch.update(configRef, { actual: maxActual });
+                let maxNumReal = 0;
+                cacheFoliosGlobal.forEach(f => {
+                    if (f.idFolio && f.idFolio.startsWith(info.prefijo)) {
+                        let num = extraerNumeroFolio(f.idFolio);
+                        if (num > maxNumReal) maxNumReal = num;
+                    }
+                });
+                foliosAcrear.forEach(item => {
+                    let num = extraerNumeroFolio(item.folio);
+                    if (num > maxNumReal) maxNumReal = num;
+                });
+
+                batch.update(configRef, { actual: maxNumReal + 1 });
                 await batch.commit();
 
                 alert('¡Folios asignados con éxito!'); 
@@ -1523,7 +1570,7 @@
 
                     if(contador > 0) {
                         await batch.commit();
-                        alert(`¡Se importaron ${contador} registros con éxito!`);
+                        alert(`¡Se importaron ${contador} registros con éxito! El sistema detectará automáticamente el siguiente número.`);
                         cargarDatosSistemaAsync();
                     } else {
                         alert("No se encontraron columnas de Folio válidas en el archivo.");
