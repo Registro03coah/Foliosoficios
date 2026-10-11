@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v0.9.2</title>
+    <title>VRFE 03JDE - Gestión de Folios v0.9.3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -341,7 +341,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 0.9.2</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 0.9.3</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-offline"></span><span id="footer-status-text" style="color: #ff3333;">offline</span></div>
     </footer>
 
@@ -357,7 +357,7 @@
         let currentUserUsername = null; let currentUserRole = 'user'; let foliosPendientes = 0; let cacheFoliosGlobal = [];
         let urlDriveScriptGlobal = "";
 
-        let sortConfigUser = { column: 'folio', asc: false }; // Por defecto ordenados por folio de mayor a menor
+        let sortConfigUser = { column: 'folio', asc: false };
         let sortConfigGlobal = { column: 'folio', asc: false };
 
         function setConexionEstado(online) {
@@ -404,6 +404,12 @@
 
         function iniciarSesionCorrecta(username, role) {
             currentUserUsername = username; currentUserRole = role;
+            
+            // Limpiar formularios y estados pendientes de sesiones anteriores
+            cancelarFormularioFolios();
+            document.getElementById('login-usuario').value = '';
+            document.getElementById('login-password').value = '';
+
             document.getElementById('auth-section').classList.add('hidden');
             document.getElementById('btn-header-logout').classList.remove('hidden');
             document.getElementById('app-container').classList.remove('hidden');
@@ -421,7 +427,15 @@
             cargarDatosSistemaAsync();
         }
 
-        window.logout = () => { currentUserUsername = null; document.getElementById('app-container').classList.add('hidden'); document.getElementById('auth-section').classList.remove('hidden'); document.getElementById('btn-header-logout').classList.add('hidden'); mostrarLogin(); };
+        window.logout = () => { 
+            currentUserUsername = null; 
+            currentUserRole = 'user';
+            cancelarFormularioFolios();
+            document.getElementById('app-container').classList.add('hidden'); 
+            document.getElementById('auth-section').classList.remove('hidden'); 
+            document.getElementById('btn-header-logout').classList.add('hidden'); 
+            mostrarLogin(); 
+        };
 
         window.cambiarPestana = (pestana) => {
             if (pestana !== 'mis-folios' && currentUserRole !== 'admin') {
@@ -526,7 +540,14 @@
             document.getElementById('formulario-folios-area').classList.remove('hidden');
         };
 
-        window.cancelarFormularioFolios = () => { document.getElementById('formulario-folios-area').classList.add('hidden'); document.getElementById('cantidad-folios').value = ''; foliosPendientes = 0; };
+        window.cancelarFormularioFolios = () => { 
+            document.getElementById('formulario-folios-area').classList.add('hidden'); 
+            const cantInput = document.getElementById('cantidad-folios');
+            if(cantInput) cantInput.value = ''; 
+            foliosPendientes = 0; 
+            const esp = document.getElementById('espacios-folios');
+            if(esp) esp.innerHTML = '';
+        };
 
         window.confirmarSolicitud = async () => {
             for (let i = 0; i < foliosPendientes; i++) { if (!document.getElementById(`dirigido-${i}`).value.trim() || !document.getElementById(`asunto-${i}`).value.trim()) return alert(`Completa los campos del folio #${i+1}.`); }
@@ -627,15 +648,10 @@
             return `<td class="col-foto">${fotoHTML}</td><td class="col-doc">${docHTML}</td>`;
         }
 
-        // Función auxiliar para extraer el número real de un folio y ordenarlo de forma numérica exacta
         function extraerNumeroFolio(folioStr) {
             if (!folioStr) return 0;
-            // Busca bloques de números dentro del texto del folio (ej. extrae el 580 de INE/.../580/2026)
             let match = folioStr.match(/\/(\d+)\//);
-            if (match && match[1]) {
-                return parseInt(match[1], 10);
-            }
-            // Fallback por si acaso: extrae cualquier número o usa 0
+            if (match && match[1]) { return parseInt(match[1], 10); }
             let nums = folioStr.replace(/\D/g, "");
             return nums ? parseInt(nums, 10) : 0;
         }
