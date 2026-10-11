@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v0.7.0</title>
+    <title>VRFE 03JDE - Gestión de Folios v0.8.0</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -46,14 +46,12 @@
         .btn-config { background-color: #1d3557; } .btn-export { background-color: #2a9d8f; }
         .btn-import { background-color: #e9c46a; color: #121212; } .btn-delete-db { background-color: #9d0208; border-color: #d90429; }
         .btn-secondary { background-color: var(--azul-oscuro); border-color: var(--azul-medio); }
+        .btn-danger { background-color: #5a1818; border-color: #8B0000; }
         .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 5px 12px; font-size: 0.75em; }
         .btn-small { padding: 3px 6px; font-size: 0.7em; }
         .btn-icon { background: transparent; border: none; cursor: pointer; font-size: 1.15em; padding: 2px 4px; transition: transform 0.1s; }
         .btn-icon:hover { transform: scale(1.15); }
         
-        .btn-subir-inactivo { background-color: #444 !important; color: #888 !important; border-color: #555 !important; cursor: not-allowed !important; width:100%; margin-top:3px;}
-        .btn-subir-activo { background-color: var(--azul-brillante) !important; color: white !important; border-color: #6096ba !important; cursor: pointer !important; box-shadow: 0 0 6px var(--azul-brillante); width:100%; margin-top:3px;}
-
         .tooltip-container { position: relative; display: inline-block; cursor: pointer; }
         .tooltip-img { max-width: 45px; max-height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid var(--azul-brillante); }
         .tooltip-icon { font-size: 2em; text-decoration: none; display: inline-block; }
@@ -84,11 +82,10 @@
 
         .hidden { display: none !important; }
         .error { color: #ff6b6b; font-size: 0.85em; margin-bottom: 8px; background: rgba(255,0,0,0.1); padding: 4px; border-radius: 3px;}
-        .alerta-evidencia { background-color: rgba(139, 0, 0, 0.85); color: white; padding: 10px; border-radius: 4px; margin-bottom: 12px; border-left: 4px solid #ff4d4d; font-size: 0.85em; }
         .folio-item { background: rgba(0,0,0,0.5); padding: 10px; margin-bottom: 10px; border-left: 3px solid var(--azul-brillante); border-radius: 4px; }
         
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 10px; box-sizing: border-box; }
-        .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 18px; border-radius: 6px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 18px; border-radius: 6px; width: 100%; max-width: 450px; max-height: 92vh; overflow-y: auto; }
         .modal-content-viewer { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 8px; border-radius: 6px; width: 92vw; height: 82vh; display: flex; flex-direction: column; }
 
         footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: var(--azul-oscuro); color: #888; font-size: 0.75em; border-top: 1px solid var(--azul-medio); z-index: 10; box-sizing: border-box; }
@@ -96,10 +93,7 @@
         .footer-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
         .dot-online { background-color: #00ff66; box-shadow: 0 0 6px #00ff66; }
         .dot-offline { background-color: #ff3333; box-shadow: 0 0 6px #ff3333; }
-
-        .upload-label { background:#222; border:1px dashed var(--azul-brillante); padding:3px 6px; font-size:0.6em; text-align:center; cursor:pointer; border-radius:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display: block; }
-        .loader-mini { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid #00ff66; border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .upload-label { background:#222; border:1px dashed var(--azul-brillante); padding:3px 6px; font-size:0.6em; text-align:center; cursor:pointer; border-radius:3px; display:block; }
     </style>
 </head>
 <body>
@@ -177,7 +171,6 @@
                     </div>
                     <label style="font-size:0.8em; color:#aaa;">Enlace Script Google Drive (Para subir PDFs)</label>
                     <input type="text" id="nom-drive-url" placeholder="https://script.google.com/macros/s/AKfyc.../exec">
-                    
                     <button style="margin-top:8px;" onclick="guardarConfiguracion()">Guardar Configuración</button>
                     <button onclick="cancelarEdicionConfig()" id="btn-cancelar-config" class="btn-secondary hidden" style="margin-top:4px;">Cancelar</button>
                 </div>
@@ -191,8 +184,11 @@
                     </div>
                 </div>
 
-                <h3 style="font-size: 1em;">Gestión de Usuarios</h3>
-                <div style="overflow-x: auto;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
+                    <h3 style="font-size: 1em; margin:0;">Gestión de Usuarios</h3>
+                    <button class="btn-small" onclick="abrirModalCrearUsuario()">+ Nuevo Usuario</button>
+                </div>
+                <div style="overflow-x: auto; margin-top:8px;">
                     <table>
                         <thead>
                             <tr>
@@ -240,7 +236,7 @@
                                 <th class="col-folio">Folio</th><th class="col-fecha">Fecha</th>
                                 <th class="col-dirigido">Dirigido a</th><th class="col-asunto">Asunto</th>
                                 <th class="col-respuesta">Respuesta</th><th class="col-obs">Obs.</th>
-                                <th class="col-foto">Foto (Cámara)</th><th class="col-doc">Doc (Drive)</th>
+                                <th class="col-foto">Foto</th><th class="col-doc">Doc</th>
                                 <th class="col-acc">Acción</th>
                             </tr>
                         </thead>
@@ -280,7 +276,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDICIÓN -->
+    <!-- MODAL EDICIÓN AVANZADA -->
     <div id="modal-edicion" class="modal-overlay hidden">
         <div class="modal-content">
             <h3 id="modal-title" style="font-size: 1.1em; margin-top:0;">✏️ Editar Registro</h3>
@@ -293,9 +289,49 @@
             <label>Asunto:</label><input type="text" id="edit-asunto" readonly>
             <label>Respuesta:</label><input type="text" id="edit-respuesta" placeholder="Respuesta...">
             <label>Observaciones:</label><input type="text" id="edit-observaciones" placeholder="Observaciones...">
-            <div style="display:flex; gap:8px; margin-top:12px;">
-                <button onclick="guardarEdicionFolio()" style="flex:1;">Guardar</button>
+            
+            <hr style="border-color:#333; margin:12px 0;">
+            <label style="font-size:0.85em; color:var(--azul-brillante); font-weight:bold;">Evidencias Actuales:</label>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.4); padding:8px; border-radius:4px; margin-bottom:10px;">
+                <div id="modal-preview-foto">Foto: Ninguna</div>
+                <div id="modal-preview-doc">Doc: Ninguno</div>
+            </div>
+            
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+                <div style="flex:1;">
+                    <label for="edit-input-foto" class="upload-label">📷 Cambiar Foto</label>
+                    <input type="file" id="edit-input-foto" accept="image/*" style="display:none;" onchange="document.getElementById('lbl-foto-status').innerText='Foto lista ✓'">
+                    <span id="lbl-foto-status" style="font-size:0.6em; color:#00ff66;"></span>
+                </div>
+                <div style="flex:1;">
+                    <label for="edit-input-doc" class="upload-label">📄 Cambiar Doc</label>
+                    <input type="file" id="edit-input-doc" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="document.getElementById('lbl-doc-status').innerText='Doc listo ✓'">
+                    <span id="lbl-doc-status" style="font-size:0.6em; color:#00ff66;"></span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:8px;">
+                <button onclick="guardarEdicionFolioAvanzada()" style="flex:1;">Guardar Cambios</button>
                 <button onclick="cerrarModalEdicion()" class="btn-secondary" style="flex:1;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CREAR USUARIO ADMIN -->
+    <div id="modal-usuario" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 style="font-size: 1.1em; margin-top:0;">👤 Registrar Nuevo Personal</h3>
+            <input type="text" id="admin-reg-usuario" placeholder="Usuario (Ej. ana.gomez)" required>
+            <input type="text" id="admin-reg-nombre" placeholder="Nombre completo" required>
+            <input type="email" id="admin-reg-correo" placeholder="Correo @ine.mx" required>
+            <input type="password" id="admin-reg-pass" placeholder="Contraseña (Mín. 6)" required>
+            <select id="admin-reg-rol">
+                <option value="user">Usuario Normal</option>
+                <option value="admin">Administrador</option>
+            </select>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+                <button onclick="crearUsuarioAdminModal()" style="flex:1;">Crear Usuario</button>
+                <button onclick="cerrarModalCrearUsuario()" class="btn-secondary" style="flex:1;">Cancelar</button>
             </div>
         </div>
     </div>
@@ -309,22 +345,21 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 0.7.0 (Drive+Base64)</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 0.8.0</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-offline"></span><span id="footer-status-text" style="color: #ff3333;">offline</span></div>
     </footer>
 
-    <!-- SCRIPT FIREBASE Y LÓGICA -->
+    <!-- SCRIPT Y LÓGICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, getDocs, query, where, writeBatch, runTransaction } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-        // YA NO IMPORTAMOS STORAGE. SOLO FIRESTORE.
         const firebaseConfig = { apiKey: "AIzaSyBpmtUCDLKDkhGx9zh2IkQ65Yrob13gjxE", authDomain: "foliosvrfe03.firebaseapp.com", projectId: "foliosvrfe03", appId: "1:493793399671:web:bfdcedf6260818851dc772" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         let currentUserUsername = null; let currentUserRole = 'user'; let foliosPendientes = 0; let cacheFoliosGlobal = [];
-        let urlDriveScriptGlobal = ""; // Guarda la URL de Google Apps Script configurada
+        let urlDriveScriptGlobal = "";
 
         function setConexionEstado(online) {
             const dot = document.getElementById('footer-dot'); const txt = document.getElementById('footer-status-text');
@@ -342,7 +377,7 @@
             const usuario = document.getElementById('reg-usuario').value.trim().toLowerCase(); const nombre = document.getElementById('reg-nombre').value.trim();
             const correo = document.getElementById('reg-correo').value.trim().toLowerCase(); const password = document.getElementById('reg-password').value;
             const passwordConfirm = document.getElementById('reg-password-confirm').value;
-            if (!usuario || !nombre || !correo || !password || !passwordConfirm) return mostrarError('Llena todos los campos obligatorios.', 'register');
+            if (!usuario || !nombre || !correo || !password || !passwordConfirm) return mostrarError('Llena todos los campos.', 'register');
             if (password !== passwordConfirm) return mostrarError('Las contraseñas no coinciden.', 'register');
             try {
                 const userCheck = await getDoc(doc(db, "usuarios", usuario));
@@ -414,30 +449,49 @@
         window.guardarConfiguracion = async () => {
             const prefijo = document.getElementById('nom-prefijo').value.trim(); const inicio = parseInt(document.getElementById('nom-inicio').value);
             const anio = document.getElementById('nom-anio').value.trim(); const urlScript = document.getElementById('nom-drive-url').value.trim();
-            if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los campos de numeración.');
+            if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los campos.');
             await setDoc(doc(db, "sistema", "config"), { prefijo, actual: inicio, anio, urlDriveScript: urlScript, configurado: true });
             alert('Configuración guardada.'); cancelarEdicionConfig(); cargarDatosSistemaAsync();
         };
 
+        // Consecutivo exacto Último + 1 corregido
         async function actualizarIndicadorUltimoFolioDinamico() {
             const badge = document.getElementById('badge-ultimo-container');
             const configSnap = await getDoc(doc(db, "sistema", "config"));
             if (configSnap.exists() && configSnap.data().configurado) {
-                const configData = configSnap.data(); let ultimoUsado = Math.max(0, configData.actual - 1);
-                badge.innerText = `Último Folio: ${configData.prefijo}${ultimoUsado}/${configData.anio}`;
+                const configData = configSnap.data();
+                let maxNum = configData.actual - 1;
+                cacheFoliosGlobal.forEach(f => {
+                    if (f.idFolio && f.idFolio.startsWith(configData.prefijo)) {
+                        let partes = f.idFolio.replace(configData.prefijo, "").split('/');
+                        let num = parseInt(partes[0]);
+                        if (!isNaN(num) && num > maxNum) { maxNum = num; }
+                    }
+                });
+                badge.innerText = `Último Folio Utilizado: ${configData.prefijo}${maxNum}/${configData.anio}`;
             }
         }
 
         window.generarFormularioFolios = async () => {
             const configSnap = await getDoc(doc(db, "sistema", "config"));
-            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Pide al administrador configurar la Nomenclatura.');
+            if (!configSnap.exists() || !configSnap.data().configurado) return alert('Configura la nomenclatura primero.');
             const cantidad = parseInt(document.getElementById('cantidad-folios').value);
-            if (isNaN(cantidad) || cantidad < 1 || cantidad > 20) return alert('Ingresa una cantidad válida (1 a 20).');
+            if (isNaN(cantidad) || cantidad < 1 || cantidad > 20) return alert('Ingresa una cantidad (1 a 20).');
+            
             foliosPendientes = cantidad;
-            let info = configSnap.data(); let consecutivoTemp = info.actual;
+            let info = configSnap.data();
+            let maxNum = info.actual;
+            cacheFoliosGlobal.forEach(f => {
+                if (f.idFolio && f.idFolio.startsWith(info.prefijo)) {
+                    let partes = f.idFolio.replace(info.prefijo, "").split('/');
+                    let num = parseInt(partes[0]);
+                    if (!isNaN(num) && num >= maxNum) { maxNum = num + 1; }
+                }
+            });
+
             const container = document.getElementById('espacios-folios'); container.innerHTML = '';
             for (let i = 0; i < cantidad; i++) {
-                let folioPrevisto = `${info.prefijo}${consecutivoTemp + i}/${info.anio}`;
+                let folioPrevisto = `${info.prefijo}${maxNum + i}/${info.anio}`;
                 container.innerHTML += `
                     <div class="folio-item">
                         <h4 style="margin: 0 0 8px 0; color: var(--azul-brillante);">Folio: ${folioPrevisto}</h4>
@@ -451,155 +505,102 @@
         window.cancelarFormularioFolios = () => { document.getElementById('formulario-folios-area').classList.add('hidden'); document.getElementById('cantidad-folios').value = ''; foliosPendientes = 0; };
 
         window.confirmarSolicitud = async () => {
-            for (let i = 0; i < foliosPendientes; i++) { if (!document.getElementById(`dirigido-${i}`).value.trim() || !document.getElementById(`asunto-${i}`).value.trim()) return alert(`Completa los datos del folio #${i+1}.`); }
+            for (let i = 0; i < foliosPendientes; i++) { if (!document.getElementById(`dirigido-${i}`).value.trim() || !document.getElementById(`asunto-${i}`).value.trim()) return alert(`Completa los campos del folio #${i+1}.`); }
             const configRef = doc(db, "sistema", "config");
             const fechaStr = new Date().toLocaleDateString('es-MX') + ', ' + new Date().toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'});
 
             try {
                 await runTransaction(db, async (transaction) => {
                     const configDoc = await transaction.get(configRef);
-                    if (!configDoc.exists()) throw "Falta configuración";
-                    let info = configDoc.data(); let consecutivoActual = info.actual;
+                    if (!configDoc.exists()) throw "Falta config";
+                    let info = configDoc.data();
+                    let nextNum = info.actual;
+                    cacheFoliosGlobal.forEach(f => {
+                        if (f.idFolio && f.idFolio.startsWith(info.prefijo)) {
+                            let partes = f.idFolio.replace(info.prefijo, "").split('/');
+                            let num = parseInt(partes[0]);
+                            if (!isNaN(num) && num >= nextNum) { nextNum = num + 1; }
+                        }
+                    });
                     
                     for (let i = 0; i < foliosPendientes; i++) {
-                        let folioGenerado = `${info.prefijo}${consecutivoActual + i}/${info.anio}`;
-                        let newFolioRef = doc(collection(db, "folios"));
-                        transaction.set(newFolioRef, {
+                        let folioGenerado = `${info.prefijo}${nextNum + i}/${info.anio}`;
+                        let newRef = doc(collection(db, "folios"));
+                        transaction.set(newRef, {
                             idFolio: folioGenerado, usuario: currentUserUsername, 
                             dirigidoA: document.getElementById(`dirigido-${i}`).value.trim(), asunto: document.getElementById(`asunto-${i}`).value.trim(),
                             respuesta: "", observaciones: "", fecha: fechaStr, timestamp: Date.now() + i, 
                             fotoBase64: "", docDriveUrl: "", docDriveName: ""
                         });
                     }
-                    transaction.update(configRef, { actual: consecutivoActual + foliosPendientes });
+                    transaction.update(configRef, { actual: nextNum + foliosPendientes });
                 });
-                alert(`¡Asignados con éxito!`); cancelarFormularioFolios(); cargarDatosSistemaAsync();
-            } catch (err) { alert("Error al asignar folios. Intenta de nuevo."); }
+                alert('¡Folios asignados con éxito!'); cancelarFormularioFolios(); cargarDatosSistemaAsync();
+            } catch (err) { alert("Error al asignar."); }
         };
 
-        // -------------------------------------------------------------
-        // FUNCIONES DE SUBIDA HÍBRIDA (BASE64 PARA FOTOS / DRIVE PARA PDF)
-        // -------------------------------------------------------------
-
-        // Compresión de fotos en Canvas antes de guardar en Firestore
+        // Compresión de fotos en Canvas
         function comprimirImagenABase64(file, maxWidth = 800) {
             return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
+                const reader = new FileReader(); reader.readAsDataURL(file);
                 reader.onload = event => {
-                    const img = new Image();
-                    img.src = event.target.result;
+                    const img = new Image(); img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         let width = img.width; let height = img.height;
                         if (width > height && width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
                         else if (height > maxWidth) { width *= maxWidth / height; height = maxWidth; }
                         canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.65)); // 65% calidad = muy ligero!
+                        const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.65));
                     };
                 };
                 reader.onerror = error => reject(error);
             });
         }
 
-        window.subirFotoFirebase = async (docId, fileInputId, btnId) => {
+        window.subirFotoRapida = async (docId, fileInputId) => {
+            const input = document.getElementById(fileInputId);
+            if (!input.files || input.files.length === 0) return;
+            const base64 = await comprimirImagenABase64(input.files[0]);
+            await updateDoc(doc(db, "folios", docId), { fotoBase64: base64 });
+            cargarDatosSistemaAsync();
+        };
+
+        window.subirDocRapido = async (docId, folioNombre, fileInputId) => {
+            if(!urlDriveScriptGlobal) return alert("Falta configurar enlace de Google Drive en el panel de Admin.");
             const input = document.getElementById(fileInputId);
             if (!input.files || input.files.length === 0) return;
             const file = input.files[0];
-            const btn = document.getElementById(btnId);
             
-            btn.innerHTML = '<span class="loader-mini"></span>'; btn.disabled = true;
-            try {
-                const base64Comprimido = await comprimirImagenABase64(file);
-                await updateDoc(doc(db, "folios", docId), { fotoBase64: base64Comprimido });
-                cargarDatosSistemaAsync(); // Recarga la tabla para mostrar la foto
-            } catch(e) { alert("Error al subir foto."); btn.innerHTML = 'Subir Foto'; btn.disabled = false; }
+            const reader = new FileReader(); reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const base64Data = reader.result.split(',')[1];
+                const newFileName = `${folioNombre.replace(/\//g, '_')}.${file.name.split('.').pop()}`;
+                const formData = new URLSearchParams();
+                formData.append('fileData', base64Data); formData.append('fileName', newFileName); formData.append('mimeType', file.type);
+
+                const response = await fetch(urlDriveScriptGlobal, { method: 'POST', body: formData });
+                const result = await response.json();
+                if(result.status === 'success') {
+                    await updateDoc(doc(db, "folios", docId), { docDriveUrl: result.fileUrl, docDriveName: newFileName });
+                    cargarDatosSistemaAsync();
+                } else { alert("Error Drive: " + result.message); }
+            };
         };
 
-        window.subirDocDrive = async (docId, folioNombre, fileInputId, btnId) => {
-            if(!urlDriveScriptGlobal) return alert("El Administrador no ha configurado el enlace de Google Drive en el panel.");
-            const input = document.getElementById(fileInputId);
-            if (!input.files || input.files.length === 0) return;
-            const file = input.files[0];
-            const btn = document.getElementById(btnId);
-            
-            btn.innerHTML = '<span class="loader-mini"></span>'; btn.disabled = true;
-            try {
-                // Leemos el PDF/Doc a Base64 para enviarlo por HTTP a Drive
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = async () => {
-                    const base64Data = reader.result.split(',')[1];
-                    // Renombramos el archivo a: Folio + Extension original
-                    const safeFolio = folioNombre.replace(/\//g, '_'); 
-                    const extension = file.name.split('.').pop();
-                    const newFileName = `${safeFolio}.${extension}`;
-
-                    const formData = new URLSearchParams();
-                    formData.append('fileData', base64Data);
-                    formData.append('fileName', newFileName);
-                    formData.append('mimeType', file.type);
-
-                    const response = await fetch(urlDriveScriptGlobal, { method: 'POST', body: formData });
-                    const result = await response.json();
-
-                    if(result.status === 'success') {
-                        await updateDoc(doc(db, "folios", docId), { docDriveUrl: result.fileUrl, docDriveName: newFileName });
-                        cargarDatosSistemaAsync();
-                    } else {
-                        alert("Error de Drive: " + result.message); btn.innerHTML = 'Subir PDF'; btn.disabled = false;
-                    }
-                };
-            } catch(e) { alert("Error de red."); btn.innerHTML = 'Subir PDF'; btn.disabled = false; }
-        };
-
-        window.abrirVisorFoto = (base64String) => {
-            document.getElementById('visor-img').src = base64String;
-            document.getElementById('modal-visor').classList.remove('hidden');
-        };
+        window.abrirVisorFoto = (base64) => { document.getElementById('visor-img').src = base64; document.getElementById('modal-visor').classList.remove('hidden'); };
         window.cerrarVisor = () => { document.getElementById('modal-visor').classList.add('hidden'); document.getElementById('visor-img').src = ""; };
 
-        // -------------------------------------------------------------
-        // RENDERIZADO DE TABLAS
-        // -------------------------------------------------------------
+        // Renderizado de Celdas con botones individuales
         function generarCeldasEvidencia(f) {
-            // COLUMNA 1: FOTO (Firebase Base64)
-            let fotoHTML = '';
-            if (f.fotoBase64) {
-                fotoHTML = `
-                    <div class="tooltip-container" onclick="abrirVisorFoto('${f.fotoBase64}')" title="Ver Fotografía">
-                        <img src="${f.fotoBase64}" class="tooltip-img">
-                    </div>
-                    <label for="foto-${f.docId}" style="display:block; font-size:0.6em; color:#a8dadc; cursor:pointer; margin-top:2px;">[Cambiar]</label>
-                    <input type="file" id="foto-${f.docId}" accept="image/*" style="display:none;" onchange="subirFotoFirebase('${f.docId}', 'foto-${f.docId}', 'btn-foto-${f.docId}')">
-                    <button id="btn-foto-${f.docId}" class="hidden"></button>
-                `;
-            } else {
-                fotoHTML = `
-                    <label for="foto-${f.docId}" class="upload-label" id="lbl-f-${f.docId}">📷 Cámara</label>
-                    <input type="file" id="foto-${f.docId}" accept="image/*" style="display:none;" onchange="document.getElementById('lbl-f-${f.docId}').innerText='Lista ✓'; document.getElementById('btn-foto-${f.docId}').classList.replace('btn-subir-inactivo','btn-subir-activo'); document.getElementById('btn-foto-${f.docId}').disabled=false;">
-                    <button id="btn-foto-${f.docId}" class="btn-small btn-subir-inactivo" disabled onclick="subirFotoFirebase('${f.docId}', 'foto-${f.docId}', this.id)">Subir</button>
-                `;
-            }
+            let fotoHTML = f.fotoBase64 ? 
+                `<div class="tooltip-container" onclick="abrirVisorFoto('${f.fotoBase64}')"><img src="${f.fotoBase64}" class="tooltip-img"></div><label style="font-size:0.55em; color:#a8dadc; cursor:pointer;"><input type="file" id="f-${f.docId}" accept="image/*" style="display:none;" onchange="subirFotoRapida('${f.docId}', 'f-${f.docId}')">Cambiar</label>` :
+                `<label class="upload-label"><input type="file" id="f-${f.docId}" accept="image/*" style="display:none;" onchange="subirFotoRapida('${f.docId}', 'f-${f.docId}')">📷 Foto</label>`;
 
-            // COLUMNA 2: DOC (Google Drive)
-            let docHTML = '';
-            if (f.docDriveUrl) {
-                docHTML = `
-                    <a href="${f.docDriveUrl}" target="_blank" class="tooltip-icon" title="Abrir Documento en Drive">📄</a>
-                    <label for="doc-${f.docId}" style="display:block; font-size:0.6em; color:#a8dadc; cursor:pointer; margin-top:2px;">[Cambiar]</label>
-                    <input type="file" id="doc-${f.docId}" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="subirDocDrive('${f.docId}', '${f.idFolio}', 'doc-${f.docId}', 'btn-doc-${f.docId}')">
-                    <button id="btn-doc-${f.docId}" class="hidden"></button>
-                `;
-            } else {
-                docHTML = `
-                    <label for="doc-${f.docId}" class="upload-label" id="lbl-d-${f.docId}">📄 Archivo</label>
-                    <input type="file" id="doc-${f.docId}" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="document.getElementById('lbl-d-${f.docId}').innerText='Listo ✓'; document.getElementById('btn-doc-${f.docId}').classList.replace('btn-subir-inactivo','btn-subir-activo'); document.getElementById('btn-doc-${f.docId}').disabled=false;">
-                    <button id="btn-doc-${f.docId}" class="btn-small btn-subir-inactivo" disabled onclick="subirDocDrive('${f.docId}', '${f.idFolio}', 'doc-${f.docId}', this.id)">Subir PDF</button>
-                `;
-            }
+            let docHTML = f.docDriveUrl ? 
+                `<a href="${f.docDriveUrl}" target="_blank" class="tooltip-icon" title="Ver PDF">📄</a><label style="font-size:0.55em; color:#a8dadc; cursor:pointer;"><input type="file" id="d-${f.docId}" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="subirDocRapido('${f.docId}', '${f.idFolio}', 'd-${f.docId}')">Cambiar</label>` :
+                `<label class="upload-label"><input type="file" id="d-${f.docId}" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display:none;" onchange="subirDocRapido('${f.docId}', '${f.idFolio}', 'd-${f.docId}')">📄 Doc</label>`;
 
             return `<td class="col-foto">${fotoHTML}</td><td class="col-doc">${docHTML}</td>`;
         }
@@ -618,7 +619,7 @@
                     <td class="col-dirigido">${f.dirigidoA || '-'}</td><td class="col-asunto">${f.asunto || ''}</td>
                     <td class="col-respuesta">${f.respuesta || '-'}</td><td class="col-obs">${f.observaciones || ''}</td>
                     ${generarCeldasEvidencia(f)}
-                    <td class="col-acc"><button class="btn-icon" title="Editar" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️</button></td>
+                    <td class="col-acc"><button class="btn-icon" title="Editar" onclick="abrirModalEdicion('${f.docId}')">✏️</button></td>
                 </tr>`;
             });
             tbody.innerHTML = html;
@@ -639,30 +640,86 @@
                     <td class="col-folio"><strong>${f.idFolio}</strong></td><td class="col-usuario">${f.usuario}</td>
                     <td class="col-dirigido">${f.dirigidoA || '-'}</td><td class="col-asunto">${f.asunto || ''}</td><td class="col-fecha">${f.fecha}</td>
                     <td class="col-foto">${fotoH}</td><td class="col-doc">${docH}</td>
-                    <td class="col-acc">
-                        <button class="btn-icon" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️</button>
+                    <td class="col-acc" style="white-space:nowrap;">
+                        <button class="btn-icon" onclick="abrirModalEdicion('${f.docId}')">✏️</button>
+                        <button class="btn-icon" onclick="eliminarFolioAdmin('${f.docId}', '${f.idFolio}')" title="Borrar">🗑️</button>
                     </td>
                 </tr>`;
             });
             tbody.innerHTML = html;
         };
 
-        // Modal de Edición (Asunto y Observaciones)
-        window.abrirModalEdicion = (docId, folio, usr, dirigido, asunto, respuesta, observaciones) => {
-            document.getElementById('edit-docId').value = docId; document.getElementById('edit-folio').value = folio; document.getElementById('edit-usuario').value = usr; document.getElementById('edit-dirigido').value = dirigido; document.getElementById('edit-asunto').value = asunto; document.getElementById('edit-respuesta').value = respuesta; document.getElementById('edit-observaciones').value = observaciones;
+        // Modal Edición Avanzada (con fotos y docs incluidos)
+        window.abrirModalEdicion = (docId) => {
+            const f = cacheFoliosGlobal.find(item => item.docId === docId);
+            if(!f) return;
+            document.getElementById('edit-docId').value = f.docId;
+            document.getElementById('edit-folio').value = f.idFolio;
+            document.getElementById('edit-usuario').value = f.usuario;
+            document.getElementById('edit-dirigido').value = f.dirigidoA || '';
+            document.getElementById('edit-asunto').value = f.asunto || '';
+            document.getElementById('edit-respuesta').value = f.respuesta || '';
+            document.getElementById('edit-observaciones').value = f.observaciones || '';
+            
+            document.getElementById('modal-preview-foto').innerHTML = f.fotoBase64 ? 'Foto: <span style="color:#00ff66;">Cargada ✓</span>' : 'Foto: <span style="color:#ff6b6b;">Ninguna</span>';
+            document.getElementById('modal-preview-doc').innerHTML = f.docDriveUrl ? 'Doc: <span style="color:#00ff66;">Cargado ✓</span>' : 'Doc: <span style="color:#ff6b6b;">Ninguno</span>';
+            document.getElementById('edit-input-foto').value = ""; document.getElementById('edit-input-doc').value = "";
+            document.getElementById('lbl-foto-status').innerText = ""; document.getElementById('lbl-doc-status').innerText = "";
+
             if(currentUserRole !== 'admin') { document.getElementById('admin-only-edit-fields').classList.add('hidden'); } 
             else { document.getElementById('admin-only-edit-fields').classList.remove('hidden'); }
             document.getElementById('modal-edicion').classList.remove('hidden');
         };
         window.cerrarModalEdicion = () => { document.getElementById('modal-edicion').classList.add('hidden'); };
-        window.guardarEdicionFolio = async () => {
+
+        window.guardarEdicionFolioAvanzada = async () => {
             const docId = document.getElementById('edit-docId').value;
-            let updateData = { respuesta: document.getElementById('edit-respuesta').value.trim(), observaciones: document.getElementById('edit-observaciones').value.trim() };
-            if(currentUserRole === 'admin') { updateData.idFolio = document.getElementById('edit-folio').value.trim(); updateData.usuario = document.getElementById('edit-usuario').value.trim(); }
+            let f = cacheFoliosGlobal.find(item => item.docId === docId);
+            let updateData = { 
+                respuesta: document.getElementById('edit-respuesta').value.trim(), 
+                observaciones: document.getElementById('edit-observaciones').value.trim() 
+            };
+            if(currentUserRole === 'admin') {
+                updateData.idFolio = document.getElementById('edit-folio').value.trim();
+                updateData.usuario = document.getElementById('edit-usuario').value.trim();
+            }
+
+            const fotoInput = document.getElementById('edit-input-foto');
+            if(fotoInput.files && fotoInput.files.length > 0) {
+                updateData.fotoBase64 = await comprimirImagenABase64(fotoInput.files[0]);
+            }
+
+            const docInput = document.getElementById('edit-input-doc');
+            if(docInput.files && docInput.files.length > 0 && urlDriveScriptGlobal) {
+                const file = docInput.files[0];
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                await new Promise((resolve) => {
+                    reader.onload = async () => {
+                        const base64Data = reader.result.split(',')[1];
+                        const newFileName = `${updateData.idFolio ? updateData.idFolio.replace(/\//g, '_') : f.idFolio.replace(/\//g, '_')}.${file.name.split('.').pop()}`;
+                        const formData = new URLSearchParams();
+                        formData.append('fileData', base64Data); formData.append('fileName', newFileName); formData.append('mimeType', file.type);
+                        const response = await fetch(urlDriveScriptGlobal, { method: 'POST', body: formData });
+                        const result = await response.json();
+                        if(result.status === 'success') { updateData.docDriveUrl = result.fileUrl; updateData.docDriveName = newFileName; }
+                        resolve();
+                    };
+                });
+            }
+
             await updateDoc(doc(db, "folios", docId), updateData);
-            cerrarModalEdicion(); alert("Actualizado."); cargarDatosSistemaAsync();
+            cerrarModalEdicion(); alert("Registro actualizado con éxito."); cargarDatosSistemaAsync();
         };
-        
+
+        window.eliminarFolioAdmin = async (docId, folioName) => {
+            if(currentUserRole !== 'admin') return alert('Acceso denegado. Solo administradores pueden borrar.');
+            if(confirm(`⚠️ ¿Estás seguro de eliminar permanentemente el folio ${folioName}?`)) {
+                await deleteDoc(doc(db, "folios", docId));
+                alert("Folio eliminado."); cargarDatosSistemaAsync();
+            }
+        };
+
+        // Gestión de Usuarios Exclusiva de Admin
         async function cargarUsuariosAdmin() {
             if(currentUserRole !== 'admin') return;
             const querySnapshot = await getDocs(collection(db, "usuarios"));
@@ -671,16 +728,75 @@
                 const u = docSnap.data();
                 tbody.innerHTML += `<tr>
                     <td><strong>${u.usuario}</strong></td><td>${u.nombre || '-'}</td><td>${u.correo}</td>
-                    <td><input type="text" id="pass-${u.usuario}" value="${u.password}" style="width:90px; padding:2px; font-size:0.8em;"></td>
-                    <td>${u.rol.toUpperCase()}</td>
-                    <td><button class="btn-small" onclick="actualizarPasswordUser('${u.usuario}')">Pass</button></td>
+                    <td><input type="text" id="pass-${u.usuario}" value="${u.password}" style="width:80px; padding:2px; font-size:0.8em;"></td>
+                    <td>
+                        <select id="rol-${u.usuario}" onchange="cambiarRolUser('${u.usuario}')" style="width:75px; padding:2px; font-size:0.8em; margin:0;">
+                            <option value="user" ${u.rol==='user'?'selected':''}>User</option>
+                            <option value="admin" ${u.rol==='admin'?'selected':''}>Admin</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn-small" onclick="actualizarPasswordUser('${u.usuario}')">🔑</button>
+                        ${u.usuario !== 'admin' ? `<button class="btn-small btn-danger" onclick="eliminarUsuarioAdmin('${u.usuario}')">🗑️</button>` : ''}
+                    </td>
                 </tr>`;
             });
         }
+
+        window.abrirModalCrearUsuario = () => { document.getElementById('modal-usuario').classList.remove('hidden'); };
+        window.cerrarModalCrearUsuario = () => { document.getElementById('modal-usuario').classList.add('hidden'); };
+        window.crearUsuarioAdminModal = async () => {
+            const usuario = document.getElementById('admin-reg-usuario').value.trim().toLowerCase();
+            const nombre = document.getElementById('admin-reg-nombre').value.trim();
+            const correo = document.getElementById('admin-reg-correo').value.trim().toLowerCase();
+            const password = document.getElementById('admin-reg-pass').value.trim();
+            const rol = document.getElementById('admin-reg-rol').value;
+            if(!usuario || !nombre || !correo || !password) return alert('Completa todos los campos.');
+            
+            const check = await getDoc(doc(db, "usuarios", usuario));
+            if(check.exists()) return alert('El usuario ya existe.');
+            await setDoc(doc(db, "usuarios", usuario), { usuario, nombre, correo, password, rol });
+            alert('¡Usuario creado con éxito!'); cerrarModalCrearUsuario(); cargarUsuariosAdmin();
+        };
+
         window.actualizarPasswordUser = async (username) => {
             const nuevaPass = document.getElementById(`pass-${username}`).value.trim();
             if(nuevaPass.length < 6) return alert('Mínimo 6 caracteres.');
-            await updateDoc(doc(db, "usuarios", username), { password: nuevaPass }); alert("Pass actualizada.");
+            await updateDoc(doc(db, "usuarios", username), { password: nuevaPass }); alert("Contraseña actualizada.");
+        };
+
+        window.cambiarRolUser = async (username) => {
+            const nuevoRol = document.getElementById(`rol-${username}`).value;
+            await updateDoc(doc(db, "usuarios", username), { rol: nuevoRol });
+            alert(`Rol de ${username} actualizado a ${nuevoRol.toUpperCase()}.`);
+        };
+
+        window.eliminarUsuarioAdmin = async (username) => {
+            if(confirm(`⚠️ ¿Eliminar al usuario ${username}?`)) {
+                await deleteDoc(doc(db, "usuarios", username));
+                alert("Usuario eliminado."); cargarUsuariosAdmin();
+            }
+        };
+
+        window.exportarExcel = async () => {
+            if(currentUserRole !== 'admin') return;
+            let arr = cacheFoliosGlobal.map(d => ({
+                "Folio": d.idFolio, "Usuario": d.usuario, "Dirigido_a": d.dirigidoA || "", "Asunto": d.asunto || "", "Respuesta": d.respuesta || "", "Observaciones": d.observaciones || "", "Fecha": d.fecha
+            }));
+            const ws = XLSX.utils.json_to_sheet(arr); const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Folios"); XLSX.writeFile(wb, "Respaldo_Folios_VRFE03.xlsx");
+        };
+
+        window.borrarBaseDeDatosCompleta = async () => {
+            if(currentUserRole !== 'admin') return;
+            if(confirm("⚠️ ADVERTENCIA: ¿Borrar TODOS los folios?")) {
+                if(prompt("Escribe 'BORRAR' para confirmar:") === 'BORRAR') {
+                    const snap = await getDocs(collection(db, "folios"));
+                    const batch = writeBatch(db);
+                    snap.forEach(d => batch.delete(d.ref));
+                    await batch.commit(); alert("Base de datos vaciada."); cargarDatosSistemaAsync();
+                }
+            }
         };
 
         mostrarLogin();
