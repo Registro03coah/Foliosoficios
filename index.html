@@ -21,9 +21,17 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--texto); margin: 0; padding: 0; background-color: var(--negro-mate); background-image: url('lineasazules_fondo.avif'); background-size: cover; background-position: center; background-attachment: fixed; display: flex; flex-direction: column; min-height: 100vh; }
         
         header { position: fixed; top: 0; left: 0; width: 100%; z-index: 999; background: linear-gradient(90deg, var(--azul-oscuro), var(--azul-medio)); padding: 8px 15px; border-bottom: 3px solid var(--azul-brillante); box-shadow: 0 3px 10px rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        
+        .header-left-info { display: flex; align-items: center; gap: 12px; font-size: 0.85em; font-weight: bold; }
+        .status-dot-container { display: flex; align-items: center; gap: 5px; }
+        .dot-indicator { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px currentColor; }
+        .dot-online { color: #00ff66; background-color: #00ff66; }
+        .dot-offline { color: #ff3333; background-color: #ff3333; }
+        .status-text { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; }
+        .header-username { color: #00d2ff; text-shadow: 0 0 5px rgba(0, 210, 255, 0.5); }
+
         .header-title { text-align: center; flex: 1; }
         
-        /* Contenedor extra ancho y optimizado */
         .container { max-width: 1450px; margin: 85px auto 20px auto; padding: 10px; flex: 1; width: 98%; box-sizing: border-box; }
         .login-container { max-width: 380px !important; margin: 80px auto 20px auto; width: 100% !important; }
         
@@ -55,8 +63,8 @@
 
         .btn-secondary { background-color: var(--azul-oscuro); border-color: var(--azul-medio); }
         .btn-danger { background-color: #5a1818; border-color: #8B0000; }
-        .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 5px 10px; font-size: 0.75em; }
-        .btn-small { padding: 4px 8px; font-size: 0.75em; }
+        .btn-logout { background-color: #8B0000; border-color: #ff4d4d; padding: 5px 12px; font-size: 0.75em; }
+        .btn-small { padding: 3px 6px; font-size: 0.7em; }
 
         .badge-ultimo-folio { background-color: var(--azul-brillante); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; font-weight: bold; display: block; text-align: center; margin-bottom: 12px; border: 1px solid #6096ba; }
         @media(min-width: 600px) { .badge-ultimo-folio { display: inline-block; float: right; margin-top: -3px; margin-bottom: 0; } }
@@ -71,25 +79,24 @@
         .sort-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 0.8em; background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 5px; }
         .sort-bar select { width: auto; margin-bottom: 0; padding: 4px 8px; font-size: 0.8em; }
 
-        /* TABLA COMPACTA Y CONTROL DE COLUMNAS (40 CARACTERES POR LÍNEA) */
-        table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.8em; background-color: rgba(0,0,0,0.4); table-layout: fixed; }
-        th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); vertical-align: top; overflow-wrap: break-word; word-wrap: break-word; }
-        th { background-color: var(--azul-medio); border-bottom: 2px solid var(--azul-brillante); font-size: 0.8em; white-space: nowrap; }
+        /* TABLA COMPACTA OPTIMIZADA (LETRA MÁS PEQUEÑA Y ANCHOS PRECISOS) */
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.73em; background-color: rgba(0,0,0,0.4); table-layout: fixed; }
+        th, td { padding: 6px 4px; text-align: left; border-bottom: 1px solid var(--azul-oscuro); vertical-align: top; overflow-wrap: break-word; word-wrap: break-word; }
+        th { background-color: var(--azul-medio); border-bottom: 2px solid var(--azul-brillante); font-size: 0.75em; white-space: nowrap; }
         
-        /* Definición de anchos y comportamiento de líneas */
-        .col-folio { width: 150px; white-space: nowrap; font-weight: bold; }
-        .col-fecha { width: 135px; white-space: nowrap; }
-        .col-dirigido { width: 220px; max-width: 220px; }
-        .col-asunto { width: 220px; max-width: 220px; }
-        .col-respuesta { width: 180px; max-width: 180px; }
-        .col-obs { width: 160px; max-width: 160px; }
-        .col-evid { width: 95px; white-space: nowrap; }
-        .col-acc { width: 85px; white-space: nowrap; text-align: center; }
-        .col-usuario { width: 100px; white-space: nowrap; }
+        /* Definición de anchos exactos para que quepan todas las columnas */
+        .col-folio { width: 135px; white-space: nowrap; font-weight: bold; }
+        .col-fecha { width: 125px; white-space: nowrap; }
+        .col-usuario { width: 90px; white-space: nowrap; }
+        .col-dirigido { width: 195px; }
+        .col-asunto { width: 195px; }
+        .col-respuesta { width: 150px; }
+        .col-obs { width: 130px; }
+        .col-evid { width: 85px; white-space: nowrap; }
+        .col-acc { width: 75px; white-space: nowrap; text-align: center; }
 
         .hidden { display: none !important; }
         .error { color: #ff6b6b; font-size: 0.85em; margin-bottom: 8px; background: rgba(255,0,0,0.1); padding: 4px; border-radius: 3px;}
-        .status-indicator { text-align: center; font-size: 0.8em; margin-top: 10px; color: #aaa; padding: 6px; background: rgba(0,0,0,0.5); border-radius: 4px; }
         .alerta-evidencia { background-color: rgba(139, 0, 0, 0.85); color: white; padding: 10px; border-radius: 4px; margin-bottom: 12px; border-left: 4px solid #ff4d4d; font-size: 0.85em; }
         .folio-item { background: rgba(0,0,0,0.5); padding: 10px; margin-bottom: 10px; border-left: 3px solid var(--azul-brillante); border-radius: 4px; }
         
@@ -103,9 +110,9 @@
             body { background: white !important; color: black !important; margin: 0 !important; }
             header, .card, footer, button, input, select, .badge-ultimo-folio, .alerta-evidencia, .modal-overlay, .nav-tabs, .sort-bar { display: none !important; }
             .container { margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; }
-            table { width: 100% !important; background: white !important; color: black !important; border: 1px solid #999 !important; font-size: 7.5pt !important; table-layout: auto !important; }
+            table { width: 100% !important; background: white !important; color: black !important; border: 1px solid #999 !important; font-size: 7pt !important; table-layout: auto !important; }
             th { background-color: #1d3557 !important; color: white !important; -webkit-print-color-adjust: exact; }
-            td, th { border: 1px solid #ccc !important; padding: 4px !important; white-space: normal !important; width: auto !important; }
+            td, th { border: 1px solid #ccc !important; padding: 3px !important; white-space: normal !important; width: auto !important; }
             @page { size: portrait; margin: 0.8cm; }
         }
     </style>
@@ -113,12 +120,20 @@
 <body>
 
     <header>
-        <div style="width: 60px;"></div>
+        <div class="header-left-info">
+            <div class="status-dot-container">
+                <span id="dot-indicator" class="dot-indicator dot-offline"></span>
+                <span id="status-text" class="status-text" style="color: #ff3333;">Offline</span>
+            </div>
+            <span id="header-username-display" class="header-username"></span>
+        </div>
+
         <div class="header-title">
             <h1 style="font-size: 1em; margin: 0;">Vocalía del RFE</h1>
             <p style="font-size: 0.65em; margin: 1px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva</p>
         </div>
-        <div style="width: 60px; text-align: right;">
+
+        <div style="text-align: right;">
             <button id="btn-header-logout" class="btn-logout hidden" onclick="logout()">Salir</button>
         </div>
     </header>
@@ -167,7 +182,6 @@
                     <button class="btn-secondary" style="width:100%;" onclick="mostrarLogin()">Volver</button>
                 </div>
             </div>
-            <div id="firebase-status" class="status-indicator">⏳ Conectando...</div>
         </div>
 
         <!-- APLICACIÓN PRINCIPAL CON PESTAÑAS -->
@@ -286,7 +300,7 @@
                 </div>
             </div>
 
-            <!-- PESTAÑA 3: HISTORIAL DE FOLIOS (GLOBAL) -->
+            <!-- PESTAÑA 3: HISTORIAL DE FOLIOS (SOLO ADMINS) -->
             <div id="pestana-historial" class="card hidden">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <h2 style="margin:0; font-size: 1.15em;">Historial General de Folios (Todos los Usuarios)</h2>
@@ -369,7 +383,7 @@
     </div>
 
     <footer>
-        &copy; 2026 VRFE 03JDE | Versión 0.3.1 (Optimized Perf & Compact Layout)
+        &copy; 2026 VRFE 03JDE | Versión 0.3.3 (Secure Roles & Compact Table UI)
     </footer>
 
     <!-- SCRIPT FIREBASE -->
@@ -391,7 +405,32 @@
         let currentUserUsername = null;
         let currentUserRole = 'user';
         let foliosPendientes = 0;
-        let cacheFoliosGlobal = []; // Caché global para evitar lecturas repetitivas y acelerar la navegación
+        let cacheFoliosGlobal = [];
+
+        function setConexionEstado(online) {
+            const dot = document.getElementById('dot-indicator');
+            const txt = document.getElementById('status-text');
+            if(online) {
+                dot.className = "dot-indicator dot-online";
+                txt.innerText = "Online";
+                txt.style.color = "#00ff66";
+            } else {
+                dot.className = "dot-indicator dot-offline";
+                txt.innerText = "Offline";
+                txt.style.color = "#ff3333";
+            }
+        }
+
+        async function testConexion() {
+            try { 
+                await getDoc(doc(db, "sistema", "ping")); 
+                setConexionEstado(true);
+            } catch(e) { 
+                setConexionEstado(false);
+            }
+        }
+        testConexion();
+        setInterval(testConexion, 30000);
 
         window.togglePasswordVisibility = (idField, btn) => {
             const input = document.getElementById(idField);
@@ -399,16 +438,10 @@
             else { input.type = "password"; btn.innerText = "👁️"; }
         };
 
-        window.mostrarRegistro = () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); document.getElementById('auth-error-login').classList.add('hidden'); };
-        window.mostrarLogin = () => { document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); document.getElementById('auth-error-register').classList.add('hidden'); };
+        window.mostrarRegistro = () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); };
+        window.mostrarLogin = () => { document.getElementById('register-form').classList.add('hidden'); document.getElementById('login-form').classList.remove('hidden'); };
         function mostrarError(msg, type) { const errorDiv = document.getElementById(type === 'login' ? 'auth-error-login' : 'auth-error-register'); errorDiv.innerText = msg; errorDiv.classList.remove('hidden'); }
         
-        async function testConexion() {
-            try { await getDoc(doc(db, "sistema", "ping")); document.getElementById('firebase-status').innerHTML = "🟢 Conectado a Firebase."; document.getElementById('firebase-status').style.color = "#4CAF50"; } 
-            catch(e) { document.getElementById('firebase-status').innerHTML = "🔴 Sin permisos de Base de Datos."; document.getElementById('firebase-status').style.color = "#ff6b6b"; }
-        }
-        testConexion();
-
         window.register = async () => {
             const usuario = document.getElementById('reg-usuario').value.trim().toLowerCase();
             const nombre = document.getElementById('reg-nombre').value.trim();
@@ -476,24 +509,36 @@
                 document.getElementById('btn-header-logout').classList.remove('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
 
+                document.getElementById('header-username-display').innerText = `👤 ${currentUserUsername}`;
+
+                // RESTRICCIÓN DE PESTAÑAS SEGÚN ROL
                 if (currentUserRole === 'admin') {
                     document.getElementById('tab-btn-admin').classList.remove('hidden');
+                    document.getElementById('tab-btn-historial').classList.remove('hidden');
                     cambiarPestana('admin');
                 } else {
                     document.getElementById('tab-btn-admin').classList.add('hidden');
+                    document.getElementById('tab-btn-historial').classList.add('hidden');
                     cambiarPestana('mis-folios');
                 }
-                cargarDatosSistema();
+                cargarDatosSistemaAsync();
             } else {
                 currentUserUsername = null; currentUserRole = 'user';
+                document.getElementById('header-username-display').innerText = '';
                 document.getElementById('app-container').classList.add('hidden');
                 document.getElementById('auth-section').classList.remove('hidden');
                 document.getElementById('btn-header-logout').classList.add('hidden');
+                setConexionEstado(false);
                 mostrarLogin();
             }
         });
 
         window.cambiarPestana = (pestana) => {
+            // Validar acceso estricto a historial si no es admin
+            if (pestana === 'historial' && currentUserRole !== 'admin') {
+                pestana = 'mis-folios';
+            }
+
             document.getElementById('pestana-admin').classList.add('hidden');
             document.getElementById('pestana-mis-folios').classList.add('hidden');
             document.getElementById('pestana-historial').classList.add('hidden');
@@ -510,34 +555,40 @@
                 document.getElementById('pestana-mis-folios').classList.remove('hidden');
                 document.getElementById('tab-btn-mis-folios').classList.add('active');
                 renderizarTablaUsuario();
-            } else if (pestana === 'historial') {
+            } else if (pestana === 'historial' && currentUserRole === 'admin') {
                 document.getElementById('pestana-historial').classList.remove('hidden');
                 document.getElementById('tab-btn-historial').classList.add('active');
                 renderizarTablaGlobal();
             }
         };
 
-        async function cargarDatosSistema() {
-            const configSnap = await getDoc(doc(db, "sistema", "config"));
-            if (configSnap.exists() && configSnap.data().configurado) {
-                document.getElementById('config-area').classList.add('hidden');
-                document.getElementById('nom-prefijo').value = configSnap.data().prefijo;
-                document.getElementById('nom-inicio').value = configSnap.data().actual;
-                document.getElementById('nom-anio').value = configSnap.data().anio;
-            } else {
-                document.getElementById('nom-anio').value = new Date().getFullYear();
-                document.getElementById('config-area').classList.remove('hidden');
-            }
+        async function cargarDatosSistemaAsync() {
+            setTimeout(async () => {
+                try {
+                    const configSnap = await getDoc(doc(db, "sistema", "config"));
+                    if (configSnap.exists() && configSnap.data().configurado) {
+                        document.getElementById('config-area').classList.add('hidden');
+                        document.getElementById('nom-prefijo').value = configSnap.data().prefijo;
+                        document.getElementById('nom-inicio').value = configSnap.data().actual;
+                        document.getElementById('nom-anio').value = configSnap.data().anio;
+                    } else {
+                        document.getElementById('nom-anio').value = new Date().getFullYear();
+                        document.getElementById('config-area').classList.remove('hidden');
+                    }
 
-            // Descargar todos los folios una sola vez a memoria para máxima fluidez
-            const querySnapshot = await getDocs(collection(db, "folios"));
-            cacheFoliosGlobal = [];
-            querySnapshot.forEach((d) => cacheFoliosGlobal.push({ docId: d.id, ...d.data() }));
+                    const querySnapshot = await getDocs(collection(db, "folios"));
+                    cacheFoliosGlobal = [];
+                    querySnapshot.forEach((d) => cacheFoliosGlobal.push({ docId: d.id, ...d.data() }));
 
-            if(currentUserRole === 'admin') cargarUsuariosAdmin();
-            await actualizarIndicadorUltimoFolio();
-            renderizarTablaUsuario();
-            renderizarTablaGlobal();
+                    if(currentUserRole === 'admin') cargarUsuariosAdmin();
+                    await actualizarIndicadorUltimoFolio();
+                    renderizarTablaUsuario();
+                    if(currentUserRole === 'admin') renderizarTablaGlobal();
+                    setConexionEstado(true);
+                } catch(e) {
+                    setConexionEstado(false);
+                }
+            }, 50);
         }
 
         window.habilitarEdicionConfig = () => { document.getElementById('config-area').classList.remove('hidden'); document.getElementById('btn-cancelar-config').classList.remove('hidden'); };
@@ -549,7 +600,7 @@
             const anio = document.getElementById('nom-anio').value.trim();
             if (!prefijo || isNaN(inicio) || !anio) return alert('Llena los campos.');
             await setDoc(doc(db, "sistema", "config"), { prefijo, actual: inicio, anio, configurado: true });
-            alert('Configuración guardada.'); cancelarEdicionConfig(); cargarDatosSistema();
+            alert('Configuración guardada.'); cancelarEdicionConfig(); cargarDatosSistemaAsync();
         };
 
         window.borrarBaseDeDatosCompleta = async () => {
@@ -562,31 +613,34 @@
                         querySnapshot.forEach((d) => { batch.delete(d.ref); });
                         await batch.commit();
                         alert("🗑️ Base de datos limpiada.");
-                        cargarDatosSistema();
+                        cargarDatosSistemaAsync();
                     } catch(e) { alert("Error al vaciar la base de datos."); }
                 }
             }
         };
 
         async function cargarUsuariosAdmin() {
-            const querySnapshot = await getDocs(collection(db, "usuarios"));
-            const tbody = document.getElementById('admin-tabla-usuarios');
-            tbody.innerHTML = '';
-            querySnapshot.forEach((docSnap) => {
-                const u = docSnap.data();
-                tbody.innerHTML += `<tr>
-                    <td><strong>${u.usuario}</strong></td>
-                    <td>${u.nombre || '-'}</td>
-                    <td>${u.correo}</td>
-                    <td><input type="text" id="pass-${u.usuario}" value="${u.password}" style="width:90px; padding:2px; margin:0; font-size:0.8em;"></td>
-                    <td>${u.rol.toUpperCase()}</td>
-                    <td>
-                        <button class="btn-small" onclick="actualizarPasswordUser('${u.usuario}')">🔑 Pass</button>
-                        ${u.usuario !== 'admin' ? `<button class="btn-small ${u.rol === 'admin' ? 'btn-danger' : 'btn-secondary'}" onclick="cambiarRol('${u.usuario}', '${u.rol}')">${u.rol === 'admin' ? 'Quitar' : 'Admin'}</button>` : ''}
-                        ${u.usuario !== 'admin' ? `<button class="btn-small btn-danger" onclick="eliminarUsuario('${u.usuario}')">🗑️</button>` : ''}
-                    </td>
-                </tr>`;
-            });
+            if(currentUserRole !== 'admin') return;
+            setTimeout(async () => {
+                const querySnapshot = await getDocs(collection(db, "usuarios"));
+                const tbody = document.getElementById('admin-tabla-usuarios');
+                tbody.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const u = docSnap.data();
+                    tbody.innerHTML += `<tr>
+                        <td><strong>${u.usuario}</strong></td>
+                        <td>${u.nombre || '-'}</td>
+                        <td>${u.correo}</td>
+                        <td><input type="text" id="pass-${u.usuario}" value="${u.password}" style="width:90px; padding:2px; margin:0; font-size:0.8em;"></td>
+                        <td>${u.rol.toUpperCase()}</td>
+                        <td>
+                            <button class="btn-small" onclick="actualizarPasswordUser('${u.usuario}')">🔑 Pass</button>
+                            ${u.usuario !== 'admin' ? `<button class="btn-small ${u.rol === 'admin' ? 'btn-danger' : 'btn-secondary'}" onclick="cambiarRol('${u.usuario}', '${u.rol}')">${u.rol === 'admin' ? 'Quitar' : 'Admin'}</button>` : ''}
+                            ${u.usuario !== 'admin' ? `<button class="btn-small btn-danger" onclick="eliminarUsuario('${u.usuario}')">🗑️</button>` : ''}
+                        </td>
+                    </tr>`;
+                });
+            }, 10);
         }
 
         window.actualizarPasswordUser = async (username) => {
@@ -613,6 +667,7 @@
         };
 
         window.exportarExcel = async () => {
+            if(currentUserRole !== 'admin') return;
             let foliosArr = cacheFoliosGlobal.map(d => ({
                 "Folio": d.idFolio, "Usuario": d.usuario, "Dirigido_a": d.dirigidoA || "", "Asunto": d.asunto || "", "Respuesta": d.respuesta || "", "Observaciones": d.observaciones || "", "Fecha": d.fecha
             }));
@@ -623,6 +678,7 @@
         };
 
         window.importarExcel = (event) => {
+            if(currentUserRole !== 'admin') return;
             const file = event.target.files[0];
             if(!file) return;
             const reader = new FileReader();
@@ -680,8 +736,8 @@
                     setTimeout(() => {
                         progressBox.classList.add('hidden'); progressBar.style.width = '0%';
                         alert(`¡Importados ${total} folios con éxito!`);
-                        cargarDatosSistema(); event.target.value = "";
-                    }, 400);
+                        cargarDatosSistemaAsync(); event.target.value = "";
+                    }, 300);
 
                 } catch(err) {
                     progressBox.classList.add('hidden');
@@ -724,14 +780,14 @@
             }
             
             await updateDoc(doc(db, "folios", docId), updateData);
-            cerrarModalEdicion(); alert("Actualizado."); cargarDatosSistema();
+            cerrarModalEdicion(); alert("Actualizado."); cargarDatosSistemaAsync();
         };
 
         window.eliminarFolio = async (docId, folioName) => {
             if(currentUserRole !== 'admin') return alert('Acceso denegado.');
             if(confirm(`⚠️ ¿Eliminar folio ${folioName}?`)) {
                 await deleteDoc(doc(db, "folios", docId));
-                alert("Folio eliminado."); cargarDatosSistema();
+                alert("Folio eliminado."); cargarDatosSistemaAsync();
             }
         };
 
@@ -822,99 +878,103 @@
                 alert(`¡${foliosPendientes} folios asignados!`);
                 document.getElementById('formulario-folios-area').classList.add('hidden');
                 document.getElementById('cantidad-folios').value = '';
-                cargarDatosSistema();
+                cargarDatosSistemaAsync();
             } catch (err) { alert("Error al guardar."); }
         };
 
-        // --- RENDERIZADO RÁPIDO DESDE MEMORIA (Caché) ---
         window.renderizarTablaUsuario = () => {
-            const tbody = document.getElementById('user-tabla-folios');
-            tbody.innerHTML = '';
-            let misFolios = cacheFoliosGlobal.filter(f => f.usuario === currentUserUsername);
-            let foliosAtrasados = [];
-            const ahora = Date.now();
-            const limiteMs = 5 * 24 * 60 * 60 * 1000;
+            setTimeout(() => {
+                const tbody = document.getElementById('user-tabla-folios');
+                tbody.innerHTML = '';
+                let misFolios = cacheFoliosGlobal.filter(f => f.usuario === currentUserUsername);
+                let foliosAtrasados = [];
+                const ahora = Date.now();
+                const limiteMs = 5 * 24 * 60 * 60 * 1000;
 
-            const sortBy = document.getElementById('sort-user-select').value;
-            misFolios.sort((a, b) => {
-                if(sortBy === 'fecha-desc') return b.timestamp - a.timestamp;
-                if(sortBy === 'fecha-asc') return a.timestamp - b.timestamp;
-                if(sortBy === 'folio') return a.idFolio.localeCompare(b.idFolio);
-                if(sortBy === 'dirigido') return (a.dirigidoA || '').localeCompare(b.dirigidoA || '');
-                if(sortBy === 'asunto') return (a.asunto || '').localeCompare(b.asunto || '');
-                return 0;
-            });
+                const sortBy = document.getElementById('sort-user-select').value;
+                misFolios.sort((a, b) => {
+                    if(sortBy === 'fecha-desc') return b.timestamp - a.timestamp;
+                    if(sortBy === 'fecha-asc') return a.timestamp - b.timestamp;
+                    if(sortBy === 'folio') return a.idFolio.localeCompare(b.idFolio);
+                    if(sortBy === 'dirigido') return (a.dirigidoA || '').localeCompare(b.dirigidoA || '');
+                    if(sortBy === 'asunto') return (a.asunto || '').localeCompare(b.asunto || '');
+                    return 0;
+                });
 
-            if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="8">No has solicitado folios.</td></tr>'; return; }
+                if(misFolios.length === 0) { tbody.innerHTML = '<tr><td colspan="8">No has solicitado folios.</td></tr>'; return; }
 
-            misFolios.forEach(f => {
-                if(!f.archivoUrl && !f.exentoEvidencia && (ahora - f.timestamp > limiteMs)) {
-                    foliosAtrasados.push(f.idFolio);
+                misFolios.forEach(f => {
+                    if(!f.archivoUrl && !f.exentoEvidencia && (ahora - f.timestamp > limiteMs)) {
+                        foliosAtrasados.push(f.idFolio);
+                    }
+
+                    let btnSubir = `<div style="display:flex; gap:2px;"><input type="file" id="file-${f.docId}" style="width:70px; font-size:0.55em; margin:0;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
+                    let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 Ver</a>` : btnSubir;
+                    
+                    tbody.innerHTML += `<tr>
+                        <td class="col-folio"><strong>${f.idFolio}</strong></td>
+                        <td class="col-fecha">${f.fecha}</td>
+                        <td class="col-dirigido">${f.dirigidoA || '-'}</td>
+                        <td class="col-asunto">${f.asunto || ''}</td>
+                        <td class="col-respuesta">${f.respuesta || '-'}</td>
+                        <td class="col-obs">${f.observaciones || ''}</td>
+                        <td class="col-evid">${evidenciaHTML}</td>
+                        <td class="col-acc"><button class="btn-small" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️ Edit</button></td>
+                    </tr>`;
+                });
+
+                const alerta = document.getElementById('alerta-evidencia-container');
+                if(foliosAtrasados.length > 0) {
+                    document.getElementById('folios-atrasados-lista').innerText = foliosAtrasados.join(", ");
+                    alerta.classList.remove('hidden');
+                } else {
+                    alerta.classList.add('hidden');
                 }
-
-                let btnSubir = `<div style="display:flex; gap:2px;"><input type="file" id="file-${f.docId}" style="width:75px; font-size:0.6em; margin:0;"><button class="btn-small" onclick="subirEvidencia('${f.docId}')">Subir</button></div>`;
-                let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 ${f.archivo}</a>` : btnSubir;
-                
-                tbody.innerHTML += `<tr>
-                    <td class="col-folio"><strong>${f.idFolio}</strong></td>
-                    <td class="col-fecha">${f.fecha}</td>
-                    <td class="col-dirigido">${f.dirigidoA || '-'}</td>
-                    <td class="col-asunto">${f.asunto || ''}</td>
-                    <td class="col-respuesta">${f.respuesta || '-'}</td>
-                    <td class="col-obs">${f.observaciones || ''}</td>
-                    <td class="col-evid">${evidenciaHTML}</td>
-                    <td class="col-acc"><button class="btn-small" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️ Edit</button></td>
-                </tr>`;
-            });
-
-            const alerta = document.getElementById('alerta-evidencia-container');
-            if(foliosAtrasados.length > 0) {
-                document.getElementById('folios-atrasados-lista').innerText = foliosAtrasados.join(", ");
-                alerta.classList.remove('hidden');
-            } else {
-                alerta.classList.add('hidden');
-            }
+            }, 5);
         };
 
         window.renderizarTablaGlobal = () => {
-            const tbody = document.getElementById('global-tabla-folios');
-            tbody.innerHTML = '';
-            let foliosArr = [...cacheFoliosGlobal];
+            if(currentUserRole !== 'admin') return;
+            setTimeout(() => {
+                const tbody = document.getElementById('global-tabla-folios');
+                tbody.innerHTML = '';
+                let foliosArr = [...cacheFoliosGlobal];
 
-            const sortBy = document.getElementById('sort-global-select').value;
-            foliosArr.sort((a, b) => {
-                if(sortBy === 'fecha-desc') return b.timestamp - a.timestamp;
-                if(sortBy === 'fecha-asc') return a.timestamp - b.timestamp;
-                if(sortBy === 'folio') return a.idFolio.localeCompare(b.idFolio);
-                if(sortBy === 'usuario') return (a.usuario || '').localeCompare(b.usuario || '');
-                if(sortBy === 'dirigido') return (a.dirigidoA || '').localeCompare(b.dirigidoA || '');
-                if(sortBy === 'asunto') return (a.asunto || '').localeCompare(b.asunto || '');
-                return 0;
-            });
+                const sortBy = document.getElementById('sort-global-select').value;
+                foliosArr.sort((a, b) => {
+                    if(sortBy === 'fecha-desc') return b.timestamp - a.timestamp;
+                    if(sortBy === 'fecha-asc') return a.timestamp - b.timestamp;
+                    if(sortBy === 'folio') return a.idFolio.localeCompare(b.idFolio);
+                    if(sortBy === 'usuario') return (a.usuario || '').localeCompare(b.usuario || '');
+                    if(sortBy === 'dirigido') return (a.dirigidoA || '').localeCompare(b.dirigidoA || '');
+                    if(sortBy === 'asunto') return (a.asunto || '').localeCompare(b.asunto || '');
+                    return 0;
+                });
 
-            if(foliosArr.length === 0) { tbody.innerHTML = '<tr><td colspan="9">No hay folios registrados.</td></tr>'; return; }
+                if(foliosArr.length === 0) { tbody.innerHTML = '<tr><td colspan="9">No hay folios registrados.</td></tr>'; return; }
 
-            foliosArr.forEach(f => {
-                let badge = f.exentoEvidencia ? ' <span style="font-size:0.55em; background:#b78a00; padding:1px 2px;">Imp</span>' : '';
-                let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 Ver</a>` : (f.exentoEvidencia ? 'N/A' : '<span style="color:#ff6b6b">Pend</span>');
-                
-                let btnAccionesAdmin = currentUserRole === 'admin' ? 
-                    `<button class="btn-small" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️</button>
-                     <button class="btn-small btn-danger" onclick="eliminarFolio('${f.docId}', '${f.idFolio}')">🗑️</button>` : 
-                    `<span style="color:#888; font-size:0.75em;">Lectura</span>`;
+                foliosArr.forEach(f => {
+                    let badge = f.exentoEvidencia ? ' <span style="font-size:0.55em; background:#b78a00; padding:1px 2px;">Imp</span>' : '';
+                    let evidenciaHTML = f.archivoUrl ? `<a href="javascript:void(0)" onclick="previsualizarEvidencia('${f.archivoUrl}', '${f.archivo}', '${f.idFolio}')">📄 Ver</a>` : (f.exentoEvidencia ? 'N/A' : '<span style="color:#ff6b6b">Pend</span>');
+                    
+                    let btnAccionesAdmin = currentUserRole === 'admin' ? 
+                        `<button class="btn-small" onclick="abrirModalEdicion('${f.docId}', '${f.idFolio}', '${f.usuario}', '${f.dirigidoA || ''}', '${f.asunto || ''}', '${f.respuesta || ''}', '${f.observaciones || ''}')">✏️</button>
+                         <button class="btn-small btn-danger" onclick="eliminarFolio('${f.docId}', '${f.idFolio}')">🗑️</button>` : 
+                        `<span style="color:#888; font-size:0.7em;">Lectura</span>`;
 
-                tbody.innerHTML += `<tr>
-                    <td class="col-folio"><strong>${f.idFolio}</strong>${badge}</td>
-                    <td class="col-usuario">${f.usuario}</td>
-                    <td class="col-dirigido">${f.dirigidoA || '-'}</td>
-                    <td class="col-asunto">${f.asunto || ''}</td>
-                    <td class="col-respuesta">${f.respuesta || '-'}</td>
-                    <td class="col-obs">${f.observaciones || ''}</td>
-                    <td class="col-fecha">${f.fecha}</td>
-                    <td class="col-evid">${evidenciaHTML}</td>
-                    <td class="col-acc">${btnAccionesAdmin}</td>
-                </tr>`;
-            });
+                    tbody.innerHTML += `<tr>
+                        <td class="col-folio"><strong>${f.idFolio}</strong>${badge}</td>
+                        <td class="col-usuario">${f.usuario}</td>
+                        <td class="col-dirigido">${f.dirigidoA || '-'}</td>
+                        <td class="col-asunto">${f.asunto || ''}</td>
+                        <td class="col-respuesta">${f.respuesta || '-'}</td>
+                        <td class="col-obs">${f.observaciones || ''}</td>
+                        <td class="col-fecha">${f.fecha}</td>
+                        <td class="col-evid">${evidenciaHTML}</td>
+                        <td class="col-acc">${btnAccionesAdmin}</td>
+                    </tr>`;
+                });
+            }, 5);
         };
 
         window.subirEvidencia = async (docId) => {
@@ -928,7 +988,7 @@
                 const downloadURL = await getDownloadURL(snapshot.ref);
                 await updateDoc(doc(db, "folios", docId), { archivo: file.name, archivoUrl: downloadURL });
                 alert('¡Evidencia subida con éxito!');
-                cargarDatosSistema();
+                cargarDatosSistemaAsync();
             } catch (error) { alert("Error al subir."); }
         };
     </script>
