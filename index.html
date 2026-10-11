@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v1.0.2</title>
+    <title>VRFE 03JDE - Gestión de Folios v1.0.3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -93,7 +93,6 @@
         .modal-content { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 18px; border-radius: 6px; width: 100%; max-width: 450px; max-height: 92vh; overflow-y: auto; }
         .modal-content-viewer { background: var(--negro-mate); border: 2px solid var(--azul-brillante); padding: 8px; border-radius: 6px; width: 92vw; height: 82vh; display: flex; flex-direction: column; }
 
-        /* Estilos específicos para impresión institucional */
         .print-only-container { display: none; }
 
         @media print {
@@ -344,20 +343,52 @@
     <!-- CONTENEDOR OCULTO PARA IMPRESIÓN INSTITUCIONAL DE REPORTES -->
     <div id="print-institutional-area" class="print-only-container"></div>
 
-    <!-- MODAL PERFIL DE USUARIO / DETALLE -->
+    <!-- MODAL PERFIL DE USUARIO / DETALLE Y EDICIÓN PERSONAL -->
     <div id="modal-perfil" class="modal-overlay hidden">
         <div class="modal-content" style="text-align:center;">
-            <h3 style="font-size: 1.1em; margin-top:0;">👤 Ficha de Datos del Personal</h3>
+            <h3 style="font-size: 1.1em; margin-top:0;">👤 Ficha y Edición de Perfil</h3>
             <div id="perfil-modal-avatar-container" style="margin-bottom:12px;"></div>
-            <div style="text-align:left; background:rgba(0,0,0,0.5); padding:10px; border-radius:5px; font-size:0.85em; line-height:1.5;">
-                <p><strong>Usuario:</strong> <span id="p-usuario"></span></p>
-                <p><strong>Nombre Completo:</strong> <span id="p-nombre"></span></p>
-                <p><strong>Puesto:</strong> <span id="p-puesto"></span></p>
-                <p><strong>Correo:</strong> <span id="p-correo"></span></p>
-                <p><strong>Teléfono:</strong> <span id="p-telefono"></span></p>
-                <p><strong>Rol en el Sistema:</strong> <span id="p-rol"></span></p>
+            
+            <div style="text-align:left; background:rgba(0,0,0,0.5); padding:12px; border-radius:5px; font-size:0.85em; line-height:1.5;">
+                <label style="font-size:0.75em; color:#aaa;">Usuario (No modificable):</label>
+                <input type="text" id="p-usuario" readonly style="margin-bottom:8px;">
+
+                <label style="font-size:0.75em; color:#a8dadc;">Nombre Completo:</label>
+                <input type="text" id="p-nombre" style="margin-bottom:8px;">
+
+                <label style="font-size:0.75em; color:#a8dadc;">Puesto:</label>
+                <input type="text" id="p-puesto" style="margin-bottom:8px;">
+
+                <label style="font-size:0.75em; color:#aaa;">Correo (No modificable):</label>
+                <input type="text" id="p-correo" readonly style="margin-bottom:8px;">
+
+                <label style="font-size:0.75em; color:#a8dadc;">Teléfono:</label>
+                <input type="tel" id="p-telefono" style="margin-bottom:8px;">
+
+                <label style="font-size:0.75em; color:#aaa;">Rol en el Sistema (No modificable):</label>
+                <input type="text" id="p-rol" readonly style="margin-bottom:8px;">
+
+                <button class="btn-small" style="width:100%; background:#2a9d8f; margin-top:4px;" onclick="guardarMiPerfilModal()">💾 Guardar Cambios de Perfil</button>
             </div>
-            <button onclick="cerrarMiPerfilModal()" class="btn-secondary" style="width:100%; margin-top:12px;">Cerrar</button>
+
+            <div style="text-align:left; background:rgba(0,0,0,0.4); padding:10px; border-radius:5px; margin-top:10px;">
+                <h4 style="margin:0 0 8px 0; font-size:0.9em; color:var(--azul-brillante);">🔑 Cambiar Contraseña</h4>
+                <div class="password-wrapper" style="margin-bottom:6px;">
+                    <input type="password" id="cambio-pass-actual" placeholder="Contraseña actual" style="margin-bottom:0; padding-right:35px;">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('cambio-pass-actual', this)">👁️</button>
+                </div>
+                <div class="password-wrapper" style="margin-bottom:6px;">
+                    <input type="password" id="cambio-pass-nueva" placeholder="Nueva contraseña (Mín. 6)" style="margin-bottom:0; padding-right:35px;">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('cambio-pass-nueva', this)">👁️</button>
+                </div>
+                <div class="password-wrapper" style="margin-bottom:8px;">
+                    <input type="password" id="cambio-pass-confirmar" placeholder="Confirmar nueva contraseña" style="margin-bottom:0; padding-right:35px;">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('cambio-pass-confirmar', this)">👁️</button>
+                </div>
+                <button class="btn-small btn-secondary" style="width:100%;" onclick="ejecutarCambioPassword()">Actualizar Contraseña</button>
+            </div>
+
+            <button onclick="cerrarMiPerfilModal()" class="btn-secondary" style="width:100%; margin-top:12px;">Cerrar Ventana</button>
         </div>
     </div>
 
@@ -434,7 +465,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.2</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.3</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-offline"></span><span id="footer-status-text" style="color: #ff3333;">offline</span></div>
     </footer>
 
@@ -639,6 +670,12 @@
 
             const qMsg = await getDocs(collection(db, "mensajes"));
             cacheMensajesGlobal = []; qMsg.forEach((d) => cacheMensajesGlobal.push({ id: d.id, ...d.data() }));
+
+            // Actualizar currentUserDataFull si está logueado
+            if(currentUserUsername) {
+                const uDoc = cacheUsuariosGlobal.find(u => u.usuario === currentUserUsername);
+                if(uDoc) currentUserDataFull = uDoc;
+            }
 
             await actualizarIndicadorUltimoFolioDinamico();
             if(currentUserRole === 'admin') cargarUsuariosAdmin();
@@ -939,7 +976,6 @@
             tbody.innerHTML = html;
         };
 
-        // Función Inteligente para Imprimir Reporte Institucional por Rango de Fechas con Observaciones
         window.imprimirReporteRango = (tipo) => {
             let desdeVal = document.getElementById(tipo === 'user' ? 'print-user-desde' : 'print-global-desde').value;
             let hastaVal = document.getElementById(tipo === 'user' ? 'print-user-hasta' : 'print-global-hasta').value;
@@ -964,7 +1000,7 @@
             let fechaEmision = new Date().toLocaleDateString('es-MX');
             let periodoTexto = (desdeVal && hastaVal) ? `PERIODO: ${desdeVal} AL ${hastaVal}` : 'REPORTE GENERAL DE REGISTROS';
             
-            let nombreFuncionario = currentUserDataFull ? currentUserDataFull.nombre : (tipo === 'admin' ? 'Administrador' : currentUserUsername);
+            let nombreFuncionario = currentUserDataFull ? currentUserDataFull.nombre : currentUserUsername;
             let puestoFuncionario = currentUserDataFull ? currentUserDataFull.puesto : 'Personal Adscrito';
             let correoFuncionario = currentUserDataFull ? currentUserDataFull.correo : 'ine.mx';
 
@@ -1144,7 +1180,7 @@
 
                 tbody.innerHTML += `<tr>
                     <td style="text-align:center;">${fotoHtml}</td>
-                    <td><strong style="cursor:pointer; color:#00d2ff;" onclick="verFichaUsuario('${u.usuario}')">${u.usuario}</strong></td>
+                    <td><strong style="cursor:pointer; color:#00d2ff;" onclick="verFichaUsuarioAdmin('${u.usuario}')">${u.usuario}</strong></td>
                     <td>${u.nombre || '-'}</td><td>${u.correo}</td>
                     <td><input type="text" id="pass-${u.usuario}" value="${u.password}" style="width:80px; padding:2px; font-size:0.8em;"></td>
                     <td>
@@ -1167,23 +1203,99 @@
             cargarUsuariosAdmin();
         };
 
-        window.verFichaUsuario = (username) => {
+        // Ver perfil propio o del admin hacia otro usuario
+        window.abrirMiPerfilModal = () => {
+            if(!currentUserUsername) return;
+            const u = currentUserDataFull || cacheUsuariosGlobal.find(item => item.usuario === currentUserUsername);
+            if(!u) return;
+
+            let avatarC = u.fotoBase64 ? `<img src="${u.fotoBase64}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--azul-brillante);">` : `<span style="font-size:3em;">👤</span>`;
+            document.getElementById('perfil-modal-avatar-container').innerHTML = avatarC;
+            document.getElementById('p-usuario').value = u.usuario;
+            document.getElementById('p-nombre').value = u.nombre || '';
+            document.getElementById('p-puesto').value = u.puesto || '';
+            document.getElementById('p-correo').value = u.correo || '';
+            document.getElementById('p-telefono').value = u.telefono || '';
+            document.getElementById('p-rol').value = (u.rol || 'user').toUpperCase();
+
+            // Limpiar campos de cambio de contraseña
+            document.getElementById('cambio-pass-actual').value = "";
+            document.getElementById('cambio-pass-nueva').value = "";
+            document.getElementById('cambio-pass-confirmar').value = "";
+
+            document.getElementById('modal-perfil').classList.remove('hidden');
+        };
+
+        window.verFichaUsuarioAdmin = (username) => {
+            // Si el admin hace clic en la tabla de usuarios
             const u = cacheUsuariosGlobal.find(item => item.usuario === username || item.id === username);
             if(!u) return;
             let avatarC = u.fotoBase64 ? `<img src="${u.fotoBase64}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--azul-brillante);">` : `<span style="font-size:3em;">👤</span>`;
             document.getElementById('perfil-modal-avatar-container').innerHTML = avatarC;
-            document.getElementById('p-usuario').innerText = u.usuario;
-            document.getElementById('p-nombre').innerText = u.nombre || '-';
-            document.getElementById('p-puesto').innerText = u.puesto || '-';
-            document.getElementById('p-correo').innerText = u.correo || '-';
-            document.getElementById('p-telefono').innerText = u.telefono || '-';
-            document.getElementById('p-rol').innerText = (u.rol || 'user').toUpperCase();
+            document.getElementById('p-usuario').value = u.usuario;
+            document.getElementById('p-nombre').value = u.nombre || '';
+            document.getElementById('p-puesto').value = u.puesto || '';
+            document.getElementById('p-correo').value = u.correo || '';
+            document.getElementById('p-telefono').value = u.telefono || '';
+            document.getElementById('p-rol').value = (u.rol || 'user').toUpperCase();
             document.getElementById('modal-perfil').classList.remove('hidden');
         };
 
-        window.abrirMiPerfilModal = () => {
-            if(currentUserDataFull) { verFichaUsuario(currentUserUsername); }
+        window.guardarMiPerfilModal = async () => {
+            const username = document.getElementById('p-usuario').value;
+            const nuevoNombre = document.getElementById('p-nombre').value.trim();
+            const nuevoPuesto = document.getElementById('p-puesto').value.trim();
+            const nuevoTelefono = document.getElementById('p-telefono').value.trim();
+
+            if(!nuevoNombre || !nuevoPuesto) return alert('El nombre y el puesto no pueden estar vacíos.');
+
+            try {
+                await updateDoc(doc(db, "usuarios", username), {
+                    nombre: nuevoNombre,
+                    puesto: nuevoPuesto,
+                    telefono: nuevoTelefono
+                });
+
+                if(username === currentUserUsername && currentUserDataFull) {
+                    currentUserDataFull.nombre = nuevoNombre;
+                    currentUserDataFull.puesto = nuevoPuesto;
+                    currentUserDataFull.telefono = nuevoTelefono;
+                }
+
+                alert('¡Perfil actualizado con éxito!');
+                cerrarMiPerfilModal();
+                cargarDatosSistemaAsync();
+            } catch(e) {
+                alert('Error al actualizar el perfil.');
+            }
         };
+
+        window.ejecutarCambioPassword = async () => {
+            const passActual = document.getElementById('cambio-pass-actual').value;
+            const passNueva = document.getElementById('cambio-pass-nueva').value;
+            const passConfirmar = document.getElementById('cambio-pass-confirmar').value;
+
+            if(!passActual || !passNueva || !passConfirmar) return alert('Llena todos los campos de contraseña.');
+            if(passNueva.length < 6) return alert('La nueva contraseña debe tener al menos 6 caracteres.');
+            if(passNueva !== passConfirmar) return alert('La nueva contraseña y la confirmación no coinciden.');
+
+            const uDoc = cacheUsuariosGlobal.find(u => u.usuario === currentUserUsername);
+            if(!uDoc) return alert('Usuario no encontrado.');
+
+            if(passActual !== uDoc.password) return alert('La contraseña actual es incorrecta.');
+
+            try {
+                await updateDoc(doc(db, "usuarios", currentUserUsername), { password: passNueva });
+                uDoc.password = passNueva;
+                alert('¡Contraseña actualizada con éxito!');
+                document.getElementById('cambio-pass-actual').value = "";
+                document.getElementById('cambio-pass-nueva').value = "";
+                document.getElementById('cambio-pass-confirmar').value = "";
+            } catch(e) {
+                alert('Error al actualizar la contraseña.');
+            }
+        };
+
         window.cerrarMiPerfilModal = () => { document.getElementById('modal-perfil').classList.add('hidden'); };
 
         window.abrirModalCrearUsuario = () => { document.getElementById('modal-usuario').classList.remove('hidden'); };
