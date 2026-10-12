@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor de Folios</title>
+    <title>VRFE 03JDE - Gestor de Folios v1.0.15</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -125,7 +125,7 @@
                 </div>
             </div>
         </div>
-        <div class="header-title"><h1 style="font-size: 0.95em; margin: 0;">Vocalía del RFE</h1><p style="font-size: 0.6em; margin: 1px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva</p></div>
+        <div class="header-title"><h1 style="font-size: 0.95em; margin: 0;">Gestor de Folios</h1><p style="font-size: 0.6em; margin: 1px 0 0 0; color: #cfd9e8;">03 Junta Distrital Ejecutiva</p></div>
         <div style="text-align: right; display: flex; align-items: center; gap: 8px; justify-content: flex-end;">
             <div id="header-status-dot-container" style="display:flex; align-items:center; gap:4px; font-size:0.7em;">
                 <span id="header-top-dot" class="footer-dot dot-online"></span>
@@ -484,7 +484,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.14</div>
+        <div>&copy; 2026 Gestor de Folios | Versión 1.0.15</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-online"></span><span id="footer-status-text" style="color: #00ff66;">online</span></div>
     </footer>
 
@@ -504,7 +504,7 @@
         let sortConfigUser = { column: 'folio', asc: false };
         let sortConfigGlobal = { column: 'folio', asc: false };
 
-        const defaultAdminFoto = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA...[imagen integrada]...";
+        const defaultAdminFoto = "mayito admin.jpeg";
 
         window.togglePasswordVisibility = (idField, btn) => { const input = document.getElementById(idField); if (input.type === "password") { input.type = "text"; btn.innerText = " Ocultar "; } else { input.type = "password"; btn.innerText = "👁️"; } };
         window.mostrarRegistro = () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); };
@@ -1119,12 +1119,12 @@
                 <div style="font-family: Arial, sans-serif; color: #111; padding: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px double #1d3557; padding-bottom: 8px; margin-bottom: 10px;">
                         <div>
-                            <h2 style="margin: 0; font-size: 1.1em; color: #0a1128; text-transform: uppercase;">Instituto Nacional Electoral</h2>
-                            <p style="margin: 2px 0 0 0; font-size: 0.8em; color: #555;">Vocalía del Registro Federal de Electores &bull; 03 Junta Distrital Ejecutiva</p>
+                            <h2 style="margin: 0; font-size: 1.1em; color: #0a1128; text-transform: uppercase;">Gestor de Folios</h2>
+                            <p style="margin: 2px 0 0 0; font-size: 0.8em; color: #555;">03 Junta Distrital Ejecutiva</p>
                         </div>
                         <div style="text-align: right; font-size: 0.75em; color: #444;">
                             <p style="margin:0;"><strong>Fecha de Emisión:</strong> ${fechaEmision}</p>
-                            <p style="margin:0;"><strong>Sistema VRFE</strong></p>
+                            <p style="margin:0;"><strong>Sistema Gestor</strong></p>
                         </div>
                     </div>
 
