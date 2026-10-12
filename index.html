@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor de Folios de Oficio v1.0.13</title>
+    <title>Gestor de Folios</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -484,7 +484,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.13</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.14</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-online"></span><span id="footer-status-text" style="color: #00ff66;">online</span></div>
     </footer>
 
@@ -504,7 +504,7 @@
         let sortConfigUser = { column: 'folio', asc: false };
         let sortConfigGlobal = { column: 'folio', asc: false };
 
-        const defaultAdminFoto = data_uri_placeholder;
+        const defaultAdminFoto = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA...[imagen integrada]...";
 
         window.togglePasswordVisibility = (idField, btn) => { const input = document.getElementById(idField); if (input.type === "password") { input.type = "text"; btn.innerText = " Ocultar "; } else { input.type = "password"; btn.innerText = "👁️"; } };
         window.mostrarRegistro = () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); };
