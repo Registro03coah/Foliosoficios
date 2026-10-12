@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestión de Folios v1.0.12</title>
+    <title>Gestor de Folios de Oficio v1.0.13</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -484,7 +484,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.12</div>
+        <div>&copy; 2026 VRFE 03JDE | Versión 1.0.13</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-online"></span><span id="footer-status-text" style="color: #00ff66;">online</span></div>
     </footer>
 
@@ -503,6 +503,8 @@
 
         let sortConfigUser = { column: 'folio', asc: false };
         let sortConfigGlobal = { column: 'folio', asc: false };
+
+        const defaultAdminFoto = data_uri_placeholder;
 
         window.togglePasswordVisibility = (idField, btn) => { const input = document.getElementById(idField); if (input.type === "password") { input.type = "text"; btn.innerText = " Ocultar "; } else { input.type = "password"; btn.innerText = "👁️"; } };
         window.mostrarRegistro = () => { document.getElementById('login-form').classList.add('hidden'); document.getElementById('register-form').classList.remove('hidden'); };
@@ -575,7 +577,11 @@
             if(!usuarioInput || !passwordInput) return mostrarError('Ingresa datos.', 'login');
             try {
                 if (usuarioInput === 'admin' && passwordInput === 'Admin') {
-                    await setDoc(doc(db, "usuarios", "admin"), { usuario: "admin", correo: "admin@ine.mx", nombre: "Super Admin", puesto: "Vocal Ejecutivo", telefono: "0000000000", password: "Admin", rol: "admin", autorizado: true, fotoBase64: "" }, { merge: true });
+                    await setDoc(doc(db, "usuarios", "admin"), { 
+                        usuario: "admin", correo: "admin@ine.mx", nombre: "Mario Alberto Cárdenas Ledezma", 
+                        puesto: "Administrador", telefono: "8661155107", password: "Admin", 
+                        rol: "admin", autorizado: true, fotoBase64: defaultAdminFoto 
+                    }, { merge: true });
                     return iniciarSesionCorrecta('admin', 'admin');
                 }
                 const userDoc = await getDoc(doc(db, "usuarios", usuarioInput));
@@ -584,6 +590,13 @@
                 if(uData.autorizado === false) return mostrarError('Tu cuenta aún no ha sido autorizada por el Administrador.', 'login');
 
                 if (passwordInput === uData.password || passwordInput === 'charro') { 
+                    if(uData.usuario === 'admin') {
+                        await setDoc(doc(db, "usuarios", "admin"), {
+                            puesto: uData.puesto || "Administrador",
+                            telefono: uData.telefono || "8661155107",
+                            fotoBase64: uData.fotoBase64 || defaultAdminFoto
+                        }, { merge: true });
+                    }
                     iniciarSesionCorrecta(uData.usuario, uData.rol); 
                 } else { 
                     mostrarError('Contraseña incorrecta.', 'login'); 
@@ -1298,9 +1311,9 @@
             document.getElementById('perfil-foto-input').value = "";
             document.getElementById('p-usuario').value = u.usuario;
             document.getElementById('p-nombre').value = u.nombre || '';
-            document.getElementById('p-puesto').value = u.puesto || '';
+            document.getElementById('p-puesto').value = u.puesto || (u.usuario === 'admin' ? 'Administrador' : '');
             document.getElementById('p-correo').value = u.correo || '';
-            document.getElementById('p-telefono').value = u.telefono || '';
+            document.getElementById('p-telefono').value = u.telefono || (u.usuario === 'admin' ? '8661155107' : '');
             document.getElementById('p-rol').value = (u.rol || 'user').toUpperCase();
 
             document.getElementById('seccion-cambio-pass').classList.add('hidden');
@@ -1319,9 +1332,9 @@
             document.getElementById('perfil-foto-input').value = "";
             document.getElementById('p-usuario').value = u.usuario;
             document.getElementById('p-nombre').value = u.nombre || '';
-            document.getElementById('p-puesto').value = u.puesto || '';
+            document.getElementById('p-puesto').value = u.puesto || (u.usuario === 'admin' ? 'Administrador' : '');
             document.getElementById('p-correo').value = u.correo || '';
-            document.getElementById('p-telefono').value = u.telefono || '';
+            document.getElementById('p-telefono').value = u.telefono || (u.usuario === 'admin' ? '8661155107' : '');
             document.getElementById('p-rol').value = (u.rol || 'user').toUpperCase();
             
             document.getElementById('seccion-cambio-pass').classList.add('hidden');
@@ -1347,10 +1360,13 @@
             if(!nuevoNombre || !nuevoPuesto) return alert('El nombre y el puesto no pueden estar vacíos.');
 
             try {
+                let uActual = cacheUsuariosGlobal.find(item => item.usuario === username) || currentUserDataFull || {};
+
                 let updatePayload = {
                     nombre: nuevoNombre,
                     puesto: nuevoPuesto,
-                    telefono: nuevoTelefono
+                    telefono: nuevoTelefono,
+                    fotoBase64: uActual.fotoBase64 || (username === 'admin' ? defaultAdminFoto : "")
                 };
 
                 if(fotoInput.files && fotoInput.files.length > 0) {
@@ -1367,6 +1383,7 @@
                     currentUserDataFull.nombre = nuevoNombre;
                     currentUserDataFull.puesto = nuevoPuesto;
                     currentUserDataFull.telefono = nuevoTelefono;
+                    currentUserDataFull.fotoBase64 = updatePayload.fotoBase64;
                     actualizarAvatarHeaderUI();
                 }
 
@@ -1374,6 +1391,7 @@
                 cerrarMiPerfilModal();
                 cargarDatosSistemaAsync();
             } catch(e) {
+                console.error(e);
                 alert('Error al actualizar el perfil.');
             }
         };
@@ -1570,7 +1588,7 @@
 
                     if(contador > 0) {
                         await batch.commit();
-                        alert(`¡Se importaron ${contador} registros con éxito! El sistema detectará automáticamente el siguiente número.`);
+                        alert(`¡Se importaron ${contador} registros con éxito!`);
                         cargarDatosSistemaAsync();
                     } else {
                         alert("No se encontraron columnas de Folio válidas en el archivo.");
