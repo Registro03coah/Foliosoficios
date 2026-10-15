@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VRFE 03JDE - Gestor de Folios v1.0.15</title>
+    <title>Gestor de Folios v1.0.16</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -30,6 +30,13 @@
         
         .card { background-color: var(--tarjeta-bg); padding: 14px; border-radius: 6px; border-top: 3px solid var(--azul-claro); box-shadow: 0 5px 12px rgba(0,0,0,0.7); margin-bottom: 15px; position: relative; text-align: left; }
         
+        /* BANNER DE AVISO IMPORTANTE */
+        .aviso-importante-banner { background: linear-gradient(135deg, #1d3557, #14213d); border-left: 4px solid #e9c46a; border-right: 1px solid var(--azul-claro); border-top: 1px solid var(--azul-claro); border-bottom: 1px solid var(--azul-claro); padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; gap: 10px; animation: fadeIn 0.4s ease-in-out; }
+        .aviso-importante-text { font-size: 0.78em; line-height: 1.4; color: #f1f1f1; }
+        .aviso-importante-text strong { color: #e9c46a; }
+        .btn-cerrar-aviso { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 0.7em; padding: 4px 8px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+        .btn-cerrar-aviso:hover { background: #e9c46a; color: #000; }
+
         input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="tel"], input[type="date"], textarea, select { width: 100%; padding: 7px 9px; margin-bottom: 8px; border: 1px solid var(--azul-claro); background-color: rgba(0,0,0,0.6); color: white; border-radius: 4px; box-sizing: border-box; font-size: 13px; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--azul-brillante); box-shadow: 0 0 4px var(--azul-brillante); }
         input[readonly] { background-color: #222; color: #888; cursor: not-allowed; }
@@ -193,6 +200,14 @@
                 <button class="nav-tab-btn" id="tab-btn-mensajes" onclick="cambiarPestana('mensajes')">💬 Buzón de Mensajes</button>
             </div>
 
+            <!-- AVISO IMPORTANTE (SOLO USUARIO / SE OCULTA CON BOTÓN) -->
+            <div id="aviso-importante-usuario" class="aviso-importante-banner hidden">
+                <div class="aviso-importante-text">
+                    ⚠️ <strong>Aviso Importante:</strong> Este sistema es exclusivo para el personal Administrativo de la Vocalía del Registro Federal de Electores de la 03 Junta Distrital Ejecutiva en Coahuila.
+                </div>
+                <button class="btn-cerrar-aviso" onclick="cerrarAvisoImportante()">Entendido [X]</button>
+            </div>
+
             <!-- ADMIN -->
             <div id="pestana-admin" class="card">
                 <h2 style="margin-top:0; font-size: 1.1em;">Panel de Control del Administrador</h2>
@@ -247,13 +262,7 @@
                     </table>
                 </div>
             </div>
-<!-- AVISO IMPORTANTE (SOLO USUARIO / SE OCULTA CON BOTÓN) -->
-            <div id="aviso-importante-usuario" class="aviso-importante-banner hidden">
-                <div class="aviso-importante-text">
-                    ⚠️ <strong>Aviso Importante:</strong> Este sistema es exclusivo para el personal Administrativo de la Vocalía del Registro Federal de Electores de la 03 Junta Distrital Ejecutiva en Coahuila.
-                </div>
-                <button class="btn-cerrar-aviso" onclick="cerrarAvisoImportante()">Entendido [X]</button>
-            </div>
+
             <!-- MIS FOLIOS -->
             <div id="pestana-mis-folios" class="card hidden">
                 <div id="badge-ultimo-container" class="badge-ultimo-folio">Último Folio: Cargando...</div>
@@ -490,7 +499,7 @@
     </div>
 
     <footer>
-        <div>&copy; 2026 Gestor de Folios | Versión 1.0.15</div>
+        <div>&copy; 2026 Gestor de Folios | Versión 1.0.16</div>
         <div class="footer-status"><span id="footer-dot" class="footer-dot dot-online"></span><span id="footer-status-text" style="color: #00ff66;">online</span></div>
     </footer>
 
@@ -631,14 +640,20 @@
             if (currentUserRole === 'admin') {
                 document.getElementById('tab-btn-admin').classList.remove('hidden');
                 document.getElementById('tab-btn-historial').classList.remove('hidden');
+                document.getElementById('aviso-importante-usuario').classList.add('hidden');
                 cambiarPestana('admin');
             } else {
                 document.getElementById('tab-btn-admin').classList.add('hidden');
                 document.getElementById('tab-btn-historial').classList.add('hidden');
+                document.getElementById('aviso-importante-usuario').classList.remove('hidden');
                 cambiarPestana('mis-folios');
             }
             cargarDatosSistemaAsync();
         }
+
+        window.cerrarAvisoImportante = () => {
+            document.getElementById('aviso-importante-usuario').classList.add('hidden');
+        };
 
         function actualizarAvatarHeaderUI() {
             const imgEl = document.getElementById('header-user-avatar');
@@ -1622,46 +1637,5 @@
 
         mostrarLogin();
     </script>
-    <!-- Botón Flotante para Regresar al Menú Principal -->
-<a href="https://registro03coah.github.io/mimenu/index.html" class="btn-regresar-menu" title="Regresar al Centro de Mando">
-    <i class="fas fa-home"></i> <span>Menú Principal</span>
-</a>
-
-<style>
-    .btn-regresar-menu {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background: rgba(13, 27, 42, 0.9);
-        color: #fff;
-        padding: 10px 18px;
-        border-radius: 30px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 600;
-        border: 2px solid #4ea8de;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-        z-index: 9999;
-        transition: all 0.3s ease;
-    }
-
-    .btn-regresar-menu:hover {
-        background: #4ea8de;
-        color: #0d1b2a;
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(78, 168, 222, 0.7);
-    }
-/* BANNER DE AVISO IMPORTANTE */
-        .aviso-importante-banner { background: linear-gradient(135deg, #1d3557, #14213d); border-left: 4px solid #e9c46a; border-right: 1px solid var(--azul-claro); border-top: 1px solid var(--azul-claro); border-bottom: 1px solid var(--azul-claro); padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; gap: 10px; animation: fadeIn 0.4s ease-in-out; }
-        .aviso-importante-text { font-size: 0.78em; line-height: 1.4; color: #f1f1f1; }
-        .aviso-importante-text strong { color: #e9c46a; }
-        .btn-cerrar-aviso { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 0.7em; padding: 4px 8px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
-        .btn-cerrar-aviso:hover { background: #e9c46a; color: #000; }
-</style>
 </body>
 </html>
