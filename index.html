@@ -247,7 +247,13 @@
                     </table>
                 </div>
             </div>
-
+<!-- AVISO IMPORTANTE (SOLO USUARIO / SE OCULTA CON BOTÓN) -->
+            <div id="aviso-importante-usuario" class="aviso-importante-banner hidden">
+                <div class="aviso-importante-text">
+                    ⚠️ <strong>Aviso Importante:</strong> Este sistema es exclusivo para el personal Administrativo de la Vocalía del Registro Federal de Electores de la 03 Junta Distrital Ejecutiva en Coahuila.
+                </div>
+                <button class="btn-cerrar-aviso" onclick="cerrarAvisoImportante()">Entendido [X]</button>
+            </div>
             <!-- MIS FOLIOS -->
             <div id="pestana-mis-folios" class="card hidden">
                 <div id="badge-ultimo-container" class="badge-ultimo-folio">Último Folio: Cargando...</div>
@@ -1650,6 +1656,12 @@
         transform: translateY(-3px);
         box-shadow: 0 8px 25px rgba(78, 168, 222, 0.7);
     }
+/* BANNER DE AVISO IMPORTANTE */
+        .aviso-importante-banner { background: linear-gradient(135deg, #1d3557, #14213d); border-left: 4px solid #e9c46a; border-right: 1px solid var(--azul-claro); border-top: 1px solid var(--azul-claro); border-bottom: 1px solid var(--azul-claro); padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; gap: 10px; animation: fadeIn 0.4s ease-in-out; }
+        .aviso-importante-text { font-size: 0.78em; line-height: 1.4; color: #f1f1f1; }
+        .aviso-importante-text strong { color: #e9c46a; }
+        .btn-cerrar-aviso { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 0.7em; padding: 4px 8px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+        .btn-cerrar-aviso:hover { background: #e9c46a; color: #000; }
 </style>
 </body>
 </html>
